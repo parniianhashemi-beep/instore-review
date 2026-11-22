@@ -82,6 +82,42 @@
     margin: 16px 0 12px;
   }
   .status-line { margin: 0; color: var(--muted); font-size: 12px; max-width: 38rem; }
+  .download {
+    flex: 1 1 100%;
+    margin-top: 4px;
+  }
+  .download-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 6px;
+    color: var(--ink);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  .download-track {
+    height: 16px;
+    background: #e4ebf3;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .download-fill {
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      #1a73e8 0 10px,
+      #4c94f5 10px 20px
+    );
+    background-size: 28px 28px;
+    animation: download-move 0.7s linear infinite;
+  }
+  @keyframes download-move {
+    from { background-position: 0 0; }
+    to { background-position: 28px 0; }
+  }
   .action-buttons { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .check { display: flex; align-items: center; gap: 6px; color: var(--ink); font-size: 12px; }
   button.primary, a.ghost, button.ghost {
@@ -310,6 +346,15 @@
     <div class="action-buttons">
       <label class="check" id="preview-label"><input type="checkbox" id="preview" data-testid="preview"> فقط پیش‌نمایش (چیزی در شیت نوشته نمی‌شود)</label>
       <button type="button" class="primary" id="run" data-testid="run">بررسی خودکار و ثبت گزارش در شیت</button>
+    </div>
+    <div id="review-progress" class="download" hidden>
+      <p class="download-meta">
+        <span id="review-rate" data-testid="review-rate">0 ردیف در ثانیهٔ اخیر</span>
+        <span id="review-left" data-testid="review-left">100٪ مانده</span>
+      </p>
+      <div id="review-track" class="download-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="100 درصد مانده">
+        <div id="review-bar" class="download-fill"></div>
+      </div>
     </div>
   </div>
   <p id="error" class="banner" data-testid="error" hidden></p>
@@ -2028,6 +2073,73 @@
       if (again) again.disabled = false;
     }
   }
+  const progressSamples = [];
+  let lastPerSecond = 0;
+  let reviewChecked = 0;
+  function resetReviewProgress() {
+    progressSamples.length = 0;
+    progressSamples.push({ t: Date.now(), checked: 0 });
+    lastPerSecond = 0;
+    reviewChecked = 0;
+    paintReviewProgress(0, 100);
+  }
+  function paintReviewProgress(perSecond, remaining) {
+    const box = document.getElementById("review-progress");
+    const rate = document.getElementById("review-rate");
+    const left = document.getElementById("review-left");
+    const bar = document.getElementById("review-bar");
+    const track = document.getElementById("review-track");
+    if (!box || !rate || !left || !bar || !track) return;
+    box.hidden = false;
+    const leftPercent = Math.max(0, Math.min(100, remaining));
+    const donePercent = 100 - leftPercent;
+    rate.textContent = perSecond + " ردیف در ثانیهٔ اخیر";
+    left.textContent = leftPercent + "٪ مانده";
+    bar.style.width = donePercent + "%";
+    track.setAttribute("aria-valuenow", String(donePercent));
+    track.setAttribute("aria-valuetext", leftPercent + " درصد مانده");
+  }
+  function noteReviewProgress(checked, remaining) {
+    const now = Date.now();
+    progressSamples.push({ t: now, checked: checked });
+    const cutoff = now - 1000;
+    while (progressSamples.length > 1 && progressSamples[1].t <= cutoff) progressSamples.shift();
+    const first = progressSamples[0];
+    lastPerSecond = Math.max(0, checked - first.checked);
+    reviewChecked = checked;
+    paintReviewProgress(lastPerSecond, remaining);
+  }
+  async function readReviewProgress(res) {
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error((data && data.error) || "ثبت گزارش در شیت انجام نشد.");
+    }
+    if (!res.body || !res.body.getReader) throw new Error("پیشرفت بررسی خوانده نشد.");
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = "";
+    let last = null;
+    const take = (event) => {
+      if (event.ok === false) throw new Error(event.error || "ثبت گزارش در شیت انجام نشد.");
+      if (typeof event.checked === "number") noteReviewProgress(event.checked, event.remaining);
+      if (event.ok === true) last = event;
+    };
+    while (true) {
+      const step = await reader.read();
+      if (step.done) break;
+      buf += decoder.decode(step.value, { stream: true });
+      const lines = buf.split("\n");
+      buf = lines.pop();
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        take(JSON.parse(line));
+      }
+    }
+    if (buf.trim()) take(JSON.parse(buf));
+    if (!last) throw new Error("ثبت گزارش در شیت انجام نشد.");
+    if (last.finished) paintReviewProgress(lastPerSecond, 0);
+    return last;
+  }
   async function runReview() {
     if (running) return;
     running = true;
@@ -2042,10 +2154,41 @@
         showToast("پنج تب گزارش روی صفحه است. چیزی نوشته نشد.");
         return;
       }
-      setStatus("در حال نوشتن دوبارهٔ فقط پنج تب گزارش…");
-      const res = await fetch("/review", { method: "POST", headers: { "x-instore-request": "1" } });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.ok) throw new Error(data.error || "ثبت گزارش در شیت انجام نشد.");
+      setStatus("در حال بررسی هر ردیف و نوشتن فقط پنج تب گزارش…");
+      resetReviewProgress();
+      let fresh = true;
+      let hops = 0;
+      let drops = 0;
+      while (hops < 80) {
+        hops += 1;
+        let event;
+        try {
+          const res = await fetch("/review", {
+            method: "POST",
+            headers: { "content-type": "application/json", "x-instore-request": "1" },
+            body: JSON.stringify({ fresh: fresh })
+          });
+          const type = res.headers.get("content-type") || "";
+          if (!type.includes("ndjson")) {
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok || !data.ok) throw new Error((data && data.error) || "ثبت گزارش در شیت انجام نشد.");
+            event = data;
+          } else {
+            event = await readReviewProgress(res);
+          }
+          drops = 0;
+        } catch (err) {
+          if (!reviewChecked || drops >= 3) throw err;
+          drops += 1;
+          fresh = false;
+          setStatus("اتصال قطع شد. بررسی از همان‌جا ادامه پیدا می‌کند…");
+          continue;
+        }
+        if (event && event.finished) break;
+        if (!event || !event.partial) throw new Error("ثبت گزارش در شیت انجام نشد.");
+        fresh = false;
+        setStatus("بررسی ادامه دارد…");
+      }
       await loadReport();
       showToast("پنج تب گزارش از نو نوشته شد و روی صفحه آمد.");
     } catch (err) {
