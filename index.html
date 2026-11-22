@@ -1999,7 +1999,7 @@
     try {
       const res = await fetch("/save", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-instore-request": "1" },
         body: JSON.stringify({ contract: item.contract, status: status, fa: fa, en: en, reason: reason, ref: ref })
       });
       const data = await res.json().catch(() => ({}));
@@ -2043,7 +2043,7 @@
         return;
       }
       setStatus("در حال نوشتن دوبارهٔ فقط پنج تب گزارش…");
-      const res = await fetch("/review", { method: "POST" });
+      const res = await fetch("/review", { method: "POST", headers: { "x-instore-request": "1" } });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) throw new Error(data.error || "ثبت گزارش در شیت انجام نشد.");
       await loadReport();
@@ -2361,7 +2361,7 @@
     let last = "پنج تب گزارش خوانده نشد.";
     for (const url of urls) {
       try {
-        const res = await fetch(url, { cache: "no-store" });
+        const res = await fetch(url, { cache: "no-store", headers: { "x-instore-request": "1" } });
         const data = await res.json().catch(() => ({}));
         if (!res.ok || !data.ok || !data.rows) throw new Error(data.error || last);
         applyReport(data);

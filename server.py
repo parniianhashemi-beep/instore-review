@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Serve the reviewer on http://127.0.0.1:8765.
 
-POST /review reads New Flow, online, and social with the service account,
-then clears the five report tabs and writes them again.
+Sheet routes are not served here. Reading and writing the report
+requires a signed-in person on the published app.
 """
 
 from __future__ import annotations
@@ -13,7 +13,7 @@ import urllib.parse
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from sheets_job import KEY_PATH, SheetError, report_view, run_review, save_store
+from sheets_job import KEY_PATH
 
 ROOT = Path(__file__).resolve().parent
 HOST = "127.0.0.1"
@@ -34,15 +34,7 @@ class Handler(SimpleHTTPRequestHandler):
     def do_GET(self):
         path = urllib.parse.urlparse(self.path).path
         if path == "/report":
-            try:
-                payload = report_view()
-            except SheetError as exc:
-                self._json(503, {"ok": False, "error": str(exc)})
-                return
-            except Exception:
-                self._json(500, {"ok": False, "error": "خواندن پنج تب گزارش انجام نشد."})
-                return
-            self._json(200, payload)
+            self._json(401, {"ok": False, "error": "ورود لازم است."})
             return
         if self._blocked(path):
             self.send_error(404)
@@ -51,37 +43,17 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         path = urllib.parse.urlparse(self.path).path
-        length = int(self.headers.get("Content-Length") or 0)
-        raw = self.rfile.read(min(length, 1_000_000)) if length else b""
-        if path == "/save":
-            try:
-                payload = json.loads(raw.decode("utf-8") or "{}")
-                self._json(200, save_store(payload))
-            except SheetError as exc:
-                self._json(503, {"ok": False, "error": str(exc)})
-            except Exception:
-                self._json(500, {"ok": False, "error": "ذخیرهٔ این فروشگاه در شیت انجام نشد."})
+        if path in ("/save", "/review"):
+            self._json(401, {"ok": False, "error": "ورود لازم است."})
             return
-        if path != "/review":
-            self._json(404, {"ok": False, "error": "مسیر پیدا نشد."})
-            return
-        try:
-            summary = run_review()
-        except SheetError as exc:
-            self._json(503, {"ok": False, "error": str(exc)})
-            return
-        except Exception:
-            self._json(500, {"ok": False, "error": "ثبت گزارش در شیت انجام نشد."})
-            return
-        self._json(200, summary)
+        self._json(404, {"ok": False, "error": "مسیر پیدا نشد."})
 
     def _json(self, status: int, payload: dict) -> None:
         raw = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(raw)))
-        self.send_header("Cache-Control", "no-store")
-        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Cache-Control", "private, no-store")
         self.end_headers()
         self.wfile.write(raw)
 
