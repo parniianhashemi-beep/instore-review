@@ -1954,7 +1954,7 @@
       script.src = "https://accounts.google.com/gsi/client";
       script.async = true;
       script.onload = () => resolve();
-      script.onerror = () => reject(new Error("ورود گوگل بار نشد. صفحه را از http://127.0.0.1:8765 باز کنید و دوباره دکمه را بزنید."));
+      script.onerror = () => reject(new Error("ورود گوگل بار نشد. دوباره دکمه را بزنید."));
       document.head.append(script);
     });
   }
@@ -2357,20 +2357,11 @@
     setStatus(statusText());
   }
   async function loadReport() {
-    const urls = ["/report", "http://127.0.0.1:8765/report"];
-    let last = "پنج تب گزارش خوانده نشد.";
-    for (const url of urls) {
-      try {
-        const res = await fetch(url, { cache: "no-store", headers: { "x-instore-request": "1" } });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok || !data.ok || !data.rows) throw new Error(data.error || last);
-        applyReport(data);
-        return data;
-      } catch (err) {
-        last = err && err.message ? err.message : last;
-      }
-    }
-    throw new Error(last + " صفحه را از http://127.0.0.1:8765 باز کنید.");
+    const res = await fetch("/report", { cache: "no-store", headers: { "x-instore-request": "1" } });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok || !data.rows) throw new Error((data && data.error) || "پنج تب گزارش خوانده نشد.");
+    applyReport(data);
+    return data;
   }
   async function boot() {
     running = true;
