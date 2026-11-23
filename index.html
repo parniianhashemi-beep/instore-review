@@ -1,0 +1,2620 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap">
+<title>بررسی فعال‌سازی حضوری</title>
+<style>
+  :root {
+    --ink: #1c2430;
+    --muted: #667085;
+    --page: #f7f8fa;
+    --card: #fff;
+    --line: #e4ebf3;
+    --blue: #1a73e8;
+    --blue-dark: #1558b0;
+    --green: #1f9d55;
+    --orange: #e07a2f;
+    --pink: #fde8ec;
+    --pink-ink: #9d2340;
+    --ok-bg: #e7f6ec;
+    --no-bg: #fdecef;
+    --unk-bg: #fff4e2;
+    --unk: #8a4e0b;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font-family: Vazirmatn, Tahoma, sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  button, input, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  a { color: var(--blue); }
+  body.signed-out > header, body.signed-out > .wrap { display: none; }
+  .auth-screen { min-height: 100vh; display: grid; place-items: center; padding: 20px; }
+  .auth-card { width: min(440px, 100%); background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 24px; box-shadow: 0 8px 28px #172b4d12; }
+  .auth-card h1 { font-size: 1.25rem; }
+  .auth-card p { color: var(--muted); }
+  #google-signin { min-height: 42px; }
+  #auth-message { color: var(--pink-ink); min-height: 1.5em; }
+  header { background: #fff; border-bottom: 1px solid var(--line); }
+  .head-inner, .wrap { width: min(1180px, calc(100% - 28px)); margin: 0 auto; }
+  .head-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0 10px;
+  }
+  h1 { margin: 0; font-size: 1.15rem; font-weight: 700; }
+  .sub { margin: 4px 0 0; color: var(--muted); max-width: 46rem; font-size: 0.86rem; }
+  .head-actions { display: flex; gap: 8px; flex: none; }
+  .wrap { padding: 12px 0 32px; }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-top: 3px solid #d5dbe6;
+    border-radius: 12px;
+    padding: 8px 10px 8px;
+    min-height: 64px;
+  }
+  .card.ok { border-top-color: #b7e0c4; background: #e7f6ec; }
+  .card.warn { border-top-color: #ead98a; background: #fff6d6; }
+  #card-box-rename { border-top-color: #e8c09a; background: #fff0e0; }
+  #chip-rename { background: #fff0e0; border-color: #f0d2b0; }
+  #chip-rename.on { background: #ffe4c7; border-color: #e8c09a; color: var(--ink); }
+  .card .k { margin: 0; color: var(--muted); font-size: 12px; }
+  .card .num {
+    margin: 6px 0 0;
+    font-size: 18px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 16px 0 12px;
+  }
+  .status-line { margin: 0; color: var(--muted); font-size: 12px; max-width: 38rem; }
+  .last-update { margin: 6px 0 0; color: var(--muted); font-size: 12px; }
+  .download {
+    flex: 1 1 100%;
+    margin-top: 4px;
+  }
+  .download-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 6px;
+    color: var(--ink);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  .download-track {
+    height: 16px;
+    background: #e4ebf3;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .download-fill {
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      #1a73e8 0 10px,
+      #4c94f5 10px 20px
+    );
+    background-size: 28px 28px;
+    animation: download-move 0.7s linear infinite;
+  }
+  @keyframes download-move {
+    from { background-position: 0 0; }
+    to { background-position: 28px 0; }
+  }
+  .action-buttons { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .check { display: flex; align-items: center; gap: 6px; color: var(--ink); font-size: 12px; }
+  button.primary, a.ghost, button.ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    border: 1px solid #d5dbe6;
+    background: #fff;
+    color: var(--ink);
+    font-size: 13px;
+  }
+  button.primary {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #fff;
+    font-weight: 700;
+    min-height: 34px;
+    padding: 6px 14px;
+  }
+  button.primary:hover { background: var(--blue-dark); }
+  #run { background: #1b2a4a; border-color: #1b2a4a; color: #fff; }
+  #run:hover { background: #152238; }
+  #save-store { background: #d8f3e2; border-color: #b7e4c7; color: var(--ink); }
+  #save-store:hover { background: #c8efd4; }
+  button:disabled { opacity: 0.55; cursor: default; }
+  .banner {
+    background: var(--pink);
+    color: var(--pink-ink);
+    border-radius: 10px;
+    padding: 8px 10px;
+    margin: 0 0 10px;
+    font-size: 13px;
+  }
+  .panel {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px;
+  }
+  .results-head, .filters, .row-nav, .pager {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .results-head h2, .row-nav h2 { margin: 0; font-size: 14px; }
+  .filters { margin: 8px 0; justify-content: flex-start; }
+  .chip {
+    border: 1px solid #d5dbe6;
+    background: #fff;
+    border-radius: 999px;
+    padding: 3px 10px;
+    min-height: 28px;
+    font-size: 12px;
+  }
+  .chip.on { background: var(--blue); border-color: var(--blue); color: #fff; }
+  input[type="search"], input[type="text"], textarea {
+    background: #fff;
+    border: 1px solid #d5dbe6;
+    border-radius: 10px;
+    padding: 8px 10px;
+  }
+  input[type="search"] { min-width: min(100%, 220px); }
+  textarea { width: 100%; min-height: 5rem; resize: vertical; }
+  textarea.need { border-color: var(--pink-ink); background: #fff7f8; }
+  #rules { margin: 0 0 12px; }
+  #rules p, .hint { margin: 0 0 8px; color: var(--muted); }
+  #rules ul { margin: 0; padding: 0 1.2rem 0 0; }
+  .table-wrap {
+    margin-top: 8px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: auto;
+    max-height: 520px;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td {
+    padding: 6px 8px;
+    text-align: right;
+    vertical-align: top;
+    border-bottom: 1px solid #eef2f6;
+  }
+  th {
+    position: sticky;
+    top: 0;
+    background: #f8fafc;
+    color: var(--muted);
+    font-weight: 650;
+    font-size: 12px;
+  }
+  tbody tr { cursor: pointer; }
+  tbody tr.sel { background: #eef5ff; }
+  .muted { color: var(--muted); font-size: 12px; }
+  .ltr { direction: ltr; unicode-bidi: isolate; text-align: left; }
+  .tag {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 2px 8px;
+    background: #f3efe8;
+    font-size: 12px;
+  }
+  .tag.ok { background: #e7f6ec; color: var(--ink); }
+  .tag.rename { background: #fff0e0; color: var(--ink); }
+  .tag.manual { background: #fff6d6; color: var(--ink); }
+  .why-box { background: #f8fafc; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; margin: 0 0 10px; font-size: 13px; }
+  .why-box p { margin: 0 0 6px; }
+  .verdict-list { margin: 0 0 12px; }
+  .verdict-list h3 { font-size: 13px; margin: 8px 0 4px; }
+  .verdict-row { margin: 0 0 4px; font-size: 13px; }
+  .pager { margin-top: 8px; }
+  #detail { margin-top: 16px; }
+  .row-nav { margin-bottom: 8px; }
+  article {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px;
+  }
+  .store-name {
+    font-family: Vazirmatn, Tahoma, sans-serif;
+    font-size: 16px;
+    margin: 0;
+  }
+  .en-name { margin: 0 0 10px; color: var(--muted); direction: ltr; text-align: right; }
+  .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin: 0 0 12px; }
+  .pair { display: flex; gap: 8px; align-items: baseline; min-width: 0; }
+  .pair.wide { grid-column: 1 / -1; }
+  .pair dt { width: 7.2rem; flex: none; color: var(--muted); margin: 0; }
+  .pair dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+  .mode { border-radius: 10px; padding: 10px 12px; margin: 0 0 10px; background: #e7f1f6; color: #1d4e68; }
+  .mode.social { background: #fff4e2; color: #6d4d12; }
+  .actions, .file-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 12px; }
+  h3 { font-size: 13px; margin: 12px 0 6px; }
+  .field { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-top: 1px solid var(--line); }
+  .field .name { width: 9rem; flex: none; }
+  .choices { display: flex; flex-wrap: wrap; gap: 6px; }
+  .choices button { border: 1px solid #d5dbe6; background: #fff; border-radius: 999px; padding: 2px 8px; min-height: 26px; font-size: 12px; }
+  .choices button.on[data-val="جور است"] { background: var(--ok-bg); color: var(--green); border-color: #9dceb0; }
+  .choices button.on[data-val="جور نیست"] { background: var(--no-bg); color: var(--pink-ink); border-color: #efb7c3; }
+  .choices button.on[data-val="نتوانستم بررسی کنم"] { background: var(--unk-bg); color: var(--unk); border-color: #efd0a4; }
+  .cand-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px; }
+  .cand { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: #fff; }
+  .cand.picked { border-color: var(--green); background: var(--ok-bg); }
+  .cand p { margin: 0 0 4px; }
+  .badge { display: inline-block; border-radius: 999px; padding: 0 8px; background: #fff4e2; font-size: 11px; }
+  .empty-cand { background: #fff4e2; border-radius: 10px; padding: 10px 12px; }
+  .decisions { display: flex; flex-direction: column; gap: 6px; margin: 8px 0; }
+  .decisions label, .lbl { display: flex; gap: 8px; align-items: center; }
+  .lbl { flex-direction: column; align-items: stretch; margin: 8px 0; }
+  .pill { display: inline-block; border-radius: 999px; padding: 4px 10px; margin: 6px 0; background: #f3efe8; }
+  .pill.ok { background: #e7f6ec; color: var(--ink); }
+  .pill.rename { background: #fff0e0; color: var(--ink); }
+  .pill.manual { background: #fff6d6; color: var(--ink); }
+  #blockers { margin: 4px 0 8px; padding-right: 1.2rem; }
+  #blockers:empty { display: none; }
+  #toast {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    max-width: 420px;
+    background: #1c2430;
+    color: #fff;
+    border-radius: 10px;
+    padding: 10px 12px;
+    z-index: 7;
+  }
+  #tour { position: fixed; inset: 0; z-index: 40; }
+  .tour-shade { position: fixed; inset: 0; background: rgba(16, 24, 40, 0.55); }
+  .tour-hole {
+    position: fixed;
+    border-radius: 14px;
+    box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--blue);
+    pointer-events: none;
+  }
+  .tour-card {
+    position: fixed;
+    width: min(380px, calc(100% - 24px));
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 12px 40px rgba(16, 24, 40, 0.2);
+    z-index: 42;
+  }
+  .tour-page { margin: 0; color: var(--blue); font-size: 12px; }
+  .tour-card h2 { margin: 4px 0 8px; font-size: 14px; }
+  .tour-card p { margin: 0; }
+  .tour-nav { display: flex; gap: 8px; margin-top: 14px; }
+  .tour-nav .primary { background: var(--blue); color: #fff; border: 0; border-radius: 10px; padding: 8px 14px; }
+
+  @media (max-width: 980px) {
+    .cards { grid-template-columns: 1fr 1fr; }
+    .meta { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .cards, .action, .head-inner { display: block; }
+    .head-actions, .action-buttons { margin-top: 10px; }
+    .field { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body class="signed-out" data-stamp="sheet-dash">
+<section class="auth-screen" id="auth-screen" aria-labelledby="auth-title">
+  <div class="auth-card">
+    <h1 id="auth-title">ورود به بررسی فعال‌سازی</h1>
+    <p>برای دیدن اطلاعات و ثبت تصمیم، با حساب Google مجاز وارد شوید.</p>
+    <div id="google-signin"></div>
+    <p id="auth-message" role="status" aria-live="polite">در حال آماده‌کردن ورود امن…</p>
+  </div>
+</section>
+<header>
+  <div class="head-inner">
+    <div>
+      <h1>بررسی فعال‌سازی حضوری</h1>
+      <p class="sub">این صفحه همان پنج تب گزارش را نشان می‌دهد. آماده فعال‌سازی‌ها از تب social هستند. سایت‌های بازشده می‌گویند چه می‌فروشند و چرا اینماد خوانده نشد. New Flow و online و social نوشته نمی‌شوند.</p>
+    </div>
+    <div class="head-actions">
+      <button type="button" class="ghost" id="help-toggle">راهنما</button>
+      <a class="ghost" id="open-sheet" href="https://docs.google.com/spreadsheets/d/1YF81MqW8l3GKwwQCj74c8HfaBDEaN6hpOgGXgmtqA6I/edit" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">باز کردن شیت گزارش</a>
+      <button type="button" class="ghost" id="logout" hidden>خروج</button>
+    </div>
+  </div>
+</header>
+<div class="wrap">
+  <div class="cards" id="cards">
+    <article class="card" id="card-box-all"><p class="k">همه درخواست‌ها</p><p class="num" id="card-all" data-testid="card-all">—</p></article>
+    <article class="card" id="card-box-reviewed"><p class="k">بررسی‌شده تا الان</p><p class="num" id="card-reviewed" data-testid="card-reviewed">—</p></article>
+    <article class="card ok" id="card-box-ready"><p class="k">آماده فعال‌سازی</p><p class="num" id="card-ready" data-testid="card-ready">—</p></article>
+    <article class="card rename" id="card-box-rename"><p class="k">نیاز به تغییر نام</p><p class="num" id="card-rename" data-testid="card-rename">—</p></article>
+    <article class="card warn" id="card-box-manual"><p class="k">نیازمند بررسی دستی</p><p class="num" id="card-manual" data-testid="card-manual">—</p></article>
+  </div>
+  <div class="action">
+    <p class="status-line" id="status-line">در حال خواندن پنج تب گزارش. نوشتن فقط روی همان پنج تب است.</p>
+    <p class="last-update" id="last-update-at">آخرین بررسی خودکار: هنوز انجام نشده</p>
+    <div class="action-buttons">
+      <label class="check" id="preview-label"><input type="checkbox" id="preview" data-testid="preview"> فقط پیش‌نمایش (چیزی در شیت نوشته نمی‌شود)</label>
+      <button type="button" class="primary" id="run" data-testid="run">بررسی خودکار و ثبت گزارش در شیت</button>
+    </div>
+    <div id="review-progress" class="download" hidden>
+      <p class="download-meta">
+        <span id="review-rate" data-testid="review-rate">0 از 0 ردیف بررسی شده</span>
+        <span id="review-left" data-testid="review-left">0٪ پیشرفت</span>
+      </p>
+      <div id="review-track" class="download-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0 درصد پیشرفت">
+        <div id="review-bar" class="download-fill"></div>
+      </div>
+    </div>
+  </div>
+  <p id="error" class="banner" data-testid="error" hidden></p>
+  <section class="panel">
+    <div class="results-head">
+      <h2 id="results-title">نتیجه بررسی‌ها</h2>
+      <button type="button" class="ghost" id="help-inline">راهنمای تصمیم</button>
+    </div>
+    <div class="filters">
+      <button type="button" class="chip on" id="chip-all" data-filter="all">همه</button>
+      <button type="button" class="chip" id="chip-ready" data-filter="ready">آماده فعال‌سازی</button>
+      <button type="button" class="chip" id="chip-rename" data-filter="rename">اسم جدید</button>
+      <button type="button" class="chip" id="chip-manual" data-filter="manual">دستی</button>
+      <input id="search" type="search" placeholder="جست‌وجو، شناسه یا اسم" autocomplete="off" data-testid="search">
+      <label class="check" id="web-only-label"><input type="checkbox" id="web-only" data-testid="web-only"> دسته‌بندی بر اساس فروشگاه آنلاین</label>
+    </div>
+    <div id="rules" hidden>
+      <p>اسم آنلاین = آماده فعال‌سازی، اسم جدید = نیاز به تغییر نام، دستی = نیازمند بررسی دستی. در شیت، پیشنهاد بررسی دستی «بررسی دستی» و پیشنهاد تغییر نام «فعال‌سازی با اسم جدید» نوشته می‌شود. تب تغییر نام انجام شد فقط سرستون ۱۴تایی نمونه را دارد.</p>
+      <ul>
+        <li>سرستون هر تب خروجی همان نمونه است: شناسه درخواست، برند، دسته، سایت، نام متقاضی، موبایل، وضعیت NBO، پیشنهاد سامانه، دلیل پیشنهاد، تصمیم نهایی، اسم فارسی قابل فعال‌سازی، اسم انگلیسی قابل فعال‌سازی، وضعیت بررسی، انجام تغییر نام.</li>
+        <li>برنامه فروشگاه را فعال نمی‌کند و نام را خودش عوض نمی‌کند.</li>
+        <li>صف: ستون N دقیقاً ONLINE SITE EXISTS - DUPLICATE NAME KEPT و ستون‌های P و Z خالی.</li>
+        <li>وصل شدن به online و social فقط با URL ستون O است، نه با کد قرارداد.</li>
+        <li>سایت، از جمله دامنهٔ .app و .in: باز کردن سایت، اینماد، و نامزدهای online.</li>
+        <li>بقیه (اینستاگرام، تلگرام، بله، لینک خالی پلتفرم و مانند آن): فقط تب social.</li>
+        <li>نبودن در online رد آنلاین‌بودن نیست و نتیجه‌گیری منفی مجاز نیست.</li>
+        <li>آماده فعال‌سازی فقط وقتی ثبت می‌شود که همهٔ موردها جور باشد، هیچ موردی بررسی‌نشده نماند، و مرجع دقیق پر باشد.</li>
+        <li>دکمهٔ آبی هر پنج تب خروجی را سلول‌به‌سلول پاک می‌کند و از اول می‌نویسد. چیزی به ته جدول اضافه نمی‌شود. New Flow و online و social، و تب‌های گزارش، لیست بررسی حضوری، صفحات بررسی و راهنما پاک نمی‌شوند.</li>
+      </ul>
+    </div>
+    <div class="table-wrap">
+      <table data-testid="queue-table">
+        <thead>
+          <tr>
+            <th>نام فارسی</th>
+            <th>نام انگلیسی</th>
+            <th>کد SMR</th>
+            <th>وضعیت</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="pager" id="pager" hidden>
+      <button type="button" class="ghost" id="page-prev">صفحهٔ قبلی</button>
+      <span id="page-label"></span>
+      <button type="button" class="ghost" id="page-next">صفحهٔ بعدی</button>
+    </div>
+  </section>
+  <section id="detail" hidden>
+    <div class="row-nav">
+      <h2>بررسی این ردیف</h2>
+      <div class="row-nav-buttons">
+        <button type="button" class="ghost" id="prev">ردیف قبلی</button>
+        <button type="button" class="ghost" id="next">ردیف بعدی</button>
+        <span id="pos"></span>
+      </div>
+    </div>
+    <article id="view" data-testid="detail"></article>
+  </section>
+</div>
+<div id="toast" hidden></div>
+<noscript>برای استفاده از این صفحه جاوااسکریپت لازم است.</noscript>
+<script id="review-logic">
+(function () {
+  const STATUSES = ["آماده فعال‌سازی", "نیاز به تغییر نام", "نیازمند بررسی دستی"];
+  const OUTPUT_TABS = ["general", "آماده فعال‌سازی", "نیاز به تغییر نام", "نیازمند بررسی دستی", "تغییر نام انجام شد"];
+  const MATCH = ["جور است", "جور نیست", "نتوانستم بررسی کنم"];
+  const FIELDS = ["نام فروشگاه", "دسته و زیردسته", "نام صاحب امتیاز", "سایت/لینک", "اینماد", "کد ملی", "موبایل", "محصولات واقعی"];
+  const OUT_FIELDS = ["پیشنهاد برنامه", "دلیل پیشنهاد", "تصمیم نهایی", "نام فارسی", "نام انگلیسی", "وضعیت بررسی", "وضعیت انجام تغییر نام", "منابع بررسی‌شده", "موارد جور", "موارد جور نیست", "موارد بررسی‌نشده", "دلیل بررسی دستی", "مرجع آنلاین/سوشال"];
+  const FILTER_N = "ONLINE SITE EXISTS - DUPLICATE NAME KEPT";
+  const READY_NOTE = "آماده‌سازی رد شد: شواهد کاملِ یک مرچنت مشخص ثبت نشده است.";
+  const RENAME_NOTE = "تغییر نام رد شد: نام فارسی و انگلیسی پیشنهادی الزامی است.";
+  const MANUAL_EMPTY = "علت دقیق عدم دسترسی / نیاز به بررسی دستی ثبت نشده است.";
+  const UNTOUCHED = "بررسی این ردیف هنوز انجام نشده است.";
+  const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const NEW_FLOW_FIELDS = [
+    ["contract", "A", "کد قرارداد (A)", ["کد قرارداد", "contract code", "contract_code", "request id", "request_id", "a"]],
+    ["fa", "B", "اسم فارسی (B)", ["اسم فارسی", "نام فارسی", "brand name (fa)", "persian name", "local_name", "b"]],
+    ["en", "C", "اسم انگلیسی (C)", ["اسم انگلیسی", "نام انگلیسی", "brand name (en)", "english name", "name", "c"]],
+    ["cat", "D", "کتگوری (D)", ["کتگوری", "دسته", "category", "d"]],
+    ["sub", "E", "ساب‌کتگوری (E)", ["ساب‌کتگوری", "ساب کتگوری", "زیردسته", "sub category", "subcategory", "sub_category", "e"]],
+    ["final_fa", "J", "اسم نهایی فارسی (J)", ["final suggested fa name", "final suggested fa", "j"]],
+    ["final_en", "M", "اسم نهایی انگلیسی (M)", ["final suggested name", "final english name", "m"]],
+    ["branch", "G", "برنچ نیم (G)", ["برنچ نیم", "برنچ", "branch name", "branch", "city", "g"]],
+    ["filter_n", "N", "فیلتر N (Online Site Alert)", ["online site alert", "online_site_alert", "n", "status n", "status_n", "filter n", "filter_n", "online site exists - duplicate name kept", "duplicate name kept"]],
+    ["url", "O", "URL سایت (O)", ["duplicate callback url", "url", "site url", "site_link", "لینک", "o"]],
+    ["filter_p", "P", "ستون P / Final Step (باید خالی)", ["final step", "final_step", "p"]],
+    ["owner_id", "Q", "کد ملی اونر (Q)", ["owner national code", "owner_national_code", "national code", "کد ملی", "کد ملی اونر", "national id", "national_id", "owner national id", "q"]],
+    ["owner_mobile", "R", "موبایل اونر (R)", ["owner mobile", "موبایل", "موبایل اونر", "mobile", "r"]],
+    ["owner_first", "S", "نام مالک (S)", ["owner first name", "نام مالک", "نام اونر", "first name", "firstname", "s"]],
+    ["owner_last", "T", "نام خانوادگی مالک (T)", ["owner last name", "نام خانوادگی مالک", "نام خانوادگی", "last name", "lastname", "t"]],
+    ["filter_z", "Z", "ستون Z (باید خالی؛ در این export معمولاً بدون سرستون)", ["z"]]
+  ];
+  const SOCIAL_HOSTS = ["instagram.com", "instagr.am", "t.me", "telegram.me", "telegram.org", "rubika.ir", "web.rubika.ir", "whatsapp.com", "wa.me", "api.whatsapp.com", "twitter.com", "x.com", "linkedin.com", "aparat.com", "facebook.com", "fb.com", "fb.me", "fb.watch", "tiktok.com", "youtube.com", "youtu.be", "eitaa.com", "eitaa.ir", "bale.ai", "ble.ir", "splus.ir", "gap.im", "igap.net", "pin.it", "pinterest.com", "threads.net"];
+  const IG_SKIP = new Set(["p", "reel", "reels", "stories", "tv", "explore", "accounts", "direct", "about"]);
+
+  function norm(s) {
+    return String(s ?? "").trim().toLowerCase().replace(/[^\p{L}\p{N}_]+/gu, "");
+  }
+  function colLetter(index) {
+    return index >= 0 && index < 26 ? LETTERS[index] : "COL" + (index + 1);
+  }
+  function parseCsv(text) {
+    let src = String(text ?? "");
+    if (src.charCodeAt(0) === 0xFEFF) src = src.slice(1);
+    const rows = [];
+    let row = [];
+    let field = "";
+    let quoted = false;
+    for (let i = 0; i < src.length; i++) {
+      const ch = src[i];
+      if (quoted) {
+        if (ch === '"') {
+          if (src[i + 1] === '"') { field += '"'; i++; }
+          else quoted = false;
+        } else field += ch;
+        continue;
+      }
+      if (ch === '"') { quoted = true; continue; }
+      if (ch === ",") { row.push(field); field = ""; continue; }
+      if (ch === "\n" || ch === "\r") {
+        if (ch === "\r" && src[i + 1] === "\n") i++;
+        row.push(field);
+        rows.push(row);
+        row = [];
+        field = "";
+        continue;
+      }
+      field += ch;
+    }
+    if (field.length || row.length) {
+      row.push(field);
+      rows.push(row);
+    }
+    return rows;
+  }
+  function readTable(text) {
+    const rows = parseCsv(text);
+    if (!rows.length) return [[], []];
+    return [rows[0].map((cell) => cell.trim()), rows.slice(1)];
+  }
+  function headersLookLikeLetters(headers) {
+    const nonEmpty = headers.filter((h) => h);
+    if (!nonEmpty.length) return true;
+    const letters = new Set(LETTERS.split("").map((ch) => norm(ch)));
+    const letterish = nonEmpty.filter((h) => letters.has(norm(h))).length;
+    return letterish >= Math.max(1, nonEmpty.length * 0.6);
+  }
+  function resolveColumns(headers) {
+    const bynorm = new Map();
+    headers.forEach((h, i) => { if (h) bynorm.set(norm(h), i); });
+    const letterMode = headersLookLikeLetters(headers);
+    const mapping = {};
+    const missing = [];
+    let usedName = 0;
+    let usedPos = 0;
+    for (const [key, letter, label, aliases] of NEW_FLOW_FIELDS) {
+      let idx = null;
+      if (!letterMode) {
+        for (const alias of aliases) {
+          if (bynorm.has(norm(alias))) { idx = bynorm.get(norm(alias)); usedName++; break; }
+        }
+      }
+      if (idx == null) {
+        if (bynorm.has(norm(letter))) { idx = bynorm.get(norm(letter)); usedPos++; }
+        else {
+          const pos = LETTERS.indexOf(letter);
+          if (pos < headers.length) { idx = pos; usedPos++; }
+          else missing.push(label + " [ستون " + letter + " / موقعیت " + (pos + 1) + "]");
+        }
+      }
+      if (idx != null) mapping[key] = idx;
+    }
+    if (missing.length) {
+      throw new Error("ستون‌های ضروری New Flow پیدا نشدند:\n- " + missing.join("\n- ") + "\n\nعنوان‌های موجود در فایل: " + (headers.map((h) => h || "∅").join(", ") || "(خالی)") + "\nحدس زده نمی‌شود؛ خروجی تب New Flow را با ستون‌های A–Z کامل دوباره بگیرید.");
+    }
+    let mode = "header-name";
+    if (letterMode || usedName === 0) mode = "positional (A–Z)";
+    else if (usedPos) mode = "hybrid (name=" + usedName + ", positional=" + usedPos + ")";
+    return [mapping, mode];
+  }
+  function rowsAsDicts(headers, body) {
+    const names = [];
+    const seen = new Map();
+    headers.forEach((h, i) => {
+      let name = h.trim();
+      if (!name) name = "__col_" + colLetter(i);
+      const n = (seen.get(name) || 0) + 1;
+      seen.set(name, n);
+      names.push(n === 1 ? name : name + "_" + n);
+    });
+    let width = headers.length;
+    for (const row of body) width = Math.max(width, row.length);
+    while (names.length < width) names.push("__col_" + colLetter(names.length));
+    const out = [];
+    for (const row of body) {
+      if (!row.some((value) => String(value).trim())) continue;
+      const padded = row.concat(Array(Math.max(0, names.length - row.length)).fill(""));
+      const obj = {};
+      names.forEach((name, i) => { obj[name] = padded[i]; });
+      out.push(obj);
+    }
+    return out;
+  }
+  function cell(row, colIdx, headers) {
+    if (colIdx < headers.length && headers[colIdx].trim()) {
+      const key = headers[colIdx].trim();
+      const unique = headers.filter((h) => h.trim() === key).length === 1;
+      if (unique && Object.prototype.hasOwnProperty.call(row, key)) return String(row[key] ?? "");
+    }
+    const letter = colLetter(colIdx);
+    for (const candidate of ["__col_" + letter, "__blank_col_" + (colIdx + 1)]) {
+      if (Object.prototype.hasOwnProperty.call(row, candidate)) return String(row[candidate] ?? "");
+    }
+    const vals = Object.values(row);
+    return colIdx < vals.length ? String(vals[colIdx] ?? "") : "";
+  }
+  function requireCol(headers, aliases, label) {
+    const bynorm = new Map();
+    for (const h of headers) {
+      if (h && !String(h).startsWith("__")) bynorm.set(norm(h), h);
+    }
+    for (const alias of aliases) {
+      if (bynorm.has(norm(alias))) return bynorm.get(norm(alias));
+    }
+    throw new Error("ستون ضروری «" + label + "» پیدا نشد. عنوان‌های موجود: " + headers.join(", "));
+  }
+  function helperCols(rows, social) {
+    const headers = rows.length ? Object.keys(rows[0]) : [];
+    const cols = {
+      en: requireCol(headers, ["name", "english name"], "نام انگلیسی"),
+      fa: requireCol(headers, ["local_name", "فارسی", "persian name"], "نام فارسی"),
+      request: requireCol(headers, ["request_id", "request id", "کد قرارداد"], "شناسه درخواست"),
+      id: requireCol(headers, ["national_id", "national id", "کد ملی"], "کد ملی"),
+      mobile: requireCol(headers, ["mobile", "موبایل"], "موبایل"),
+      site: requireCol(headers, ["site_link", "site link", "website", "url"], "لینک سایت")
+    };
+    if (social) {
+      try { cols.callback = requireCol(headers, ["call back", "callback", "callback url"], "Call Back"); }
+      catch (err) { cols.callback = null; }
+    }
+    return cols;
+  }
+  function hasScheme(url) {
+    return /^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(url);
+  }
+  function ensureScheme(url) {
+    const u = String(url || "").trim();
+    if (!u) return "";
+    return hasScheme(u) ? u : "https://" + u;
+  }
+  function splitUrl(url) {
+    const match = /^[a-zA-Z][a-zA-Z0-9+.-]*:\/\/([^/?#]*)([^?#]*)(?:\?([^#]*))?/.exec(url);
+    if (!match) return null;
+    return { netloc: match[1], path: match[2] || "", query: match[3] || "" };
+  }
+  function cleanHost(netloc) {
+    let host = String(netloc || "").trim().toLowerCase();
+    if (host.includes("@")) host = host.slice(host.lastIndexOf("@") + 1);
+    if (host.startsWith("www.")) host = host.slice(4);
+    host = host.replace(/^[\[\]]+|[\[\]]+$/g, "").replace(/\.+$/g, "");
+    return host;
+  }
+  function urlHost(url) {
+    const u = ensureScheme(url);
+    if (!u) return "";
+    const parsed = splitUrl(u);
+    if (!parsed) return "";
+    return cleanHost(parsed.netloc);
+  }
+  function firstToken(raw) {
+    let token = String(raw || "").trim();
+    if (!token) return "";
+    if (token.includes("|") || /\s/.test(token)) {
+      for (const part of token.split(/[|\s]+/)) {
+        if (part.includes(".") || part.includes("://")) return part;
+      }
+    }
+    return token;
+  }
+  function normalizeUrlKey(url) {
+    const raw = firstToken(url);
+    if (!raw) return "";
+    const u = ensureScheme(raw);
+    const parsed = splitUrl(u);
+    if (!parsed) return raw.toLowerCase().replace(/\/+$/g, "");
+    const host = cleanHost(parsed.netloc);
+    const path = (parsed.path || "").replace(/\/+$/g, "");
+    const query = parsed.query ? "?" + parsed.query : "";
+    if (!host && !path) return "";
+    return (host + path + query).toLowerCase();
+  }
+  function hostIsSocial(host) {
+    if (!host) return false;
+    const cleaned = host.split("|")[0].trim();
+    return SOCIAL_HOSTS.some((domain) => cleaned === domain || cleaned.endsWith("." + domain));
+  }
+  function classifyUrl(url) {
+    const raw = String(url || "").trim();
+    if (!raw) return "social";
+    const lowered = raw.toLowerCase();
+    if (SOCIAL_HOSTS.some((domain) => lowered.includes(domain))) return "social";
+    const host = urlHost(raw);
+    if (hostIsSocial(host)) return "social";
+    if (host && host.includes(".")) return "website";
+    return "social";
+  }
+  function instagramUsername(url) {
+    const host = urlHost(url);
+    const lowered = String(url || "").toLowerCase();
+    if (host !== "instagram.com" && host !== "instagr.am" && !host.endsWith(".instagram.com") && !lowered.includes("instagram.com")) return "";
+    const parsed = splitUrl(ensureScheme(url));
+    if (!parsed) return "";
+    const parts = (parsed.path || "").split("/").filter(Boolean);
+    if (!parts.length || IG_SKIP.has(parts[0].toLowerCase())) return "";
+    return parts[0].toLowerCase().replace(/^@/, "").replace(/[^\p{L}\p{N}_.]+/gu, "");
+  }
+  function socialPathUser(url) {
+    const full = normalizeUrlKey(url);
+    if (!full || !full.includes("/")) return "";
+    const user = full.split("/").slice(1).join("/").split("/")[0].split("?")[0].trim();
+    if (!user || ["p", "reel", "reels", "stories", "tv", "page", "joinchat", "joinc"].includes(user)) return "";
+    return user;
+  }
+  function indexAdd(index, key, row) {
+    if (!key) return;
+    const bucket = index.get(key) || [];
+    if (!bucket.includes(row)) bucket.push(row);
+    index.set(key, bucket);
+  }
+  function buildOnlineIndex(rows, cols) {
+    const index = new Map();
+    for (const row of rows) {
+      const site = String(row[cols.site] || "").trim();
+      if (!site) continue;
+      indexAdd(index, normalizeUrlKey(site), row);
+      indexAdd(index, urlHost(site), row);
+    }
+    return index;
+  }
+  function buildSocialIndex(rows, cols) {
+    const index = new Map();
+    for (const row of rows) {
+      const urls = [String(row[cols.site] || "").trim()];
+      if (cols.callback) urls.push(String(row[cols.callback] || "").trim());
+      for (const site of urls) {
+        if (!site) continue;
+        const host = urlHost(site);
+        const ig = instagramUsername(site);
+        if (ig) {
+          indexAdd(index, "ig:" + ig, row);
+          indexAdd(index, "instagram.com/" + ig, row);
+          continue;
+        }
+        const user = socialPathUser(site);
+        if (host && hostIsSocial(host)) {
+          if (!user) continue;
+          indexAdd(index, normalizeUrlKey(site), row);
+          indexAdd(index, host + "/" + user, row);
+        } else if (host && !hostIsSocial(host)) {
+          indexAdd(index, normalizeUrlKey(site), row);
+          indexAdd(index, host, row);
+        }
+      }
+    }
+    return index;
+  }
+  function lookupOnline(url, index) {
+    const keys = [];
+    const full = normalizeUrlKey(url);
+    const dom = urlHost(url);
+    if (full) keys.push(full);
+    if (dom && !hostIsSocial(dom) && dom !== full) keys.push(dom);
+    return take(index, keys);
+  }
+  function lookupSocial(url, index) {
+    const keys = [];
+    let ig = instagramUsername(url);
+    if (!ig && String(url || "").toLowerCase().includes("instagram.com")) {
+      const match = /instagram\.com\/([A-Za-z0-9._]+)/i.exec(url);
+      if (match && !["p", "reel", "reels", "stories"].includes(match[1].toLowerCase())) ig = match[1].toLowerCase();
+    }
+    if (ig) keys.push("ig:" + ig, "instagram.com/" + ig);
+    else {
+      const host = urlHost(url);
+      const user = socialPathUser(url);
+      if (host && hostIsSocial(host) && !user) return [];
+      const full = normalizeUrlKey(url);
+      if (full) keys.push(full);
+      if (host && user) keys.push(host + "/" + user);
+      if (host && !hostIsSocial(host)) keys.push(host);
+    }
+    return take(index, keys);
+  }
+  function take(index, keys) {
+    const seen = new Set();
+    const out = [];
+    for (const key of keys) {
+      for (const row of index.get(key) || []) {
+        if (seen.has(row)) continue;
+        seen.add(row);
+        out.push(row);
+      }
+    }
+    return out;
+  }
+  function packCandidate(row, cols, source) {
+    const site = String(row[cols.site] || "").trim();
+    const callback = cols.callback ? String(row[cols.callback] || "").trim() : "";
+    return {
+      source,
+      fa: String(row[cols.fa] || "").trim(),
+      en: String(row[cols.en] || "").trim(),
+      site_link: site,
+      call_back: callback,
+      national_id: String(row[cols.id] || "").trim(),
+      mobile: String(row[cols.mobile] || "").trim()
+    };
+  }
+  function safeUrl(url) {
+    const token = firstToken(url);
+    if (!token) return "";
+    const withScheme = ensureScheme(token);
+    try {
+      const parsed = new URL(withScheme);
+      if (parsed.protocol === "http:" || parsed.protocol === "https:") return parsed.href;
+    } catch (err) { /* reject non-http */ }
+    return "";
+  }
+  function buildStateFromTables(nfHeaders, nfBody, onHeaders, onBody, soHeaders, soBody, names) {
+    nfHeaders = nfHeaders || [];
+    nfBody = nfBody || [];
+    onHeaders = onHeaders || [];
+    onBody = onBody || [];
+    soHeaders = soHeaders || [];
+    soBody = soBody || [];
+    if (!nfHeaders.length && !nfBody.length) throw new Error("New Flow خالی است.");
+    let width = nfHeaders.length;
+    for (const row of nfBody) width = Math.max(width, row.length);
+    const headers = nfHeaders.concat(Array(Math.max(0, width - nfHeaders.length)).fill(""));
+    const [mapping, mode] = resolveColumns(headers);
+    const rows = rowsAsDicts(headers, nfBody);
+    const queue = [];
+    for (const row of rows) {
+      const nVal = cell(row, mapping.filter_n, headers).trim();
+      const pVal = cell(row, mapping.filter_p, headers);
+      const zVal = cell(row, mapping.filter_z, headers);
+      if (nVal === FILTER_N && !String(pVal || "").trim() && !String(zVal || "").trim()) {
+        row.__contract = cell(row, mapping.contract, headers).trim();
+        row.__fa = cell(row, mapping.fa, headers).trim();
+        row.__en = cell(row, mapping.en, headers).trim();
+        row.__cat = cell(row, mapping.cat, headers).trim();
+        row.__sub = cell(row, mapping.sub, headers).trim();
+        row.__final_fa = cell(row, mapping.final_fa, headers).trim();
+        row.__final_en = cell(row, mapping.final_en, headers).trim();
+        row.__branch = cell(row, mapping.branch, headers).trim();
+        row.__url = cell(row, mapping.url, headers).trim();
+        row.__owner_id = cell(row, mapping.owner_id, headers).trim();
+        row.__owner_mobile = cell(row, mapping.owner_mobile, headers).trim();
+        row.__owner_first = cell(row, mapping.owner_first, headers).trim();
+        row.__owner_last = cell(row, mapping.owner_last, headers).trim();
+        queue.push(row);
+      }
+    }
+    const online = onHeaders.length ? rowsAsDicts(onHeaders, onBody) : [];
+    const social = soHeaders.length ? rowsAsDicts(soHeaders, soBody) : [];
+    if (!online.length) throw new Error("online خالی است یا خوانده نشد.");
+    if (!social.length) throw new Error("social خالی است یا خوانده نشد.");
+    if (!queue.length) {
+      throw new Error("هیچ ردیفی پس از فیلتر New Flow باقی نماند (خام=" + rows.length + "، نگاشت=" + mode + "). شرط: ستون N دقیقاً «" + FILTER_N + "» و ستون‌های P و Z خالی.");
+    }
+    const onlineCols = helperCols(online, false);
+    const socialCols = helperCols(social, true);
+    const onlineIndex = buildOnlineIndex(online, onlineCols);
+    const socialIndex = buildSocialIndex(social, socialCols);
+    const counts = new Map();
+    for (const row of queue) counts.set(row.__contract, (counts.get(row.__contract) || 0) + 1);
+    const seen = new Map();
+    const items = [];
+    let websiteCount = 0, socialCount = 0, websiteHits = 0, socialHits = 0;
+    for (const row of queue) {
+      const contract = row.__contract;
+      seen.set(contract, (seen.get(contract) || 0) + 1);
+      const key = counts.get(contract) === 1 ? contract : contract + "#" + seen.get(contract);
+      const oUrl = row.__url;
+      const kind = classifyUrl(oUrl);
+      let candidates;
+      if (kind === "website") {
+        websiteCount++;
+        const found = lookupOnline(oUrl, onlineIndex);
+        if (found.length) websiteHits++;
+        candidates = found.map((hit) => packCandidate(hit, onlineCols, "online"));
+      } else {
+        socialCount++;
+        const found = lookupSocial(oUrl, socialIndex);
+        if (found.length) socialHits++;
+        candidates = found.map((hit) => packCandidate(hit, socialCols, "social"));
+      }
+      const raw = {};
+      for (const [k, v] of Object.entries(row)) {
+        if (!String(k).startsWith("__")) raw[k] = v;
+      }
+      items.push({
+        key, contract,
+        fa: row.__fa, en: row.__en, cat: row.__cat, sub: row.__sub, branch: row.__branch,
+        final_fa: row.__final_fa, final_en: row.__final_en,
+        url: oUrl, open_url: safeUrl(oUrl),
+        owner_id: row.__owner_id, owner_mobile: row.__owner_mobile,
+        owner_first: row.__owner_first, owner_last: row.__owner_last,
+        mode: kind, mode_label: kind === "website" ? "سایت" : "سوشال",
+        candidates, raw
+      });
+      items[items.length - 1].review = reviewRow(items[items.length - 1]);
+    }
+    return {
+      meta: {
+        resolveMode: mode,
+        rawCount: rows.length,
+        queueCount: items.length,
+        onlineCount: online.length,
+        socialCount: social.length,
+        websiteCount, socialModeCount: socialCount,
+        websiteWithOnline: websiteHits,
+        socialWithMatch: socialHits,
+        files: names || {}
+      },
+      items
+    };
+  }
+
+  const OK = "جور است";
+  const NO = "جور نیست";
+  const UNK = "نتوانستم بررسی کنم";
+  const SKIP = "بررسی نمی‌شود";
+  function padNationalId(value) {
+    const digits = String(value || "").replace(/\D/g, "");
+    if (!digits) return "";
+    return digits.length < 10 ? digits.padStart(10, "0") : digits;
+  }
+  function mobileKey(value) {
+    let digits = String(value || "").replace(/\D/g, "");
+    if (digits.startsWith("98") && digits.length > 10) digits = digits.slice(2);
+    return digits.replace(/^0+/, "");
+  }
+  function foldName(value) {
+    return String(value || "").replace(/\u200c/g, "").replace(/ي/g, "ی").replace(/ك/g, "ک").replace(/\s+/g, " ").trim().toLowerCase();
+  }
+  function oneField(key, name, verdict, note) {
+    return { key, name, verdict, note };
+  }
+  function compareId(left, right) {
+    const a = padNationalId(left);
+    const b = padNationalId(right);
+    if (!a || !b) return [UNK, "کد ملی " + (!a ? "درخواست" : "تب") + " خالی است و مقایسه نشد."];
+    if (a.length !== 10 || b.length !== 10) return [UNK, "کد ملی باید ۱۰ رقم باشد. درخواست " + a + " و تب " + b + "."];
+    if (a === b) return [OK, "هر دو کد ملی " + a + " است."];
+    return [NO, "درخواست " + a + " و تب " + b + " یکی نیست."];
+  }
+  function compareMobile(left, right, nidOk) {
+    const a = mobileKey(left);
+    const b = mobileKey(right);
+    if (!a || !b) return [UNK, "یکی از شماره‌ها خالی است و مقایسه نشد."];
+    if (a === b) return [OK, "شماره موبایل یکی است."];
+    let note = "شماره درخواست و شماره تب یکی نیست.";
+    if (nidOk) note += " کد ملی یکی است و صاحب یکی است. فروشگاه حضوری و فروشگاه آنلاین یا سوشال می‌توانند با دو شماره ثبت شده باشند. این تفاوت شماره به‌تنهایی رد نمی‌شود.";
+    return [NO, note];
+  }
+  function compareBrand(left, right, missingNote) {
+    if (!String(right || "").trim()) return [UNK, missingNote];
+    if (!String(left || "").trim()) return [UNK, "نام درخواست خالی است."];
+    if (foldName(left) === foldName(right)) return [OK, "نام یکی است."];
+    return [NO, "نام درخواست «" + left + "» و نام تب «" + right + "» یکی نیست."];
+  }
+  function websiteOnlyFields() {
+    const unread = "خوانده نشد، پس جور بودن ساخته نشد.";
+    return [
+      oneField("owner_first", "نام صاحب امتیاز", UNK, "نام با صاحب امتیاز اینماد یا دی‌نماد مقایسه می‌شود، نه با تب online. " + unread),
+      oneField("owner_last", "نام خانوادگی صاحب امتیاز", UNK, "نام خانوادگی با صاحب امتیاز اینماد یا دی‌نماد مقایسه می‌شود، نه با تب online. " + unread),
+      oneField("certificate", "گواهی", UNK, "اینماد گواهی پیش‌فرض است. اگر سایت دی‌نماد دیجی‌کالا داشته باشد همان به‌جای اینماد بررسی می‌شود و هر دو لازم نیست. هیچ‌کدام خوانده نشد."),
+      oneField("category", "دسته", UNK, "دسته باید با دستهٔ خود سایت مقایسه شود، نه با تب online. دستهٔ سایت خوانده نشد."),
+      oneField("subcategory", "زیردسته", UNK, "زیردسته باید با دستهٔ خود سایت مقایسه شود، نه با تب online. دستهٔ سایت خوانده نشد.")
+    ];
+  }
+  function skipWebsiteFields() {
+    const note = "برای لینک سوشال این مورد بررسی نمی‌شود.";
+    return ["owner_first", "owner_last", "certificate", "category", "subcategory"].map((key) => oneField(key, key, SKIP, note));
+  }
+  function blocksStatus(rowField, nidOk) {
+    if (rowField.verdict === SKIP) return false;
+    if (rowField.key === "mobile" && rowField.verdict === NO && nidOk) return false;
+    return rowField.verdict !== OK;
+  }
+  function manualFromFields(blocks) {
+    if (blocks.length === 1) {
+      const one = blocks[0];
+      return "بررسی دستی شد چون «" + one.name + "» " + one.verdict + " است. " + one.note + " برای مطمئن شدن، همین مورد را بررسی کنید.";
+    }
+    const names = blocks.map((one) => one.name).join("، ");
+    const details = blocks.map((one) => one.name + ": " + one.verdict + ". " + one.note).join(" ");
+    return "بررسی دستی شد چون این موردها جور نیستند: " + names + ". " + details;
+  }
+  function reviewRow(item) {
+    const website = item.mode === "website";
+    const tab = website ? "online" : "social";
+    const hits = item.candidates || [];
+    const hit = hits.length === 1 ? hits[0] : null;
+    const missingName = website ? "از تب آنلاین اسم پیدا نشد" : "از تب سوشال اسم پیدا نشد";
+    const tabFa = hit ? String(hit.fa || "").trim() : "";
+    const tabEn = hit ? String(hit.en || "").trim() : "";
+    let idPair = hit ? compareId(item.owner_id, hit.national_id) : [UNK, "فروشندهٔ مشخصی پیدا نشد و کد ملی مقایسه نشد."];
+    const nidOk = idPair[0] === OK;
+    let mobilePair = hit ? compareMobile(item.owner_mobile, hit.mobile, nidOk) : [UNK, "فروشندهٔ مشخصی پیدا نشد و موبایل مقایسه نشد."];
+    let linkPair;
+    if (hit) linkPair = [OK, "همین لینک در تب " + tab + " پیدا شد."];
+    else if (hits.length > 1) linkPair = [UNK, "با این لینک " + hits.length + " فروشنده در تب " + tab + " پیدا شد."];
+    else linkPair = [NO, "این لینک در تب " + tab + " پیدا نشد."];
+    const faPair = hit ? compareBrand(item.fa, tabFa, missingName) : [UNK, "فروشندهٔ مشخصی پیدا نشد و نام فارسی مقایسه نشد."];
+    const enPair = hit ? compareBrand(item.en, tabEn, missingName) : [UNK, "فروشندهٔ مشخصی پیدا نشد و نام انگلیسی مقایسه نشد."];
+    const fields = [
+      oneField("link", "لینک", linkPair[0], linkPair[1]),
+      oneField("national_id", "کد ملی", idPair[0], idPair[1]),
+      oneField("mobile", "موبایل", mobilePair[0], mobilePair[1]),
+      oneField("fa", "نام فارسی فروشگاه", faPair[0], faPair[1]),
+      oneField("en", "نام انگلیسی فروشگاه", enPair[0], enPair[1])
+    ].concat(website ? websiteOnlyFields() : skipWebsiteFields().map((row, i) => {
+      const labels = ["نام صاحب امتیاز", "نام خانوادگی صاحب امتیاز", "گواهی", "دسته", "زیردسته"];
+      row.name = labels[i];
+      return row;
+    }));
+    const shownFa = hit ? (tabFa || missingName) : (item.fa || "");
+    const shownEn = hit ? (tabEn || missingName) : (item.en || "");
+    const statusOf = (code) => code === "ready" ? STATUSES[0] : (code === "rename" ? STATUSES[1] : STATUSES[2]);
+    if (hits.length !== 1) {
+      const url = String(item.url || "").trim();
+      const bare = !website && url && !instagramUsername(url) && !socialPathUser(url) && (hostIsSocial(urlHost(url)) || SOCIAL_HOSTS.some((domain) => url.toLowerCase().includes(domain)));
+      let reason;
+      if (!url) reason = "بررسی دستی شد چون این درخواست لینک ندارد و در شیت فروشنده‌ای برایش پیدا نشد. برای مطمئن شدن، لینک فروشگاه را از پرونده پیدا کنید و نام فارسی و انگلیسی روی آن را با همین درخواست مقایسه کنید.";
+      else if (bare) reason = "بررسی دستی شد چون لینک فقط آدرس شبکهٔ اجتماعی است و نام صفحه ندارد، پس با تب social مقایسه نشد. برای مطمئن شدن، لینک کامل همان صفحه را باز کنید و ببینید نام صفحه با نام فارسی و انگلیسی درخواست یکی است یا نه.";
+      else if (!hits.length && website) reason = "بررسی دستی شد چون این لینک سایت است ولی در تب online فروشنده‌ای با همین آدرس پیدا نشد. برای مطمئن شدن، خود سایت را باز کنید، اینماد را نگاه کنید، و نام روی سایت را با نام فارسی و انگلیسی درخواست مقایسه کنید. نبودن در تب online به‌تنهایی یعنی فروشگاه آنلاین ندارد نیست.";
+      else if (!hits.length) reason = "بررسی دستی شد چون این لینک شبکهٔ اجتماعی است ولی در تب social صفحه‌ای با همین لینک پیدا نشد. برای مطمئن شدن، لینک را باز کنید و نام صفحه را با نام فارسی و انگلیسی درخواست مقایسه کنید.";
+      else reason = "بررسی دستی شد چون با این لینک " + hits.length + " فروشنده در تب " + tab + " پیدا شد و معلوم نیست کدام‌یک همین درخواست است. برای مطمئن شدن، همان ردیف‌ها را ببینید و فقط فروشنده‌ای را انتخاب کنید که نام فارسی و انگلیسی‌اش با این درخواست یکی است.";
+      if (website) {
+        const extra = fields.filter((row) => ["certificate", "category", "subcategory", "owner_first", "owner_last"].includes(row.key));
+        reason += " " + manualFromFields(extra);
+      }
+      return { status: statusOf("manual"), fa: shownFa, en: shownEn, reason, against: "", fields };
+    }
+    const other = fields.filter((row) => row.key !== "fa" && row.key !== "en" && blocksStatus(row, nidOk));
+    const nameNo = fields.filter((row) => (row.key === "fa" || row.key === "en") && row.verdict === NO);
+    const nameUnk = fields.filter((row) => (row.key === "fa" || row.key === "en") && row.verdict === UNK);
+    if (!other.length && !nameUnk.length && nameNo.length && website) {
+      const proposedFa = String(item.final_fa || "").trim();
+      const proposedEn = String(item.final_en || "").trim();
+      if (proposedFa && proposedEn) {
+        return {
+          status: statusOf("rename"),
+          fa: proposedFa,
+          en: proposedEn,
+          reason: "نام صاحب امتیاز و دستهٔ سایت جور است و فقط نام فارسی یا انگلیسی فرق دارد. اسم پیشنهادی همان نام نهایی شیت است.",
+          against: "تب online",
+          fields
+        };
+      }
+    }
+    let blocks = other.concat(nameUnk);
+    if (!website || other.length || nameUnk.length) blocks = blocks.concat(nameNo);
+    if (!website) blocks = other.concat(nameUnk, nameNo);
+    if (blocks.length) {
+      let reason;
+      if (!website && nameNo.length && !other.length && !nameUnk.length) {
+        reason = "بررسی دستی شد چون نام فارسی یا انگلیسی با تب social یکی نیست. برای سوشال فقط لینک، کد ملی و موبایل بررسی می‌شود و نام صاحب و محصولات دیده نمی‌شود، پس فقط به‌خاطر تفاوت نام همان فروشگاه حساب نمی‌شود و در نیاز به تغییر نام نمی‌رود. " + manualFromFields(nameNo);
+      } else reason = manualFromFields(blocks);
+      return { status: statusOf("manual"), fa: shownFa, en: shownEn, reason, against: "", fields };
+    }
+    let reason = website
+      ? "آماده فعال‌سازی است چون با تب online، اینماد یا دی‌نماد، و دستهٔ سایت جور شد."
+      : "آماده فعال‌سازی است چون با تب social جور شد. لینک و کد ملی یکی است.";
+    const phone = fields.filter((row) => row.key === "mobile")[0];
+    if (nidOk && phone && phone.verdict === NO) reason += " " + phone.note;
+    return {
+      status: statusOf("ready"),
+      fa: tabFa || missingName,
+      en: tabEn || missingName,
+      reason,
+      against: website ? "تب online و اینماد" : "تب social",
+      fields
+    };
+  }
+  function buildState(newFlowText, onlineText, socialText, names) {
+    const [nfHeaders, nfBody] = readTable(newFlowText);
+    const [onHeaders, onBody] = readTable(onlineText);
+    const [soHeaders, soBody] = readTable(socialText);
+    return buildStateFromTables(nfHeaders, nfBody, onHeaders, onBody, soHeaders, soBody, names);
+  }
+  function fieldOf(decision, name, fallback) {
+    if (decision && Object.prototype.hasOwnProperty.call(decision, name)) return String(decision[name] ?? "").trim();
+    return String(fallback ?? "").trim();
+  }
+  function effective(decision, item) {
+    const src = decision || {};
+    const ok = MATCH[0], no = MATCH[1], unk = MATCH[2];
+    const ready = STATUSES[0], rename = STATUSES[1], manual = STATUSES[2];
+    const incoming = src.checks || {};
+    const checks = {};
+    for (const field of FIELDS) checks[field] = MATCH.includes(incoming[field]) ? incoming[field] : unk;
+    const matches = FIELDS.filter((field) => checks[field] === ok);
+    const mismatches = FIELDS.filter((field) => checks[field] === no);
+    const unknown = FIELDS.filter((field) => checks[field] === unk);
+    const status = STATUSES.includes(src.status) ? src.status : manual;
+    let reason = String(src.reason || "").trim();
+    const fa = fieldOf(src, "fa", item && item.fa);
+    const en = fieldOf(src, "en", item && item.en);
+    const ref = String(src.ref || "").trim();
+    const touched = !!src.touched;
+    if (status === manual && !reason) reason = touched ? MANUAL_EMPTY : UNTOUCHED;
+    return { checks, matches, mismatches, unknown, status, reason, blockers: [], fa, en, ref, touched };
+  }
+  function csvEscape(value) {
+    const text = String(value ?? "");
+    return /[",\r\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
+  }
+  function toCsv(rows) {
+    const fields = [];
+    const seen = new Set();
+    for (const row of rows) {
+      for (const key of Object.keys(row)) {
+        if (!seen.has(key)) { seen.add(key); fields.push(key); }
+      }
+    }
+    const header = fields.length ? fields : OUT_FIELDS;
+    const lines = [header.map(csvEscape).join(",")];
+    for (const row of rows) lines.push(header.map((key) => csvEscape(row[key] ?? "")).join(","));
+    return lines.join("\r\n") + "\r\n";
+  }
+  function exportRows(items, decisions) {
+    const ready = STATUSES[0], rename = STATUSES[1], manual = STATUSES[2];
+    const general = [];
+    const byStatus = { [ready]: [], [rename]: [], [manual]: [] };
+    for (const item of items) {
+      const result = effective(decisions && decisions[item.key], item);
+      const sources = item.mode === "website"
+        ? "سایت، اینماد، نامزدهای online با URL ستون O (اپراتور)"
+        : "تب social با site_link و Call Back (اپراتور)؛ سایت/اینماد/online خارج از محدوده";
+      const base = {};
+      for (const [key, value] of Object.entries(item.raw || {})) {
+        if (!String(key).startsWith("__")) base[key] = value;
+      }
+      Object.assign(base, {
+        "کد قرارداد": item.contract || "",
+        "اسم فارسی": item.fa || "",
+        "اسم انگلیسی": item.en || "",
+        "کتگوری": item.cat || "",
+        "ساب‌کتگوری": item.sub || "",
+        "برنچ نیم": item.branch || "",
+        "URL": item.url || "",
+        "حالت ستون O": item.mode_label || "",
+        "کد ملی اونر": item.owner_id || "",
+        "موبایل اونر": item.owner_mobile || "",
+        "نام مالک": item.owner_first || "",
+        "نام خانوادگی مالک": item.owner_last || "",
+        "پیشنهاد برنامه": result.status,
+        "دلیل پیشنهاد": result.reason,
+        "تصمیم نهایی": result.status,
+        "نام فارسی": result.fa,
+        "نام انگلیسی": result.en,
+        "وضعیت بررسی": result.unknown.length ? "ناقص" : "انجام شد",
+        "وضعیت انجام تغییر نام": "انجام نشده",
+        "منابع بررسی‌شده": sources,
+        "موارد جور": result.matches.join("؛ "),
+        "موارد جور نیست": result.mismatches.join("؛ "),
+        "موارد بررسی‌نشده": result.unknown.join("؛ "),
+        "دلیل بررسی دستی": result.status === manual ? result.reason : "",
+        "مرجع آنلاین/سوشال": result.ref
+      });
+      general.push(base);
+      byStatus[result.status].push(base);
+    }
+    return { general, byStatus };
+  }
+  const CRC_TABLE = (() => {
+    const table = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      table[n] = c >>> 0;
+    }
+    return table;
+  })();
+  function crc32(bytes) {
+    let c = 0xFFFFFFFF;
+    for (let i = 0; i < bytes.length; i++) c = CRC_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+  function u16(view, offset, value) { view.setUint16(offset, value, true); }
+  function u32(view, offset, value) { view.setUint32(offset, value, true); }
+  function makeZip(items, decisions) {
+    const { general, byStatus } = exportRows(items, decisions);
+    const files = [["general.csv", toCsv(general)]];
+    const counts = {};
+    for (const status of STATUSES) {
+      files.push([status + ".csv", toCsv(byStatus[status])]);
+      counts[status] = byStatus[status].length;
+    }
+    files.push(["تغییر نام انجام شد.csv", toCsv([])]);
+    const encoder = new TextEncoder();
+    const parts = [];
+    const central = [];
+    let offset = 0;
+    for (const [name, text] of files) {
+      const nameBytes = encoder.encode(name);
+      const data = encoder.encode("\uFEFF" + text);
+      const crc = crc32(data);
+      const local = new DataView(new ArrayBuffer(30));
+      u32(local, 0, 0x04034b50);
+      u16(local, 4, 20);
+      u16(local, 6, 0x0800);
+      u16(local, 8, 0);
+      u32(local, 14, crc);
+      u32(local, 18, data.length);
+      u32(local, 22, data.length);
+      u16(local, 26, nameBytes.length);
+      parts.push(new Uint8Array(local.buffer), nameBytes, data);
+      const cen = new DataView(new ArrayBuffer(46));
+      u32(cen, 0, 0x02014b50);
+      u16(cen, 4, 20);
+      u16(cen, 6, 20);
+      u16(cen, 8, 0x0800);
+      u32(cen, 16, crc);
+      u32(cen, 20, data.length);
+      u32(cen, 24, data.length);
+      u16(cen, 28, nameBytes.length);
+      u32(cen, 42, offset);
+      central.push(new Uint8Array(cen.buffer), nameBytes);
+      offset += 30 + nameBytes.length + data.length;
+    }
+    let centralSize = 0;
+    for (const part of central) centralSize += part.length;
+    const eocd = new DataView(new ArrayBuffer(22));
+    u32(eocd, 0, 0x06054b50);
+    u16(eocd, 8, files.length);
+    u16(eocd, 10, files.length);
+    u32(eocd, 12, centralSize);
+    u32(eocd, 16, offset);
+    const chunks = parts.concat(central, [new Uint8Array(eocd.buffer)]);
+    let total = 0;
+    for (const chunk of chunks) total += chunk.length;
+    const bytes = new Uint8Array(total);
+    let cursor = 0;
+    for (const chunk of chunks) { bytes.set(chunk, cursor); cursor += chunk.length; }
+    return { bytes, counts };
+  }
+
+  const SHEET_HEADERS = [
+    "شناسه درخواست", "برند", "دسته", "سایت", "نام متقاضی", "موبایل", "وضعیت NBO",
+    "پیشنهاد سامانه", "دلیل پیشنهاد", "تصمیم نهایی",
+    "اسم فارسی قابل فعال\u200cسازی", "اسم انگلیسی قابل فعال\u200cسازی",
+    "وضعیت بررسی", "انجام تغییر نام"
+  ];
+  function nboOf(item) {
+    const raw = (item && item.raw) || {};
+    const wanted = norm("وضعیت NBO");
+    for (const [key, value] of Object.entries(raw)) {
+      const folded = norm(key);
+      if (!folded || String(key).startsWith("__")) continue;
+      if (folded === "nbo" || folded === wanted || folded.endsWith("nbo")) return String(value ?? "").trim();
+    }
+    return "";
+  }
+  function sheetLabel(status) {
+    if (status === STATUSES[0]) return STATUSES[0];
+    if (status === STATUSES[1]) return "فعال\u200cسازی با اسم جدید";
+    return "بررسی دستی";
+  }
+  function sheetReview(status) {
+    return status === STATUSES[2] ? "نیازمند بررسی" : "تأیید اپراتور";
+  }
+  function sheetRow(item, result) {
+    const label = sheetLabel(result.status);
+    const owner = [item.owner_first, item.owner_last].filter(Boolean).join(" ");
+    return [
+      item.contract || "",
+      item.fa || "",
+      item.cat || "",
+      item.url || "",
+      owner,
+      item.owner_mobile || "",
+      nboOf(item),
+      label,
+      result.reason || "",
+      label,
+      result.fa || "",
+      result.en || "",
+      sheetReview(result.status),
+      ""
+    ];
+  }
+  function sheetTables(items, decisions) {
+    const general = [];
+    const ready = [];
+    const rename = [];
+    const manual = [];
+    for (const item of items) {
+      const result = effective(decisions && decisions[item.key], item);
+      const row = sheetRow(item, result);
+      general.push(row);
+      if (result.status === STATUSES[0]) ready.push(row);
+      else if (result.status === STATUSES[1]) rename.push(row);
+      else manual.push(row);
+    }
+    const grids = [general, ready, rename, manual, []].map((rows) => [SHEET_HEADERS.slice()].concat(rows));
+    return OUTPUT_TABS.map((name, i) => [name, grids[i]]);
+  }
+  globalThis.ReviewLogic = {
+    FIELDS, MATCH, STATUSES, OUTPUT_TABS, SHEET_HEADERS, FILTER_N, OUT_FIELDS, buildState, buildStateFromTables, effective, makeZip, sheetTables, safeUrl, classifyUrl, reviewRow, padNationalId
+  };
+})();
+</script>
+<script id="review-ui">
+(function () {
+  const Logic = globalThis.ReviewLogic;
+  const STORAGE_KEY = "instore-review-decisions-v1";
+  const LAST_REVIEW_KEY = "instore-review-last-completed-at-v1";
+  const KEY_INDEX = "instore-review-key";
+  const SOURCE_SHEET_ID = "19dQcEMVJUEtD9PJD7l84l4JsZH2hxNoK9ejCWN3nH1M";
+  const OUTPUT_SHEET_ID = "1YF81MqW8l3GKwwQCj74c8HfaBDEaN6hpOgGXgmtqA6I";
+  const GOOGLE_CLIENT_ID = "";
+  const SOURCE_TABS = ["New Flow", "online", "social"];
+  const KEEP_TABS = ["New Flow", "online", "social", "گزارش", "لیست بررسی حضوری", "صفحات بررسی", "راهنما"];
+  const SCOPE = "https://www.googleapis.com/auth/spreadsheets";
+  const PAGE = 40;
+  const FIELDS = Logic.FIELDS;
+  const MATCH = Logic.MATCH;
+  const STATUSES = Logic.STATUSES;
+  const OK = MATCH[0];
+  const NO = MATCH[1];
+  const UNK = MATCH[2];
+  const READY = STATUSES[0];
+  const RENAME = STATUSES[1];
+  const MANUAL = STATUSES[2];
+
+  let items = [];
+  let meta = null;
+  let idx = 0;
+  let page = 0;
+  let filter = "all";
+  let query = "";
+  let webOnly = false;
+  let decisions = {};
+  let persistTimer = 0;
+  let running = false;
+  let accessToken = "";
+  let gvizSeq = 0;
+
+  function el(tag, props, kids) {
+    const node = document.createElement(tag);
+    if (props) {
+      for (const [key, value] of Object.entries(props)) {
+        if (value == null || value === false) continue;
+        if (key === "class") node.className = value;
+        else if (key === "hidden") node.hidden = !!value;
+        else if (key === "checked") node.checked = !!value;
+        else if (key === "disabled") node.disabled = !!value;
+        else if (key === "value") node.value = String(value);
+        else if (key === "href") {
+          const href = Logic.safeUrl(value);
+          if (href) node.setAttribute("href", href);
+        } else if (key.startsWith("on") && typeof value === "function") node.addEventListener(key.slice(2), value);
+        else node.setAttribute(key, value === true ? "" : String(value));
+      }
+    }
+    for (const kid of kids || []) {
+      if (kid == null || kid === false) continue;
+      node.append(kid instanceof Node ? kid : document.createTextNode(String(kid)));
+    }
+    return node;
+  }
+  function showError(text) {
+    const box = document.getElementById("error");
+    box.hidden = !text;
+    box.textContent = text || "";
+  }
+  function showToast(text) {
+    const box = document.getElementById("toast");
+    box.hidden = false;
+    box.textContent = text;
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { box.hidden = true; }, 5000);
+  }
+  function setStatus(text) {
+    document.getElementById("status-line").textContent = text;
+  }
+  function showLastReview(value) {
+    const target = document.getElementById("last-update-at");
+    if (!target) return;
+    const date = value ? new Date(value) : null;
+    target.textContent = date && Number.isFinite(date.getTime())
+      ? "آخرین بررسی خودکار: " + new Intl.DateTimeFormat("fa-IR", { dateStyle: "long", timeStyle: "short", timeZone: "Asia/Tehran" }).format(date)
+      : "آخرین بررسی خودکار: هنوز انجام نشده";
+  }
+  function recordLastReview() {
+    const now = new Date().toISOString();
+    try { localStorage.setItem(LAST_REVIEW_KEY, now); } catch {}
+    showLastReview(now);
+  }
+  function blankDecision(item) {
+    const checks = {};
+    const review = (item && item.review) || {};
+    for (const field of FIELDS) checks[field] = UNK;
+    return {
+      checks,
+      status: STATUSES.includes(review.status) ? review.status : MANUAL,
+      fa: review.fa || item.fa || "",
+      en: review.en || item.en || "",
+      ref: review.against || "",
+      reason: review.reason || "",
+      touched: false
+    };
+  }
+  function sanitize(raw, item) {
+    const checks = {};
+    for (const field of FIELDS) {
+      const value = raw.checks && raw.checks[field];
+      checks[field] = MATCH.includes(value) ? value : UNK;
+    }
+    const faEmpty = raw.fa == null || String(raw.fa).trim() === "";
+    const enEmpty = raw.en == null || String(raw.en).trim() === "";
+    return {
+      checks,
+      status: STATUSES.includes(raw.status) ? raw.status : MANUAL,
+      fa: faEmpty ? (raw.touched ? "" : (item.fa || "")) : String(raw.fa),
+      en: enEmpty ? (raw.touched ? "" : (item.en || "")) : String(raw.en),
+      ref: String(raw.ref || ""),
+      reason: String(raw.reason || ""),
+      touched: !!raw.touched
+    };
+  }
+  function decisionOf(item) {
+    const saved = decisions[item.key];
+    return saved ? sanitize(saved, item) : blankDecision(item);
+  }
+  function candidateRef(c) {
+    const link = c.site_link || c.call_back || "";
+    const name = [c.fa, c.en].filter(Boolean).join(" / ");
+    const bits = [c.source === "online" ? "online" : "social", name, link];
+    if (c.national_id) bits.push("کدملی " + (Logic.padNationalId(c.national_id) || c.national_id));
+    if (c.mobile) bits.push("موبایل " + c.mobile);
+    return bits.filter(Boolean).join(" | ");
+  }
+  function haystack(item) {
+    const parts = [item.contract, item.fa, item.en, item.url, item.branch, item.cat, item.sub, item.owner_first, item.owner_last];
+    return parts.join("\n").toLowerCase();
+  }
+  function tally() {
+    const out = { raw: meta ? meta.rawCount : 0, reviewed: 0, ready: 0, rename: 0, manual: 0 };
+    for (const item of items) {
+      const status = (item.review && item.review.status) || MANUAL;
+      if (item.review && item.review.reviewed) out.reviewed++;
+      if (status === READY) out.ready++;
+      else if (status === RENAME) out.rename++;
+      else out.manual++;
+    }
+    return out;
+  }
+  function statusText() {
+    if (!meta) return "در حال خواندن پنج تب گزارش. نوشتن فقط روی همان پنج تب است.";
+    const c = tally();
+    if (meta.fromReport) {
+      return "گزارش: آماده فعال‌سازی " + c.ready + " · نیاز به تغییر نام " + c.rename + " · بررسی دستی " + c.manual + ". سایت " + meta.websiteCount + " (آماده " + (meta.websiteReady || 0) + "، تغییر نام " + (meta.websiteRename || 0) + "، دستی " + (meta.websiteManual || 0) + ") · تطبیق کد ملی/موبایل/URL در online: " + (meta.websiteWithOnline || 0) + " · سوشال " + meta.socialModeCount + ".";
+    }
+    const c2 = c;
+    return "خام " + meta.rawCount + " · صف " + meta.queueCount + " · سایت " + meta.websiteCount + " (نامزد online " + meta.websiteWithOnline + ") · سوشال " + meta.socialModeCount + " (نامزد " + meta.socialWithMatch + ") · نیاز به تغییر نام " + c2.rename;
+  }
+  function paintCards() {
+    const dash = !meta;
+    const c = tally();
+    document.getElementById("card-all").textContent = dash ? "—" : String(c.raw);
+    document.getElementById("card-reviewed").textContent = dash ? "—" : String(c.reviewed);
+    document.getElementById("card-ready").textContent = dash ? "—" : String(c.ready);
+    document.getElementById("card-rename").textContent = dash ? "—" : String(c.rename);
+    document.getElementById("card-manual").textContent = dash ? "—" : String(c.manual);
+  }
+  function visibleIndices() {
+    const out = [];
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      const status = (item.review && item.review.status) || MANUAL;
+      if (webOnly && item.mode !== "website") continue;
+      if (filter === "ready" && status !== READY) continue;
+      if (filter === "rename" && status !== RENAME) continue;
+      if (filter === "manual" && status !== MANUAL) continue;
+      if (query && !haystack(item).includes(query)) continue;
+      out.push(i);
+    }
+    return out;
+  }
+  function tagClass(status) {
+    if (status === READY) return "ok";
+    if (status === RENAME) return "rename";
+    return "manual";
+  }
+  function linkOrText(url) {
+    const href = Logic.safeUrl(url);
+    if (!href) return el("span", { class: "ltr" }, [url || "—"]);
+    return el("a", { class: "ltr", href, target: "_blank", rel: "noopener noreferrer", referrerpolicy: "no-referrer" }, [String(url)]);
+  }
+  function paintChips() {
+    document.querySelectorAll(".chip").forEach((chip) => {
+      const on = chip.getAttribute("data-filter") === filter;
+      chip.classList.toggle("on", on);
+      chip.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+  function paintTable() {
+    const body = document.getElementById("rows");
+    const vis = visibleIndices();
+    const pages = Math.max(1, Math.ceil(vis.length / PAGE));
+    if (page >= pages) page = pages - 1;
+    if (page < 0) page = 0;
+    const slice = vis.slice(page * PAGE, page * PAGE + PAGE);
+    const nodes = [];
+    if (!slice.length) {
+      nodes.push(el("tr", {}, [el("td", { colspan: "4" }, [items.length ? "ردیفی با این فیلتر نیست." : "هنوز نتیجه‌ای روی صفحه نیست."])]));
+    }
+    for (const i of slice) {
+      const item = items[i];
+      const review = item.review || { status: MANUAL };
+      const tr = el("tr", { class: i === idx ? "sel" : "" }, [
+        el("td", {}, [item.fa || "—"]),
+        el("td", { class: "ltr" }, [item.en || "—"]),
+        el("td", { class: "ltr" }, [item.contract || "—"]),
+        el("td", {}, [el("span", { class: "tag " + tagClass(review.status) }, [review.status])])
+      ]);
+      tr.tabIndex = 0;
+      tr.addEventListener("click", () => select(i));
+      tr.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") select(i);
+      });
+      nodes.push(tr);
+    }
+    body.replaceChildren(...nodes);
+    const pager = document.getElementById("pager");
+    pager.hidden = pages < 2;
+    document.getElementById("page-label").textContent = (page + 1) + " / " + pages + " · " + vis.length + " ردیف";
+    document.getElementById("page-prev").disabled = page <= 0;
+    document.getElementById("page-next").disabled = page >= pages - 1;
+    paintRowNav();
+  }
+  function paintRowNav() {
+    const vis = visibleIndices();
+    const pos = vis.indexOf(idx);
+    const prev = document.getElementById("prev");
+    const next = document.getElementById("next");
+    if (pos < 0) {
+      prev.disabled = vis.length === 0;
+      next.disabled = vis.length === 0;
+    } else {
+      prev.disabled = pos <= 0;
+      next.disabled = pos >= vis.length - 1;
+    }
+  }
+  function persistNow() {
+    clearTimeout(persistTimer);
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(decisions)); }
+    catch (err) { showError("ذخیره در مرورگر ناموفق بود. فضای localStorage پر است."); }
+  }
+  function persist() {
+    clearTimeout(persistTimer);
+    persistTimer = setTimeout(persistNow, 80);
+  }
+  function loadDecisions() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : {};
+      decisions = parsed && typeof parsed === "object" ? parsed : {};
+    } catch (err) { decisions = {}; }
+  }
+  function paintOutput() {
+    const pill = document.getElementById("output-status");
+    const list = document.getElementById("blockers");
+    if (!pill || !list || !items[idx]) return;
+    const d = decisionOf(items[idx]);
+    const sheet = items[idx].review;
+    const eff = (!d.touched && sheet && sheet.status) ? { status: sheet.status, blockers: [] } : Logic.effective(d, items[idx]);
+    pill.textContent = (d.touched ? "تصمیم خروجی: " : "نتیجهٔ شیت: ") + eff.status;
+    pill.className = "pill " + tagClass(eff.status);
+    pill.dataset.status = eff.status;
+    list.replaceChildren(...eff.blockers.map((text) => el("li", {}, [text])));
+    const reason = document.getElementById("reason");
+    if (reason) reason.classList.toggle("need", eff.status === MANUAL && !String(d.reason || "").trim());
+    const ref = String(d.ref || "").trim();
+    document.querySelectorAll("[data-cand]").forEach((card, i) => {
+      const c = items[idx].candidates[i];
+      card.classList.toggle("picked", !!c && !!ref && candidateRef(c) === ref);
+    });
+  }
+  function updateCurrent(mutator) {
+    const item = items[idx];
+    if (!item) return;
+    const next = JSON.parse(JSON.stringify(decisionOf(item)));
+    next.touched = true;
+    mutator(next);
+    decisions[item.key] = next;
+    persist();
+    paintOutput();
+    paintCards();
+    paintTable();
+    setStatus(statusText());
+  }
+  function select(i) {
+    if (i < 0 || i >= items.length) return;
+    idx = i;
+    sessionStorage.setItem(KEY_INDEX, items[i].key);
+    renderView();
+    paintTable();
+    const detail = document.getElementById("detail");
+    if (detail && !detail.hidden) detail.scrollIntoView({ block: "nearest" });
+  }
+  function step(delta) {
+    const vis = visibleIndices();
+    if (!vis.length) return;
+    const pos = vis.indexOf(idx);
+    let next = pos < 0 ? (delta > 0 ? 0 : vis.length - 1) : pos + delta;
+    if (next < 0 || next >= vis.length) return;
+    select(vis[next]);
+  }
+  function metaPair(label, value, ltr, wide) {
+    const shown = value || "—";
+    const dd = el("dd", {}, [ltr ? el("span", { class: "ltr" }, [shown]) : shown]);
+    return el("div", { class: wide ? "pair wide" : "pair" }, [el("dt", {}, [label]), dd]);
+  }
+  function renderReview(item) {
+    const review = item.review || { status: MANUAL, reason: "", fields: [], fa: "", en: "", against: "" };
+    const box = el("div", { class: "why-box", "data-testid": "review-reason" }, [
+      el("p", {}, [el("span", { class: "tag " + tagClass(review.status) }, [review.status || MANUAL])]),
+      el("p", {}, [review.reason || "—"])
+    ]);
+    if (review.against) box.append(el("p", {}, ["مرجع تطبیق: " + review.against]));
+    if (review.status === RENAME) {
+      box.append(el("p", {}, ["اسم فارسی پیشنهادی: " + (review.fa || "—")]));
+      box.append(el("p", { class: "ltr" }, [review.en || "—"]));
+    }
+    if (review.status === READY) {
+      box.append(el("p", {}, ["اسم فروشگاه: " + (review.fa || "—") + " / " + (review.en || "—")]));
+    }
+    const wrap = el("div", { class: "verdict-list", "data-testid": "field-notes" });
+    for (const verdict of ["جور است", "جور نیست", "نتوانستم بررسی کنم"]) {
+      const rows = (review.fields || []).filter((row) => row.verdict === verdict);
+      if (!rows.length) continue;
+      wrap.append(el("h3", {}, [verdict]));
+      for (const row of rows) wrap.append(verdictLine(row, review));
+    }
+    return el("div", {}, [box, wrap]);
+  }
+  function socialReady(review) {
+    const against = String((review && review.against) || "");
+    return !!review && review.status === READY && (against.indexOf("social") !== -1 || against.indexOf("سوشال") !== -1);
+  }
+  function verdictLine(row, review) {
+    let label = row.name || "";
+    const note = row.note || "";
+    let shown = "";
+    if (socialReady(review) && row.verdict === "جور است") {
+      if (label.indexOf("نام فارسی") === 0) {
+        label = "نام فارسی";
+        shown = review.socialFa || review.fa || "";
+      } else if (label.indexOf("نام انگلیسی") === 0) {
+        label = "نام انگلیسی";
+        shown = review.socialEn || review.en || "";
+      }
+    }
+    const line = el("p", { class: "verdict-row" });
+    line.append(document.createTextNode(label + ": "));
+    if (shown && label === "نام انگلیسی") line.append(el("span", { class: "ltr" }, [shown]));
+    else if (shown) line.append(document.createTextNode(shown));
+    if (shown && note) line.append(document.createTextNode(". " + note));
+    else if (!shown) line.append(document.createTextNode(note));
+    return line;
+  }
+  function renderView() {
+    const view = document.getElementById("view");
+    const detail = document.getElementById("detail");
+    if (!items.length || !items[idx]) {
+      view.replaceChildren();
+      detail.hidden = true;
+      paintRowNav();
+      return;
+    }
+    const item = items[idx];
+    const d = decisionOf(item);
+    const isWeb = item.mode === "website";
+    const owner = [item.owner_first, item.owner_last].filter(Boolean).join(" ");
+    const open = Logic.safeUrl(item.open_url || item.url);
+    const nodes = [
+      el("h2", { class: "store-name", "data-testid": "fa" }, [item.fa || "—"]),
+      el("p", { class: "en-name", "data-testid": "en" }, [item.en || "—"])
+    ];
+    const grid = el("div", { class: "meta" });
+    for (const [label, value, ltr] of [
+      ["کد قرارداد", item.contract, true],
+      ["برنچ", item.branch, false],
+      ["دسته", item.cat, false],
+      ["زیردسته", item.sub, false],
+      ["صاحب امتیاز", owner, false],
+      ["کد ملی", Logic.padNationalId(item.owner_id), true],
+      ["موبایل", item.owner_mobile, true]
+    ]) grid.append(metaPair(label, value, ltr));
+    const urlPair = metaPair("URL ستون O", item.url, true, true);
+    urlPair.querySelector("dd").setAttribute("data-testid", "url");
+    grid.append(urlPair);
+    nodes.push(grid);
+    nodes.push(renderReview(item));
+    nodes.push(el("p", { class: "mode" + (isWeb ? "" : " social"), "data-testid": "mode" }, [isWeb
+      ? "حالت ستون O: سایت. در محدوده: باز کردن سایت، بررسی اینماد، و نامزدهای تب online با همین URL یا دامنه."
+      : "حالت ستون O: سوشال. فقط نامزدهای تب social (site_link و Call Back). سایت، اینماد و online خارج از محدوده است."
+    ]));
+    const actions = el("div", { class: "actions" });
+    if (open) {
+      actions.append(el("a", {
+        class: "primary", href: open, target: "_blank", rel: "noopener noreferrer", referrerpolicy: "no-referrer", "data-testid": "open-link"
+      }, [isWeb ? "باز کردن سایت" : "باز کردن لینک"]));
+    }
+    if (isWeb) {
+      actions.append(el("a", {
+        class: "ghost", href: "https://enamad.ir/", target: "_blank", rel: "noopener noreferrer", referrerpolicy: "no-referrer", "data-testid": "enamad"
+      }, ["باز کردن اینماد"]));
+    }
+    actions.append(el("button", {
+      type: "button", class: "ghost",
+      onclick: () => {
+        delete decisions[item.key];
+        persistNow();
+        renderView();
+        paintCards();
+        paintTable();
+        setStatus(statusText());
+      }
+    }, ["پاک کردن این ردیف"]));
+    nodes.push(actions);
+    nodes.push(el("h3", {}, ["نامزدهای کمکی"]));
+    nodes.push(el("p", { class: "hint" }, [isWeb
+      ? "تطبیق با URL نرمال‌شده یا دامنه در تب online. کد قرارداد معیار نیست. نامزد را خودتان مرجع می‌کنید."
+      : "تطبیق با site_link و Call Back در تب social. کد قرارداد معیار نیست. نامزد را خودتان مرجع می‌کنید."
+    ]));
+    const candidates = item.candidates || [];
+    if (!candidates.length) {
+      nodes.push(el("div", { class: "empty-cand", "data-testid": "candidates" }, [
+        el("p", {}, [isWeb
+          ? "نامزد online با این URL یا دامنه یافت نشد. نبودن در online رد آنلاین‌بودن نیست؛ سایت و اینماد را همچنان بررسی کنید."
+          : "نامزد social با این URL یا یوزرنیم یافت نشد. نتیجه‌گیری منفی مجاز نیست؛ لینک را دستی بررسی کنید."])
+      ]));
+    } else {
+      const cards = el("div", { class: "cand-grid", "data-testid": "candidates" });
+      candidates.forEach((c, i) => {
+        const ref = candidateRef(c);
+        const card = el("div", { class: "cand" + (d.ref.trim() && d.ref.trim() === ref ? " picked" : ""), "data-cand": String(i) });
+        card.append(
+          el("p", {}, [el("span", { class: "badge" }, [c.source === "online" ? "online" : "social"]), " ", c.fa || "—", " / ", c.en || "—"]),
+          el("p", {}, ["site_link: ", linkOrText(c.site_link)])
+        );
+        if (c.source === "social") card.append(el("p", {}, ["Call Back: ", linkOrText(c.call_back)]));
+        card.append(
+          el("p", {}, ["کد ملی ", el("span", { class: "ltr" }, [Logic.padNationalId(c.national_id) || "—"]), " · موبایل ", el("span", { class: "ltr" }, [c.mobile || "—"])]),
+          el("button", {
+            type: "button", class: "ghost", "data-testid": i === 0 ? "use-candidate" : null,
+            onclick: () => {
+              const input = document.getElementById("ref");
+              if (input) input.value = ref;
+              updateCurrent((next) => { next.ref = ref; });
+            }
+          }, ["ثبت به‌عنوان مرجع دقیق"])
+        );
+        cards.append(card);
+      });
+      nodes.push(cards);
+      nodes.push(el("p", { class: "hint" }, ["دیدن نامزد تصمیم را عوض نمی‌کند. مرجع دقیق فقط با دکمهٔ بالا یا نوشتن خودتان پر می‌شود."]));
+    }
+    nodes.push(el("h3", {}, ["نتیجهٔ هر مورد"]));
+    nodes.push(el("p", { class: "hint" }, ["نتیجهٔ بالای صفحه همان متن نوشته‌شده در پنج تب گزارش است. دکمه‌های پایین فقط یادداشت همین مرورگر هستند و شیت را عوض نمی‌کنند."]));
+    for (const field of FIELDS) {
+      const choices = el("div", { class: "choices", role: "radiogroup", "aria-label": field });
+      for (const value of MATCH) {
+        choices.append(el("button", {
+          type: "button", "data-field": field, "data-val": value,
+          class: d.checks[field] === value ? "on" : "",
+          "aria-pressed": d.checks[field] === value ? "true" : "false",
+          onclick: (event) => {
+            updateCurrent((next) => { next.checks[field] = value; });
+            event.currentTarget.parentElement.querySelectorAll("button").forEach((btn) => {
+              const on = btn.getAttribute("data-val") === value;
+              btn.classList.toggle("on", on);
+              btn.setAttribute("aria-pressed", on ? "true" : "false");
+            });
+          }
+        }, [value]));
+      }
+      nodes.push(el("div", { class: "field" }, [el("div", { class: "name" }, [field]), choices]));
+    }
+    nodes.push(el("h3", {}, ["تصمیم اپراتور"]));
+    const radios = el("div", { class: "decisions" });
+    STATUSES.forEach((status, n) => {
+      radios.append(el("label", {}, [
+        el("input", {
+          type: "radio", name: "status", value: status, checked: d.status === status,
+          "data-testid": n === 0 ? "status-ready" : (n === 1 ? "status-rename" : "status-manual"),
+          onchange: () => {
+            updateCurrent((next) => { next.status = status; });
+            const box = document.getElementById("rename-box");
+            if (box) box.hidden = status !== RENAME;
+          }
+        }),
+        status
+      ]));
+    });
+    nodes.push(radios);
+    nodes.push(el("div", { id: "output-status", "data-testid": "output-status", class: "pill" }, ["…"]));
+    nodes.push(el("ul", { id: "blockers", "data-testid": "blockers" }));
+    const rename = el("div", { id: "rename-box" });
+    rename.hidden = d.status !== RENAME;
+    rename.append(
+      el("p", { class: "hint" }, ["اگر نام باید عوض شود، نام فارسی و انگلیسی پیشنهادی را بنویسید. ذخیره همان نام‌ها را نگه می‌دارد."]),
+      el("label", { class: "lbl" }, ["نام فارسی پیشنهادی", el("input", {
+        type: "text", id: "fa-proposed", value: d.fa, "data-testid": "fa-proposed",
+        oninput: (event) => updateCurrent((next) => { next.fa = event.target.value; })
+      })]),
+      el("label", { class: "lbl" }, ["نام انگلیسی پیشنهادی", el("input", {
+        type: "text", id: "en-proposed", class: "ltr", dir: "ltr", value: d.en, "data-testid": "en-proposed",
+        oninput: (event) => updateCurrent((next) => { next.en = event.target.value; })
+      })])
+    );
+    nodes.push(rename);
+    nodes.push(el("label", { class: "lbl" }, [
+      "مرجع دقیق آنلاین/سوشال",
+      el("input", {
+        type: "text", id: "ref", dir: "auto", value: d.ref, "data-testid": "ref",
+        placeholder: "فقط اگر یک ردیف مشخص را خودتان تأیید کرده‌اید",
+        oninput: (event) => updateCurrent((next) => { next.ref = event.target.value; })
+      })
+    ]));
+    nodes.push(el("p", { class: "hint" }, ["ذخیره، تصمیم و نام و دلیل همین فروشگاه را نگه می‌دارد و فقط همین ردیف را در پنج تب گزارش می‌نویسد."]));
+    nodes.push(el("button", {
+      type: "button", class: "primary", id: "save-store", "data-testid": "save-store",
+      onclick: () => saveStore()
+    }, ["ذخیره"]));
+    const reason = el("textarea", {
+      id: "reason", "data-testid": "reason",
+      oninput: (event) => updateCurrent((next) => { next.reason = event.target.value; })
+    });
+    nodes.push(el("label", { class: "lbl" }, ["دلیل / شواهد / علت بررسی دستی", reason]));
+    detail.hidden = false;
+    view.replaceChildren(...nodes);
+    reason.value = d.reason;
+    paintOutput();
+    const pos = document.getElementById("pos");
+    if (pos) pos.textContent = "ردیف " + (idx + 1) + " از " + items.length + " · " + item.contract;
+    paintRowNav();
+  }
+  function applyState(state) {
+    meta = state.meta;
+    items = state.items || [];
+    loadDecisions();
+    let found = items.findIndex((item) => item.key === sessionStorage.getItem(KEY_INDEX));
+    if (found < 0) {
+      const n = Number(sessionStorage.getItem("instore-review-idx") || "-1");
+      if (n >= 0 && n < items.length) found = n;
+    }
+    idx = found >= 0 ? found : 0;
+    page = 0;
+    showError("");
+    paintCards();
+    paintChips();
+    paintTable();
+    renderView();
+    setStatus(statusText());
+  }
+  function quoteSheet(name) {
+    return "'" + String(name).replace(/'/g, "''") + "'";
+  }
+  function assertOutput(name) {
+    if (KEEP_TABS.indexOf(name) >= 0 || Logic.OUTPUT_TABS.indexOf(name) < 0) {
+      throw new Error("تب منبع پاک یا نوشته نمی‌شود.");
+    }
+  }
+  function splitValues(values) {
+    const rows = values || [];
+    let width = 0;
+    for (const row of rows) width = Math.max(width, row ? row.length : 0);
+    const norm = rows.map((row) => {
+      const out = [];
+      for (let i = 0; i < width; i++) {
+        const cell = row ? row[i] : "";
+        out.push(cell == null ? "" : String(cell));
+      }
+      return out;
+    });
+    if (!norm.length) return [[], []];
+    return [norm[0].map((cell) => cell.trim()), norm.slice(1)];
+  }
+  function ensureWidth(pair, width) {
+    const headers = pair[0].slice();
+    const body = pair[1].map((row) => row.slice());
+    while (headers.length < width) headers.push("");
+    for (const row of body) while (row.length < width) row.push("");
+    return [headers, body];
+  }
+  function cellText(cell) {
+    if (!cell) return "";
+    if (cell.f != null && String(cell.f) !== "") return String(cell.f);
+    if (cell.v == null || typeof cell.v === "object") return "";
+    return String(cell.v);
+  }
+  function gvizToTable(payload) {
+    const cols = (payload.table && payload.table.cols) || [];
+    const headers = cols.map((col) => String((col && col.label) || "").trim());
+    const body = [];
+    for (const row of (payload.table && payload.table.rows) || []) {
+      const cells = (row && row.c) || [];
+      const values = [];
+      for (let i = 0; i < headers.length; i++) values.push(cellText(cells[i]));
+      body.push(values);
+    }
+    return [headers, body];
+  }
+  function sheetsError(status, data) {
+    if (status === 401 || status === 403) {
+      accessToken = "";
+      return "اجازهٔ شیت داده نشده. دکمه را بزنید و در پنجرهٔ گوگل روی Allow کلیک کنید.";
+    }
+    const msg = data && data.error && data.error.message ? String(data.error.message) : "";
+    return msg ? "شیت: " + msg : "درخواست شیت ناموفق بود.";
+  }
+  async function sheetsFetch(spreadsheetId, token, suffix, options) {
+    const res = await fetch("https://sheets.googleapis.com/v4/spreadsheets/" + spreadsheetId + suffix, {
+      method: (options && options.method) || "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json"
+      },
+      body: options && options.body
+    });
+    const text = await res.text();
+    let data = {};
+    if (text) {
+      try { data = JSON.parse(text); }
+      catch (err) { throw new Error("پاسخ شیت خوانده نشد."); }
+    }
+    if (!res.ok) throw new Error(sheetsError(res.status, data));
+    return data;
+  }
+  async function wipeAndWrite(token, tables) {
+    const output = Logic.OUTPUT_TABS;
+    if (!tables || tables.length !== output.length) throw new Error("خروجی پنج تب نیست.");
+    for (let i = 0; i < tables.length; i++) {
+      if (tables[i][0] !== output[i]) throw new Error("نام تب خروجی با خروجی اکسل یکی نیست.");
+      assertOutput(tables[i][0]);
+    }
+    const metaSheets = await sheetsFetch(OUTPUT_SHEET_ID, token, "?fields=sheets.properties(title,sheetId)");
+    const have = new Set();
+    for (const sheet of metaSheets.sheets || []) {
+      const title = sheet.properties && sheet.properties.title;
+      if (title) have.add(title);
+    }
+    for (const name of SOURCE_TABS) {
+      if (output.indexOf(name) >= 0) throw new Error("تب منبع در فهرست خروجی است.");
+    }
+    const missing = output.filter((name) => !have.has(name));
+    if (missing.length) {
+      await sheetsFetch(OUTPUT_SHEET_ID, token, ":batchUpdate", {
+        method: "POST",
+        body: JSON.stringify({
+          requests: missing.map((title) => ({ addSheet: { properties: { title } } }))
+        })
+      });
+    }
+    setStatus("در حال پاک کردن خروجی قبلی…");
+    for (const [name] of tables) {
+      assertOutput(name);
+      await sheetsFetch(OUTPUT_SHEET_ID, token, "/values/" + encodeURIComponent(quoteSheet(name)) + ":clear", {
+        method: "POST",
+        body: "{}"
+      });
+    }
+    setStatus("در حال نوشتن نتیجهٔ جدید…");
+    for (const [name, grid] of tables) {
+      assertOutput(name);
+      const chunk = 800;
+      for (let start = 0; start < grid.length; start += chunk) {
+        const slice = grid.slice(start, start + chunk);
+        const range = quoteSheet(name) + "!A" + (start + 1);
+        await sheetsFetch(OUTPUT_SHEET_ID, token, "/values/" + encodeURIComponent(range) + "?valueInputOption=RAW", {
+          method: "PUT",
+          body: JSON.stringify({ range, majorDimension: "ROWS", values: slice })
+        });
+      }
+    }
+  }
+  function loadGviz(sheetName) {
+    return new Promise((resolve, reject) => {
+      const cb = "gvizCb" + (++gvizSeq);
+      let done = false;
+      const script = document.createElement("script");
+      const timer = setTimeout(() => finish(new Error("شیت بدون ورود خوانده نشد.")), 12000);
+      function finish(err, table) {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        try { delete window[cb]; } catch (err2) { window[cb] = undefined; }
+        script.remove();
+        if (err) reject(err);
+        else resolve(table);
+      }
+      window[cb] = (payload) => {
+        if (!payload || payload.status !== "ok" || !payload.table) {
+          const reason = payload && payload.errors && payload.errors[0] && (payload.errors[0].detailed_message || payload.errors[0].message);
+          finish(new Error("تب «" + sheetName + "» خوانده نشد." + (reason ? " " + reason : "")));
+          return;
+        }
+        finish(null, gvizToTable(payload));
+      };
+      script.onerror = () => finish(new Error("تب «" + sheetName + "» بدون ورود خوانده نشد."));
+      script.src = "https://docs.google.com/spreadsheets/d/" + SOURCE_SHEET_ID + "/gviz/tq?tqx=out:json;responseHandler:" + cb + "&headers=1&sheet=" + encodeURIComponent(sheetName);
+      document.head.append(script);
+    });
+  }
+  async function readPublic() {
+    const pending = SOURCE_TABS.map((name) => loadGviz(name));
+    pending.forEach((job) => { job.catch(() => {}); });
+    const tables = await Promise.all(pending);
+    return [ensureWidth(tables[0], 26), tables[1], tables[2]];
+  }
+  async function readApi(token) {
+    const ranges = SOURCE_TABS.map((name) => quoteSheet(name) + "!A:ZZ");
+    const q = ranges.map((range) => "ranges=" + encodeURIComponent(range)).join("&");
+    const data = await sheetsFetch(SOURCE_SHEET_ID, token, "/values:batchGet?valueRenderOption=FORMATTED_VALUE&majorDimension=ROWS&" + q);
+    const valueRanges = data.valueRanges || [];
+    if (valueRanges.length !== 3) throw new Error("سه تب منبع برنگشت.");
+    return valueRanges.map((vr, i) => {
+      const pair = splitValues(vr.values || []);
+      if (!pair[0].length && !pair[1].length) throw new Error("تب «" + SOURCE_TABS[i] + "» خالی است یا پیدا نشد.");
+      return i === 0 ? ensureWidth(pair, 26) : pair;
+    });
+  }
+  async function loadSources(token) {
+    const parts = token ? await readApi(token) : await readPublic();
+    return Logic.buildStateFromTables(
+      parts[0][0], parts[0][1], parts[1][0], parts[1][1], parts[2][0], parts[2][1],
+      { newFlow: "New Flow", online: "online", social: "social" }
+    );
+  }
+  function loadGis() {
+    if (window.google && google.accounts && (google.accounts.id || google.accounts.oauth2)) return Promise.resolve();
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "https://accounts.google.com/gsi/client";
+      script.async = true;
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error("ورود گوگل بار نشد. دوباره دکمه را بزنید."));
+      document.head.append(script);
+    });
+  }
+  function ensureToken() {
+    if (!GOOGLE_CLIENT_ID) {
+      return Promise.reject(new Error("ثبت گزارش در شیت انجام نشد."));
+    }
+    return loadGis().then(() => new Promise((resolve, reject) => {
+      const client = google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID,
+        scope: SCOPE,
+        callback: (resp) => {
+          if (resp && resp.access_token) {
+            accessToken = resp.access_token;
+            resolve(accessToken);
+          } else {
+            reject(new Error("اجازه داده نشد. در پنجرهٔ گوگل روی Allow کلیک کنید."));
+          }
+        },
+        error_callback: () => reject(new Error("پنجرهٔ گوگل بسته شد. دوباره دکمه را بزنید و روی Allow کلیک کنید."))
+      });
+      client.requestAccessToken();
+    }));
+  }
+  async function saveStore() {
+    const item = items[idx];
+    if (!item) return;
+    const d = decisionOf(item);
+    const picked = document.querySelector("input[name='status']:checked");
+    const status = picked ? picked.value : d.status;
+    const faEl = document.getElementById("fa-proposed");
+    const enEl = document.getElementById("en-proposed");
+    const reasonEl = document.getElementById("reason");
+    const refEl = document.getElementById("ref");
+    const fa = faEl ? faEl.value : (d.fa || "");
+    const en = enEl ? enEl.value : (d.en || "");
+    const reason = reasonEl ? reasonEl.value : (d.reason || "");
+    const ref = refEl ? refEl.value : (d.ref || "");
+    const button = document.getElementById("save-store");
+    if (button) button.disabled = true;
+    showError("");
+    try {
+      const res = await fetch("/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-instore-request": "1" },
+        body: JSON.stringify({ contract: item.contract, status: status, fa: fa, en: en, reason: reason, ref: ref })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error((data && data.error) || "ذخیره انجام نشد.");
+      decisions[item.key] = { checks: d.checks, status: status, fa: fa, en: en, ref: ref, reason: reason, touched: true };
+      persistNow();
+      item.fa = fa || item.fa;
+      item.en = en || item.en;
+      item.review = Object.assign({}, item.review, {
+        status: status,
+        fa: fa,
+        en: en,
+        reason: reason,
+        against: ref || item.review.against,
+        socialFa: item.review.socialFa,
+        socialEn: item.review.socialEn
+      });
+      paintCards();
+      paintTable();
+      renderView();
+      showToast("این فروشگاه ذخیره شد.");
+    } catch (err) {
+      showError(err && err.message ? err.message : "ذخیره انجام نشد.");
+    } finally {
+      const again = document.getElementById("save-store");
+      if (again) again.disabled = false;
+    }
+  }
+  let reviewChecked = 0;
+  function resetReviewProgress() {
+    reviewChecked = 0;
+    paintReviewProgress(0, 0);
+  }
+  function paintReviewProgress(checked, total, stage, overallPercent) {
+    const box = document.getElementById("review-progress");
+    const rate = document.getElementById("review-rate");
+    const left = document.getElementById("review-left");
+    const bar = document.getElementById("review-bar");
+    const track = document.getElementById("review-track");
+    if (!box || !rate || !left || !bar || !track) return;
+    box.hidden = false;
+    const safeTotal = Math.max(0, total || 0);
+    const safeChecked = Math.max(0, checked || 0);
+    const donePercent = Number.isFinite(overallPercent)
+      ? Math.max(0, Math.min(100, Math.floor(overallPercent)))
+      : (safeTotal ? Math.max(0, Math.min(100, Math.floor((safeChecked * 100) / safeTotal))) : 0);
+    rate.textContent = safeChecked + " از " + safeTotal + " ردیف بررسی شده";
+    left.textContent = stage === "writing"
+      ? "در حال نوشتن نتایج · " + donePercent + "٪"
+      : (stage === "complete" ? "بررسی تمام شد · ۱۰۰٪" : donePercent + "٪ پیشرفت");
+    bar.style.width = donePercent + "%";
+    track.setAttribute("aria-valuenow", String(donePercent));
+    track.setAttribute("aria-valuetext", donePercent + " درصد پیشرفت");
+  }
+  function noteReviewProgress(checked, total, stage, percent) {
+    reviewChecked = checked;
+    paintReviewProgress(checked, total, stage, percent);
+    if (stage === "writing") setStatus("بررسی سایت‌ها و شیت تمام شد؛ نتیجه‌ها در تب‌های گزارش نوشته می‌شود…");
+    else if (stage === "complete") setStatus("نوشتن نتیجه‌ها تمام شد؛ گزارش نهایی در حال بارگذاری است…");
+  }
+  async function readReviewProgress(res) {
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error((data && data.error) || "ثبت گزارش در شیت انجام نشد.");
+    }
+    if (!res.body || !res.body.getReader) throw new Error("پیشرفت بررسی خوانده نشد.");
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = "";
+    let last = null;
+    const take = (event) => {
+      if (event.ok === false) throw new Error(event.error || "ثبت گزارش در شیت انجام نشد.");
+      if (typeof event.checked === "number") noteReviewProgress(event.checked, event.total, event.stage, event.percent);
+      if (event.ok === true) last = event;
+    };
+    while (true) {
+      const step = await reader.read();
+      if (step.done) break;
+      buf += decoder.decode(step.value, { stream: true });
+      const lines = buf.split("\n");
+      buf = lines.pop();
+      for (const line of lines) {
+        if (!line.trim()) continue;
+        take(JSON.parse(line));
+      }
+    }
+    if (buf.trim()) take(JSON.parse(buf));
+    if (!last) throw new Error("ثبت گزارش در شیت انجام نشد.");
+    if (last.finished) paintReviewProgress(last.total, last.total, "complete", 100);
+    return last;
+  }
+  async function runReview() {
+    if (running) return;
+    running = true;
+    const button = document.getElementById("run");
+    button.disabled = true;
+    const preview = document.getElementById("preview").checked;
+    try {
+      showError("");
+      if (preview) {
+        setStatus("در حال خواندن پنج تب گزارش…");
+        await loadReport();
+        showToast("پنج تب گزارش روی صفحه است. چیزی نوشته نشد.");
+        return;
+      }
+      setStatus("در حال بررسی هر ردیف و نوشتن فقط پنج تب گزارش…");
+      resetReviewProgress();
+      let fresh = true;
+      let hops = 0;
+      let drops = 0;
+      let finished = false;
+      while (hops < 80) {
+        hops += 1;
+        let event;
+        try {
+          const res = await fetch("/review", {
+            method: "POST",
+            headers: { "content-type": "application/json", "x-instore-request": "1" },
+            body: JSON.stringify({ fresh: fresh })
+          });
+          const type = res.headers.get("content-type") || "";
+          if (!type.includes("ndjson")) {
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok || !data.ok) throw new Error((data && data.error) || "ثبت گزارش در شیت انجام نشد.");
+            event = data;
+          } else {
+            event = await readReviewProgress(res);
+          }
+          drops = 0;
+        } catch (err) {
+          if (!reviewChecked || drops >= 3) throw err;
+          drops += 1;
+          fresh = false;
+          setStatus("اتصال قطع شد. بررسی از همان‌جا ادامه پیدا می‌کند…");
+          continue;
+        }
+        if (event && event.finished) { finished = true; break; }
+        if (!event || !event.partial) throw new Error("ثبت گزارش در شیت انجام نشد.");
+        fresh = false;
+        setStatus("بررسی ادامه دارد…");
+      }
+      if (!finished) throw new Error("بررسی هنوز تمام نشده است. نتیجه‌های ثبت‌شده حفظ شدند؛ دوباره دکمهٔ بررسی خودکار را بزنید تا ادامه پیدا کند.");
+      await loadReport();
+      recordLastReview();
+      const summary = tally();
+      setStatus("بررسی خودکار تمام شد و نتیجه‌ها در شیت ثبت شد: آماده " + summary.ready + " · تغییر نام " + summary.rename + " · بررسی دستی " + summary.manual + ".");
+      showToast("بررسی تمام شد و گزارش در شیت ثبت شد.");
+    } catch (err) {
+      showError(err && err.message ? err.message : "بررسی انجام نشد.");
+      if (meta) setStatus(statusText());
+    } finally {
+      running = false;
+      button.disabled = false;
+    }
+  }
+  function toggleHelp() {
+    const rules = document.getElementById("rules");
+    rules.hidden = !rules.hidden;
+    if (!rules.hidden) rules.scrollIntoView({ block: "nearest" });
+  }
+  let tourIndex = 0;
+  let tourList = [];
+  let tourOpen = false;
+  function tourSteps() {
+    const detailOpen = !document.getElementById("detail").hidden;
+    const pagerOpen = !document.getElementById("pager").hidden;
+    const linkOpen = !!document.querySelector("[data-testid='open-link']");
+    const enamadOpen = !!document.querySelector("[data-testid='enamad']");
+    const steps = [
+      { page: "خانه", sel: "h1", title: "این صفحه", body: "اینجا درخواست‌های فعال‌سازی فروشگاه حضوری را می‌بینید. شمارنده‌ها بالا هستند و دکمهٔ آبی نتیجه را در شیت می‌نویسد." },
+      { page: "خانه", sel: "#card-box-all", title: "همه درخواست‌ها", body: "تعداد همهٔ درخواست‌هایی که از شیت خوانده شده است." },
+      { page: "خانه", sel: "#card-box-reviewed", title: "بررسی‌شده تا الان", body: "تعداد ردیف‌هایی که نتیجهٔ بررسی در شیت برایشان ثبت شده است." },
+      { page: "خانه", sel: "#card-box-ready", title: "آماده فعال‌سازی", body: "درخواست‌هایی که نامشان با یک فروشنده در شیت یکی است." },
+      { page: "خانه", sel: "#card-box-rename", title: "نیاز به تغییر نام", body: "درخواست‌هایی که بررسی برایشان نام تازه پیشنهاد کرده است." },
+      { page: "خانه", sel: "#card-box-manual", title: "نیازمند بررسی دستی", body: "درخواست‌هایی که یک فروشندهٔ مشخص برایشان پیدا نشده است." },
+      { page: "خانه", sel: "#status-line", title: "وضعیت", body: "این خط می‌گوید برنامه الان چه کار می‌کند." },
+      { page: "خانه", sel: "#preview-label", title: "پیش‌نمایش", body: "اگر این را روشن کنید، دکمهٔ آبی فقط نتیجه را نشان می‌دهد و شیت را عوض نمی‌کند." },
+      { page: "خانه", sel: "#run", title: "دکمهٔ آبی", body: "یک بار بزنید. پنج تب خروجی کامل پاک می‌شود و نتیجهٔ تازه از اول نوشته می‌شود. چیزی به ته جدول اضافه نمی‌شود و تب‌های منبع دست نمی‌خورند." },
+      { page: "خانه", sel: "#open-sheet", title: "شیت گزارش", body: "شیت گزارش را در صفحهٔ تازه باز می‌کند." },
+      { page: "خانه", sel: "#help-toggle", title: "راهنما", body: "هر وقت خواستید این راهنما را از اول ببینید، همین دکمه را بزنید." },
+      { page: "نتیجه‌ها", sel: "#results-title", title: "نتیجه بررسی‌ها", body: "جدول پایین، نتیجهٔ هر درخواست را نشان می‌دهد." },
+      { page: "نتیجه‌ها", sel: "#chip-all", title: "همه", body: "همهٔ ردیف‌ها را نشان می‌دهد." },
+      { page: "نتیجه‌ها", sel: "#chip-ready", title: "اسم آنلاین", body: "فقط ردیف‌های آمادهٔ فعال‌سازی را نشان می‌دهد." },
+      { page: "نتیجه‌ها", sel: "#chip-rename", title: "اسم جدید", body: "فقط ردیف‌هایی را نشان می‌دهد که نامشان باید عوض شود." },
+      { page: "نتیجه‌ها", sel: "#chip-manual", title: "دستی", body: "فقط ردیف‌هایی را نشان می‌دهد که باید دستی دیده شوند." },
+      { page: "نتیجه‌ها", sel: "#search", title: "جست‌وجو", body: "شناسه یا اسم را بنویسید تا همان ردیف پیدا شود." },
+      { page: "نتیجه‌ها", sel: "#web-only-label", title: "فروشگاه آنلاین", body: "فقط درخواست‌هایی را نشان می‌دهد که لینکشان سایت است، نه شبکهٔ اجتماعی." },
+      { page: "نتیجه‌ها", sel: "[data-testid='queue-table']", title: "جدول", body: "روی یک ردیف بزنید تا جزئیات همان درخواست پایین صفحه باز شود." },
+      { page: "نتیجه‌ها", sel: "#pager", title: "صفحه‌ها", body: "اگر ردیف‌ها زیاد باشند، با این دکمه‌ها صفحهٔ بعدی و قبلی جدول را می‌بینید.", when: "pager" },
+      { page: "یک درخواست", sel: "[data-testid='queue-table']", title: "صفحهٔ یک درخواست", body: "برای دیدن این صفحه، یک ردیف از جدول را انتخاب کنید. نام، لینک و دلیل همان درخواست پایین می‌آید.", when: "nodetail" },
+      { page: "یک درخواست", sel: "#prev", title: "ردیف قبلی", body: "درخواست قبلی را در همین صفحه باز می‌کند.", when: "detail" },
+      { page: "یک درخواست", sel: "#next", title: "ردیف بعدی", body: "درخواست بعدی را در همین صفحه باز می‌کند.", when: "detail" },
+      { page: "یک درخواست", sel: "#view", title: "جزئیات درخواست", body: "نام، لینک و دلیل همین درخواست اینجاست.", when: "detail" },
+      { page: "یک درخواست", sel: "[data-testid='open-link']", title: "باز کردن لینک", body: "لینک ستون O را در صفحهٔ تازه باز می‌کند.", when: "link" },
+      { page: "یک درخواست", sel: "[data-testid='enamad']", title: "اینماد", body: "سایت اینماد را باز می‌کند. اگر اینماد یا دی‌نماد خوانده نشود، همان مورد «نتوانستم بررسی کنم» می‌ماند و ردیف آماده نمی‌شود.", when: "enamad" }
+    ];
+    return steps.filter((step) => {
+      if (step.when === "detail" && !detailOpen) return false;
+      if (step.when === "nodetail" && detailOpen) return false;
+      if (step.when === "pager" && !pagerOpen) return false;
+      if (step.when === "link" && !linkOpen) return false;
+      if (step.when === "enamad" && !enamadOpen) return false;
+      const node = document.querySelector(step.sel);
+      return !!node && !node.closest("[hidden]");
+    });
+  }
+  function buildTour() {
+    if (document.getElementById("tour")) return;
+    const root = el("div", { id: "tour", hidden: true });
+    root.append(
+      el("div", { id: "tour-shade", class: "tour-shade" }),
+      el("div", { id: "tour-hole", class: "tour-hole" }),
+      el("div", { id: "tour-card", class: "tour-card", role: "dialog", "aria-modal": "true", "aria-labelledby": "tour-title" }, [
+        el("p", { id: "tour-page", class: "tour-page" }),
+        el("h2", { id: "tour-title" }),
+        el("p", { id: "tour-body" }),
+        el("div", { class: "tour-nav" }, [
+          el("button", { type: "button", class: "ghost", id: "tour-back" }, ["قبلی"]),
+          el("button", { type: "button", class: "primary", id: "tour-next" }, ["بعدی"]),
+          el("button", { type: "button", class: "ghost", id: "tour-close" }, ["بستن"])
+        ])
+      ])
+    );
+    document.body.append(root);
+    document.getElementById("tour-back").addEventListener("click", () => moveTour(-1));
+    document.getElementById("tour-next").addEventListener("click", () => moveTour(1));
+    document.getElementById("tour-close").addEventListener("click", closeTour);
+    window.addEventListener("resize", () => { if (tourOpen) placeTour(); });
+    window.addEventListener("scroll", () => { if (tourOpen) placeTour(); }, true);
+  }
+  function startTour() {
+    buildTour();
+    try { localStorage.setItem("instore-tour-seen", "1"); } catch (err) { /* keep the tour usable */ }
+    tourList = tourSteps();
+    tourIndex = 0;
+    tourOpen = true;
+    document.getElementById("tour").hidden = false;
+    showTour();
+  }
+  function closeTour() {
+    tourOpen = false;
+    const root = document.getElementById("tour");
+    if (root) root.hidden = true;
+  }
+  function moveTour(delta) {
+    const next = tourIndex + delta;
+    if (next < 0) return;
+    if (next >= tourList.length) {
+      closeTour();
+      return;
+    }
+    tourIndex = next;
+    showTour();
+  }
+  function showTour() {
+    const step = tourList[tourIndex];
+    if (!step) {
+      closeTour();
+      return;
+    }
+    const pages = [];
+    tourList.forEach((item) => { if (pages.indexOf(item.page) < 0) pages.push(item.page); });
+    const pageNo = pages.indexOf(step.page) + 1;
+    document.getElementById("tour-page").textContent = "صفحهٔ " + pageNo + " از " + pages.length + " · " + step.page + " · " + (tourIndex + 1) + " از " + tourList.length;
+    document.getElementById("tour-title").textContent = step.title;
+    document.getElementById("tour-body").textContent = step.body;
+    document.getElementById("tour-back").disabled = tourIndex === 0;
+    document.getElementById("tour-next").textContent = tourIndex === tourList.length - 1 ? "تمام" : "بعدی";
+    placeTour();
+  }
+  function placeTour() {
+    const step = tourList[tourIndex];
+    const node = step ? document.querySelector(step.sel) : null;
+    const hole = document.getElementById("tour-hole");
+    const shade = document.getElementById("tour-shade");
+    const card = document.getElementById("tour-card");
+    if (!node || node.closest("[hidden]")) {
+      hole.hidden = true;
+      shade.style.clipPath = "";
+      card.style.top = "16px";
+      card.style.left = "16px";
+      return;
+    }
+    node.scrollIntoView({ block: "nearest", inline: "nearest" });
+    const rect = node.getBoundingClientRect();
+    const pad = 8;
+    const x = Math.max(8, rect.left - pad);
+    const y = Math.max(8, rect.top - pad);
+    const w = Math.min(window.innerWidth - x - 8, rect.width + pad * 2);
+    const h = Math.min(window.innerHeight - y - 8, rect.height + pad * 2);
+    hole.hidden = false;
+    hole.style.top = y + "px";
+    hole.style.left = x + "px";
+    hole.style.width = w + "px";
+    hole.style.height = h + "px";
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    shade.style.clipPath = "polygon(evenodd, 0px 0px, " + vw + "px 0px, " + vw + "px " + vh + "px, 0px " + vh + "px, 0px 0px, "
+      + x + "px " + y + "px, " + (x + w) + "px " + y + "px, " + (x + w) + "px " + (y + h) + "px, " + x + "px " + (y + h) + "px, " + x + "px " + y + "px)";
+    const cardWidth = Math.min(380, window.innerWidth - 24);
+    card.style.width = cardWidth + "px";
+    let top = y + h + 12;
+    if (top + 190 > window.innerHeight) top = Math.max(12, y - 200);
+    let left = x;
+    if (left + cardWidth > window.innerWidth - 12) left = window.innerWidth - cardWidth - 12;
+    if (left < 12) left = 12;
+    card.style.top = top + "px";
+    card.style.left = left + "px";
+  }
+  function maybeTour() {
+    let seen = "";
+    try { seen = localStorage.getItem("instore-tour-seen") || ""; } catch (err) { seen = "1"; }
+    if (!seen) startTour();
+  }
+  document.getElementById("run").addEventListener("click", runReview);
+  document.getElementById("help-toggle").addEventListener("click", startTour);
+  document.getElementById("help-inline").addEventListener("click", toggleHelp);
+  document.getElementById("prev").addEventListener("click", () => step(-1));
+  document.getElementById("next").addEventListener("click", () => step(1));
+  document.getElementById("page-prev").addEventListener("click", () => { page -= 1; paintTable(); });
+  document.getElementById("page-next").addEventListener("click", () => { page += 1; paintTable(); });
+  document.getElementById("web-only").addEventListener("change", (event) => {
+    webOnly = event.target.checked;
+    page = 0;
+    paintTable();
+  });
+  document.querySelectorAll(".chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      filter = chip.getAttribute("data-filter") || "all";
+      page = 0;
+      paintChips();
+      paintTable();
+    });
+  });
+  document.getElementById("search").addEventListener("input", (event) => {
+    query = event.target.value.trim().toLowerCase();
+    page = 0;
+    paintTable();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (tourOpen && event.key === "Escape") {
+      event.preventDefault();
+      closeTour();
+      return;
+    }
+    if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) {
+      event.preventDefault();
+      step(1);
+    }
+  });
+  window.addEventListener("beforeunload", persistNow);
+  globalThis.SheetWriter = {
+    wipeAndWrite, quoteSheet, splitValues, gvizToTable, ensureWidth, SOURCE_TABS, loadSources, applyState
+  };
+  function cellAt(row, index) {
+    const value = row && row[index];
+    return value == null ? "" : String(value);
+  }
+  function reportStatus(label) {
+    if (label === READY) return READY;
+    if (label === "فعال\u200cسازی با اسم جدید") return RENAME;
+    return MANUAL;
+  }
+  function reportItem(row) {
+    const url = cellAt(row, 3);
+    const fa = cellAt(row, 10) || cellAt(row, 1);
+    const en = cellAt(row, 11);
+    const status = reportStatus(cellAt(row, 7));
+    const pairs = [
+      [15, 16, "لینک"],
+      [17, 18, "کد ملی"],
+      [19, 20, "موبایل"],
+      [21, 22, "نام فارسی فروشگاه"],
+      [23, 24, "نام انگلیسی فروشگاه"],
+      [25, 26, "نام صاحب امتیاز"],
+      [27, 28, "نام خانوادگی صاحب امتیاز"],
+      [29, 30, "گواهی"],
+      [31, 32, "دسته"],
+      [33, 34, "زیردسته"]
+    ];
+    const fields = [];
+    for (const pair of pairs) {
+      const verdict = cellAt(row, pair[0]);
+      if (!verdict) continue;
+      fields.push({ name: pair[2], verdict: verdict, note: cellAt(row, pair[1]) });
+    }
+    const mode = Logic.classifyUrl(url);
+    return {
+      key: cellAt(row, 0) || url,
+      contract: cellAt(row, 0),
+      fa: fa,
+      en: en,
+      brand: cellAt(row, 1),
+      cat: cellAt(row, 2),
+      sub: "",
+      url: url,
+      branch: "",
+      owner_first: cellAt(row, 4),
+      owner_last: "",
+      owner_id: "",
+      owner_mobile: cellAt(row, 5),
+      mode: mode,
+      candidates: [],
+        review: {
+        status: status,
+        reviewed: Boolean(cellAt(row, 12).trim()),
+        reason: cellAt(row, 8),
+        fa: fa,
+        en: en,
+        socialFa: fa,
+        socialEn: en,
+        against: cellAt(row, 14),
+        fields: fields
+      }
+    };
+  }
+  function applyReport(payload) {
+    const rows = payload.rows || [];
+    items = rows.filter((row) => cellAt(row, 0)).map(reportItem);
+    let websiteCount = 0;
+    let socialCount = 0;
+    for (const item of items) {
+      if (item.mode === "website") websiteCount++;
+      else socialCount++;
+    }
+    meta = {
+      fromReport: true,
+      rawCount: items.length,
+      queueCount: items.length,
+      websiteCount: websiteCount,
+      socialModeCount: socialCount,
+      websiteWithOnline: payload.onlineMatches || 0,
+      websiteReady: payload.websiteReady || 0,
+      websiteRename: payload.websiteRename || 0,
+      websiteManual: payload.websiteManual || 0,
+      socialWithMatch: payload.ready || 0
+    };
+    loadDecisions();
+    let found = items.findIndex((item) => item.key === sessionStorage.getItem(KEY_INDEX));
+    idx = found >= 0 ? found : 0;
+    page = 0;
+    showError("");
+    paintCards();
+    paintChips();
+    paintTable();
+    renderView();
+    setStatus(statusText());
+  }
+  async function loadReport() {
+    const res = await fetch("/report", { cache: "no-store", headers: { "x-instore-request": "1" } });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok || !data.rows) throw new Error((data && data.error) || "پنج تب گزارش خوانده نشد.");
+    applyReport(data);
+    return data;
+  }
+  let loginButtonRendered = false;
+  async function showLogin(message) {
+    document.body.classList.add("signed-out");
+    const screen = document.getElementById("auth-screen");
+    const status = document.getElementById("auth-message");
+    const button = document.getElementById("google-signin");
+    screen.hidden = false;
+    status.textContent = message || "برای ورود از حساب Google استفاده کنید.";
+    if (!GOOGLE_CLIENT_ID) {
+      status.textContent = "ورود هنوز روی میزبان تنظیم نشده است.";
+      return;
+    }
+    if (loginButtonRendered) return;
+    try {
+      await loadGis();
+      google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: async (response) => {
+          status.textContent = "در حال بررسی دسترسی…";
+          try {
+            const result = await fetch("/auth/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ credential: response.credential }),
+              cache: "no-store",
+            });
+            const data = await result.json().catch(() => ({}));
+            if (!result.ok || !data.ok) throw new Error(data.error || "ورود انجام نشد.");
+            window.location.reload();
+          } catch (error) {
+            status.textContent = error && error.message ? error.message : "ورود انجام نشد.";
+          }
+        },
+        auto_select: false,
+        cancel_on_tap_outside: true,
+      });
+      google.accounts.id.renderButton(button, { theme: "outline", size: "large", shape: "rectangular", text: "signin_with", locale: "fa" });
+      loginButtonRendered = true;
+    } catch (error) {
+      status.textContent = error && error.message ? error.message : "ورود Google بار نشد. دوباره صفحه را باز کنید.";
+    }
+  }
+  async function boot() {
+    running = true;
+    try { showLastReview(localStorage.getItem(LAST_REVIEW_KEY)); } catch { showLastReview(""); }
+    document.getElementById("run").disabled = true;
+    setStatus("در حال خواندن پنج تب گزارش…");
+    try {
+      const session = await fetch("/auth/session", { cache: "no-store" });
+      if (!session.ok) {
+        await showLogin();
+        return;
+      }
+      document.body.classList.remove("signed-out");
+      document.getElementById("auth-screen").hidden = true;
+      document.getElementById("logout").hidden = false;
+      await loadReport();
+    } catch (err) {
+      if (!document.body.classList.contains("signed-out")) {
+        paintTable();
+        setStatus("پنج تب گزارش هنوز روی صفحه نیست.");
+        showError(err && err.message ? err.message : "خواندن شیت ناموفق بود.");
+      } else {
+        await showLogin("ورود انجام نشد. دوباره تلاش کنید.");
+      }
+    } finally {
+      running = false;
+      document.getElementById("run").disabled = false;
+      if (!document.body.classList.contains("signed-out")) maybeTour();
+    }
+  }
+  document.getElementById("logout").addEventListener("click", async () => {
+    await fetch("/auth/logout", { method: "POST", cache: "no-store" }).catch(() => {});
+    window.location.reload();
+  });
+  if (!Logic) showError("منطق صفحه بارگذاری نشد.");
+  else boot();
+})();
+</script>
+</body>
+</html>
