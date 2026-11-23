@@ -391,9 +391,6 @@
         <li>آماده فعال‌سازی فقط وقتی ثبت می‌شود که همهٔ موردها جور باشد، هیچ موردی بررسی‌نشده نماند، و مرجع دقیق پر باشد.</li>
         <li>دکمهٔ آبی هر پنج تب خروجی را سلول‌به‌سلول پاک می‌کند و از اول می‌نویسد. چیزی به ته جدول اضافه نمی‌شود. New Flow و online و social، و تب‌های گزارش، لیست بررسی حضوری، صفحات بررسی و راهنما پاک نمی‌شوند.</li>
       </ul>
-      <div class="file-actions">
-        <button type="button" class="ghost" id="clear-all">پاک کردن تصمیم‌های این مرورگر</button>
-      </div>
     </div>
     <div class="table-wrap">
       <table data-testid="queue-table">
@@ -2389,17 +2386,6 @@
     query = event.target.value.trim().toLowerCase();
     page = 0;
     paintTable();
-  });
-  document.getElementById("clear-all").addEventListener("click", () => {
-    if (!confirm("همهٔ تصمیم‌های ذخیره‌شده در این مرورگر پاک شود؟ شیت عوض نمی‌شود.")) return;
-    decisions = {};
-    persistNow();
-    if (items.length) {
-      paintCards();
-      paintTable();
-      renderView();
-      setStatus(statusText());
-    }
   });
   document.addEventListener("keydown", (event) => {
     if (tourOpen && event.key === "Escape") {
