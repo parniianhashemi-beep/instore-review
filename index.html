@@ -9,7 +9,7 @@
   :root {
     --ink: #1c2430;
     --muted: #667085;
-    --page: #eef3f9;
+    --page: #f7f8fa;
     --card: #fff;
     --line: #e4ebf3;
     --blue: #1a73e8;
@@ -63,8 +63,11 @@
     padding: 8px 10px 8px;
     min-height: 64px;
   }
-  .card.ok { border-top-color: var(--green); }
-  .card.warn { border-top-color: var(--orange); }
+  .card.ok { border-top-color: #b7e0c4; background: #e7f6ec; }
+  .card.warn { border-top-color: #ead98a; background: #fff6d6; }
+  #card-box-done { border-top-color: #b9d4ef; background: #e7f1fb; }
+  #chip-rename { background: #fff0e0; border-color: #f0d2b0; }
+  #chip-rename.on { background: #ffe4c7; border-color: #e8c09a; color: var(--ink); }
   .card .k { margin: 0; color: var(--muted); font-size: 12px; }
   .card .num {
     margin: 6px 0 0;
@@ -142,6 +145,10 @@
     padding: 6px 14px;
   }
   button.primary:hover { background: var(--blue-dark); }
+  #run { background: #1b2a4a; border-color: #1b2a4a; color: #fff; }
+  #run:hover { background: #152238; }
+  #save-store { background: #d8f3e2; border-color: #b7e4c7; color: var(--ink); }
+  #save-store:hover { background: #c8efd4; }
   button:disabled { opacity: 0.55; cursor: default; }
   .banner {
     background: var(--pink);
@@ -221,9 +228,9 @@
     background: #f3efe8;
     font-size: 12px;
   }
-  .tag.ok { background: var(--ok-bg); color: var(--green); }
-  .tag.rename { background: var(--unk-bg); color: var(--unk); }
-  .tag.manual { background: #f3efe8; color: var(--ink); }
+  .tag.ok { background: #e7f6ec; color: var(--ink); }
+  .tag.rename { background: #fff0e0; color: var(--ink); }
+  .tag.manual { background: #fff6d6; color: var(--ink); }
   .why-box { background: #f8fafc; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; margin: 0 0 10px; font-size: 13px; }
   .why-box p { margin: 0 0 6px; }
   .verdict-list { margin: 0 0 12px; }
@@ -270,9 +277,9 @@
   .decisions label, .lbl { display: flex; gap: 8px; align-items: center; }
   .lbl { flex-direction: column; align-items: stretch; margin: 8px 0; }
   .pill { display: inline-block; border-radius: 999px; padding: 4px 10px; margin: 6px 0; background: #f3efe8; }
-  .pill.ok { background: var(--ok-bg); color: var(--green); }
-  .pill.rename { background: var(--unk-bg); color: var(--unk); }
-  .pill.manual { background: #f3efe8; }
+  .pill.ok { background: #e7f6ec; color: var(--ink); }
+  .pill.rename { background: #fff0e0; color: var(--ink); }
+  .pill.manual { background: #fff6d6; color: var(--ink); }
   #blockers { margin: 4px 0 8px; padding-right: 1.2rem; }
   #blockers:empty { display: none; }
   #toast {
