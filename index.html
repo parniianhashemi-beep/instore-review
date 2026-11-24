@@ -62,7 +62,9 @@
   .brand-title h1 { color: #123b67; }
   h1 { margin: 0; font-size: 1.15rem; font-weight: 700; }
   .sub { margin: 4px 0 0; color: var(--muted); max-width: 46rem; font-size: 0.86rem; }
+  .head-tools { display: flex; align-items: center; gap: 16px; direction: ltr; }
   .head-actions { display: flex; gap: 8px; flex: none; }
+  .head-tools .head-actions { direction: rtl; }
   .wrap { padding: 12px 0 32px; }
   .cards {
     display: grid;
@@ -382,11 +384,12 @@
   }
   @media (max-width: 640px) {
     .cards, .action { display: block; }
-    .head-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "title logo" "actions actions"; align-items: center; gap: 8px 12px; }
+    .head-inner { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "title" "tools"; align-items: center; gap: 8px; }
     .brand-title { grid-area: title; }
-    .brand-logo-frame { grid-area: logo; width: 88px; height: 56px; }
+    .head-tools { grid-area: tools; justify-content: space-between; gap: 8px; width: 100%; }
+    .brand-logo-frame { width: 76px; height: 49px; }
     .brand-title h1 { font-size: 1rem; }
-    .head-actions { grid-area: actions; margin-top: 4px; }
+    .head-actions { flex-wrap: wrap; justify-content: flex-start; }
     .action-buttons { margin-top: 10px; }
     .field { flex-wrap: wrap; }
   }
@@ -404,12 +407,14 @@
 <header>
   <div class="head-inner">
     <div class="brand-title"><h1>بررسی فعال‌سازی حضوری</h1></div>
-    <div class="head-actions">
-      <button type="button" class="ghost" id="help-toggle">راهنما</button>
-      <a class="ghost" id="open-sheet" href="https://docs.google.com/spreadsheets/d/1YF81MqW8l3GKwwQCj74c8HfaBDEaN6hpOgGXgmtqA6I/edit" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">باز کردن شیت گزارش</a>
-      <button type="button" class="ghost" id="logout" hidden>خروج</button>
+    <div class="head-tools">
+      <div class="brand-logo-frame"><img class="brand-logo" src="/snapp-pay-logo-header.png" alt="لوگوی اسنپ‌پی"></div>
+      <div class="head-actions">
+        <button type="button" class="ghost" id="help-toggle">راهنما</button>
+        <a class="ghost" id="open-sheet" href="https://docs.google.com/spreadsheets/d/1YF81MqW8l3GKwwQCj74c8HfaBDEaN6hpOgGXgmtqA6I/edit" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">باز کردن شیت گزارش</a>
+        <button type="button" class="ghost" id="logout" hidden>خروج</button>
+      </div>
     </div>
-    <div class="brand-logo-frame"><img class="brand-logo" src="/snapp-pay-logo-header.png" alt="لوگوی اسنپ‌پی"></div>
   </div>
 </header>
 <div class="wrap">
