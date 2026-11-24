@@ -9,11 +9,12 @@
   :root {
     --ink: #1c2430;
     --muted: #667085;
-    --page: #f7f8fa;
+    --page: #f5f9ff;
     --card: #fff;
     --line: #e4ebf3;
-    --blue: #1a73e8;
-    --blue-dark: #1558b0;
+    --blue: #008cf5;
+    --blue-dark: #006fcb;
+    --blue-soft: #eaf5ff;
     --green: #1f9d55;
     --orange: #e07a2f;
     --pink: #fde8ec;
@@ -44,15 +45,20 @@
   .auth-card p { color: var(--muted); }
   #google-signin { min-height: 42px; }
   #auth-message { color: var(--pink-ink); min-height: 1.5em; }
-  header { background: #fff; border-bottom: 1px solid var(--line); }
+  header { background: #fff; border-top: 4px solid var(--blue); border-bottom: 1px solid var(--line); }
   .head-inner, .wrap { width: min(1180px, calc(100% - 28px)); margin: 0 auto; }
   .head-inner {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
-    padding: 12px 0 10px;
+    padding: 8px 0;
   }
+  .brand-lockup { display: flex; align-items: center; gap: 14px; min-width: 0; }
+  .brand-logo-frame { width: 150px; height: 88px; flex: none; overflow: visible; background: #fff; }
+  .brand-logo { display: block; width: 150px; height: 88px; object-fit: contain; object-position: center; }
+  .brand-title { min-width: 0; }
+  .brand-title h1 { color: #123b67; }
   h1 { margin: 0; font-size: 1.15rem; font-weight: 700; }
   .sub { margin: 4px 0 0; color: var(--muted); max-width: 46rem; font-size: 0.86rem; }
   .head-actions { display: flex; gap: 8px; flex: none; }
@@ -60,7 +66,7 @@
   .cards {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 8px;
+    gap: 10px;
   }
   .card {
     background: var(--card);
@@ -69,12 +75,11 @@
     border-radius: 12px;
     padding: 8px 10px 8px;
     min-height: 64px;
+    box-shadow: 0 2px 8px rgba(23, 43, 77, 0.035);
   }
   .card.ok { border-top-color: #b7e0c4; background: #e7f6ec; }
   .card.warn { border-top-color: #ead98a; background: #fff6d6; }
   #card-box-rename { border-top-color: #a855f7; background: #f5edff; }
-  #chip-rename { background: #f5edff; border-color: #d8b4fe; color: #6b21a8; }
-  #chip-rename.on { background: #e9d5ff; border-color: #a855f7; color: #581c87; }
   .card .k { margin: 0; color: var(--muted); font-size: 12px; }
   .card .num {
     margin: 6px 0 0;
@@ -91,7 +96,21 @@
     flex-wrap: wrap;
     margin: 16px 0 12px;
   }
-  .status-line { margin: 0; color: var(--muted); font-size: 12px; max-width: 38rem; }
+  .status-line {
+    flex: 1 1 54%;
+    max-width: 56rem;
+    margin: 0;
+    padding: 10px 12px;
+    color: #344054;
+    font-size: 12px;
+    line-height: 1.8;
+    white-space: pre-line;
+    background: #fff;
+    border: 1px solid #d6e8fa;
+    border-radius: 11px;
+    box-shadow: 0 2px 10px rgba(0, 95, 180, 0.04);
+  }
+  .reviewed-banner { margin: 8px 0; padding: 9px 12px; color: #07599b; background: var(--blue-soft); border: 1px solid #b7dcfb; border-radius: 10px; }
   .last-update { margin: 6px 0 0; color: var(--muted); font-size: 12px; }
   .download {
     flex: 1 1 100%;
@@ -152,7 +171,9 @@
     background: #fff;
     color: var(--ink);
     font-size: 13px;
+    transition: border-color 120ms ease, background-color 120ms ease, transform 120ms ease;
   }
+  a.ghost:hover, button.ghost:hover:not(:disabled) { border-color: #9bcdf7; background: var(--blue-soft); }
   button.primary {
     background: var(--blue);
     border-color: var(--blue);
@@ -162,10 +183,10 @@
     padding: 6px 14px;
   }
   button.primary:hover { background: var(--blue-dark); }
-  #run { background: #1b2a4a; border-color: #1b2a4a; color: #fff; }
-  #run:hover { background: #152238; }
-  #save-store { background: #d8f3e2; border-color: #b7e4c7; color: var(--ink); }
-  #save-store:hover { background: #c8efd4; }
+  #run { background: var(--blue); border-color: var(--blue); color: #fff; }
+  #run:hover { background: var(--blue-dark); }
+  #save-store { background: var(--blue-soft); border-color: #b7dcfb; color: #07599b; }
+  #save-store:hover { background: #d9edff; }
   button:disabled { opacity: 0.55; cursor: default; }
   .banner {
     background: var(--pink);
@@ -177,9 +198,10 @@
   }
   .panel {
     background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 10px;
+    border: 1px solid #d9e8f8;
+    border-radius: 14px;
+    padding: 12px;
+    box-shadow: 0 5px 20px rgba(0, 95, 180, 0.045);
   }
   .results-head, .filters, .row-nav, .pager {
     display: flex;
@@ -288,6 +310,9 @@
   .pair.wide { grid-column: 1 / -1; }
   .pair dt { width: 7.2rem; flex: none; color: var(--muted); margin: 0; }
   .pair dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+  .source-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 20px; margin-top: 10px; }
+  .source-fields .pair { align-items: flex-start; }
+  .source-fields .pair dt { width: auto; min-width: 8rem; }
   .mode { border-radius: 10px; padding: 10px 12px; margin: 0 0 10px; background: #e7f1f6; color: #1d4e68; }
   .mode.social { background: #fff4e2; color: #6d4d12; }
   .actions, .file-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 12px; }
@@ -312,6 +337,7 @@
   .pill.ok { background: #e7f6ec; color: var(--ink); }
   .pill.rename { background: #f5edff; color: #6b21a8; }
   .pill.manual { background: #fff6d6; color: var(--ink); }
+  #toast.toast-success { background: #176b35; border: 1px solid #0f5a2b; }
   #blockers { margin: 4px 0 8px; padding-right: 1.2rem; }
   #blockers:empty { display: none; }
   #toast {
@@ -351,9 +377,12 @@
   @media (max-width: 980px) {
     .cards { grid-template-columns: 1fr 1fr; }
     .meta { grid-template-columns: 1fr; }
+    .source-fields { grid-template-columns: 1fr; }
   }
   @media (max-width: 640px) {
     .cards, .action, .head-inner { display: block; }
+    .brand-logo-frame { width: 112px; height: 66px; }
+    .brand-logo { width: 112px; height: 66px; }
     .head-actions, .action-buttons { margin-top: 10px; }
     .field { flex-wrap: wrap; }
   }
@@ -370,8 +399,9 @@
 </section>
 <header>
   <div class="head-inner">
-    <div>
-      <h1>بررسی فعال‌سازی حضوری</h1>
+    <div class="brand-lockup">
+      <div class="brand-logo-frame"><img class="brand-logo" src="/snapp-pay-logo-header.png" alt="لوگوی اسنپ‌پی"></div>
+      <div class="brand-title"><h1>بررسی فعال‌سازی حضوری</h1></div>
     </div>
     <div class="head-actions">
       <button type="button" class="ghost" id="help-toggle">راهنما</button>
@@ -417,28 +447,35 @@
       <button type="button" class="chip" id="chip-rename" data-filter="rename">نیاز به تغییر نام</button>
       <button type="button" class="chip" id="chip-manual" data-filter="manual">دستی</button>
       <input id="search" type="search" placeholder="جست‌وجو، شناسه یا اسم" autocomplete="off" data-testid="search">
+      <label class="mode-filter" for="review-filter">وضعیت رسیدگی
+        <select id="review-filter" data-testid="review-filter" aria-label="فیلتر وضعیت رسیدگی">
+          <option value="active" selected>در حال بررسی</option>
+          <option value="reviewed">بررسی‌شده</option>
+          <option value="all">همه</option>
+        </select>
+      </label>
       <label class="mode-filter" for="mode-filter">نوع فروشگاه
         <select id="mode-filter" data-testid="mode-filter" aria-label="فیلتر بر اساس نوع فروشگاه">
-          <option value="online">online</option>
-          <option value="social">social</option>
-          <option value="both" selected>both</option>
+          <option value="online">آنلاین</option>
+          <option value="social">سوشال</option>
+          <option value="both" selected>هر دو</option>
         </select>
       </label>
     </div>
     <div id="rules" hidden>
-      <p>آنلاین و سوشال جداگانه بررسی می‌شوند. در سوشال موبایل بررسی نمی‌شود؛ لینک یا کد ملی نامنطبق، یا نام کاملاً متفاوت به تغییر نام می‌رود. اختلاف جزئی نام یکسان حساب می‌شود و شباهت مبهم بررسی دستی می‌خواهد. در آنلاین، نبودن URL در تب online به‌تنهایی مانع نیست؛ نام مالک، محصولات، شهر و گواهی بررسی می‌شوند. هر مورد ناخوانا در دلیل ردیف با عبارت «بررسی نشد» ثبت می‌شود.</p>
+      <p>آنلاین و سوشال جداگانه بررسی می‌شوند. در سوشال موبایل بررسی نمی‌شود؛ لینک یا کد ملی نامنطبق، یا نام کاملاً متفاوت به تغییر نام می‌رود. اختلاف جزئی نام یکسان حساب می‌شود و شباهت مبهم بررسی دستی می‌خواهد. نبودن URL در تب آنلاین به‌تنهایی مانع نیست؛ نام مالک، محصولات، شهر و گواهی بررسی می‌شوند. هر مورد ناخوانا در دلیل ردیف با عبارت «بررسی نشد» ثبت می‌شود.</p>
       <p>آنلاین: اختلاف قطعی نام صاحب امتیاز، نام فروشگاه یا گروه کالایی → تغییر نام؛ شهرِ تنها مورد نامنطبق، سایت/گواهی ناخوانا، تطبیق مبهم یا شباهت مشکوک محصولات → بررسی دستی. پوشاک زنانه در برابر مردانه تطبیق قطعی نیست.</p>
       <ul>
         <li>نام اصلی جدا می‌ماند. نام پیشنهادی تغییر نام از زیر‌دسته و نام فروشگاه حضوری ساخته می‌شود؛ ستون‌های قرمز J و M در New Flow تکراری‌اند و پیشنهاد جایگزین می‌گیرند.</li>
-        <li>نام قابل فعال‌سازی در ستون‌های جداست: در سوشال از ردیف social، در آنلاین از ردیف online؛ اگر آنلاین پیدا نشود همان عبارت «در تب online یافت نشد» نوشته می‌شود.</li>
+        <li>نام قابل فعال‌سازی در ستون‌های جداست: در سوشال از ردیف سوشال، در آنلاین از ردیف آنلاین؛ اگر آنلاین پیدا نشود همان عبارت «در تب آنلاین یافت نشد» نوشته می‌شود.</li>
         <li>برنامه فروشگاه را فعال نمی‌کند و نام را خودش عوض نمی‌کند.</li>
         <li>صف: ستون N دقیقاً ONLINE SITE EXISTS - DUPLICATE NAME KEPT و ستون‌های P و Z خالی.</li>
-        <li>وصل شدن به online و social فقط با URL ستون O است، نه با کد قرارداد.</li>
-        <li>سایت، از جمله دامنهٔ .app و .in: باز کردن سایت، بررسی اینماد و تطبیق با تب online.</li>
+        <li>وصل شدن به تب‌های آنلاین و سوشال فقط با URL ستون O است، نه با کد قرارداد.</li>
+        <li>سایت، از جمله دامنهٔ .app و .in: باز کردن سایت، بررسی اینماد و تطبیق با تب آنلاین.</li>
         <li>بقیه (اینستاگرام، تلگرام، بله، لینک خالی پلتفرم و مانند آن): فقط تب social.</li>
-        <li>نبودن در online رد آنلاین‌بودن نیست و نتیجه‌گیری منفی مجاز نیست.</li>
+        <li>نبودن در تب آنلاین رد آنلاین‌بودن نیست و نتیجه‌گیری منفی مجاز نیست.</li>
         <li>آماده فعال‌سازی فقط وقتی ثبت می‌شود که معیارهای لازم جور باشند؛ اختلاف شهر به‌تنهایی و موارد مبهم به بررسی دستی می‌روند.</li>
-        <li>دکمهٔ آبی هر پنج تب خروجی را سلول‌به‌سلول پاک می‌کند و از اول می‌نویسد. چیزی به ته جدول اضافه نمی‌شود. New Flow و online و social، و تب‌های گزارش، لیست بررسی حضوری، صفحات بررسی و راهنما پاک نمی‌شوند.</li>
+        <li>دکمهٔ آبی هر پنج تب خروجی را سلول‌به‌سلول پاک می‌کند و از اول می‌نویسد. چیزی به ته جدول اضافه نمی‌شود. New Flow، آنلاین و سوشال، و تب‌های گزارش، لیست بررسی حضوری، صفحات بررسی و راهنما پاک نمی‌شوند.</li>
       </ul>
     </div>
     <div class="table-wrap">
@@ -473,7 +510,7 @@
     <article id="view" data-testid="detail"></article>
   </section>
 </div>
-<div id="toast" hidden></div>
+<div id="toast" role="status" aria-live="polite" hidden></div>
 <noscript>برای استفاده از این صفحه جاوااسکریپت لازم است.</noscript>
 <script id="review-logic">
 (function () {
@@ -895,7 +932,7 @@
     }
     const online = onHeaders.length ? rowsAsDicts(onHeaders, onBody) : [];
     const social = soHeaders.length ? rowsAsDicts(soHeaders, soBody) : [];
-    if (!online.length) throw new Error("online خالی است یا خوانده نشد.");
+    if (!online.length) throw new Error("تب آنلاین خالی است یا خوانده نشد.");
     if (!social.length) throw new Error("social خالی است یا خوانده نشد.");
     if (!queue.length) {
       throw new Error("هیچ ردیفی پس از فیلتر New Flow باقی نماند (خام=" + rows.length + "، نگاشت=" + mode + "). شرط: ستون N دقیقاً «" + FILTER_N + "» و ستون‌های P و Z خالی.");
@@ -1050,11 +1087,11 @@
   function websiteOnlyFields() {
     const unread = "خوانده نشد، پس جور بودن ساخته نشد.";
     return [
-      oneField("owner_first", "نام صاحب امتیاز", UNK, "نام با صاحب امتیاز اینماد یا دی‌نماد مقایسه می‌شود، نه با تب online. " + unread),
-      oneField("owner_last", "نام خانوادگی صاحب امتیاز", UNK, "نام خانوادگی با صاحب امتیاز اینماد یا دی‌نماد مقایسه می‌شود، نه با تب online. " + unread),
+      oneField("owner_first", "نام صاحب امتیاز", UNK, "نام با صاحب امتیاز اینماد یا دی‌نماد مقایسه می‌شود، نه با تب آنلاین. " + unread),
+      oneField("owner_last", "نام خانوادگی صاحب امتیاز", UNK, "نام خانوادگی با صاحب امتیاز اینماد یا دی‌نماد مقایسه می‌شود، نه با تب آنلاین. " + unread),
       oneField("certificate", "گواهی", UNK, "اینماد گواهی پیش‌فرض است. اگر سایت دی‌نماد دیجی‌کالا داشته باشد همان به‌جای اینماد بررسی می‌شود و هر دو لازم نیست. هیچ‌کدام خوانده نشد."),
-      oneField("category", "دسته", UNK, "دسته باید با دستهٔ خود سایت مقایسه شود، نه با تب online. دستهٔ سایت خوانده نشد."),
-      oneField("subcategory", "زیردسته", UNK, "زیردسته باید با دستهٔ خود سایت مقایسه شود، نه با تب online. دستهٔ سایت خوانده نشد.")
+      oneField("category", "دسته", UNK, "دسته باید با دستهٔ خود سایت مقایسه شود، نه با تب آنلاین. دستهٔ سایت خوانده نشد."),
+      oneField("subcategory", "زیردسته", UNK, "زیردسته باید با دستهٔ خود سایت مقایسه شود، نه با تب آنلاین. دستهٔ سایت خوانده نشد.")
     ];
   }
   function skipWebsiteFields() {
@@ -1077,7 +1114,7 @@
   }
   function reviewRow(item) {
     const website = item.mode === "website";
-    const tab = website ? "online" : "social";
+    const tab = website ? "آنلاین" : "social";
     const hits = item.candidates || [];
     let hit = hits.length === 1 ? hits[0] : null;
     if (!hit && !website && hits.length > 1) {
@@ -1118,7 +1155,7 @@
       let reason;
       if (!url) reason = "بررسی دستی شد چون این درخواست لینک ندارد و در شیت فروشنده‌ای برایش پیدا نشد. برای مطمئن شدن، لینک فروشگاه را از پرونده پیدا کنید و نام فارسی و انگلیسی روی آن را با همین درخواست مقایسه کنید.";
       else if (bare) reason = "بررسی دستی شد چون لینک فقط آدرس شبکهٔ اجتماعی است و نام صفحه ندارد، پس با تب social مقایسه نشد. برای مطمئن شدن، لینک کامل همان صفحه را باز کنید و ببینید نام صفحه با نام فارسی و انگلیسی درخواست یکی است یا نه.";
-      else if (!hits.length && website) reason = "بررسی دستی شد چون این لینک سایت است ولی در تب online فروشنده‌ای با همین آدرس پیدا نشد. برای مطمئن شدن، خود سایت را باز کنید، اینماد را نگاه کنید، و نام روی سایت را با نام فارسی و انگلیسی درخواست مقایسه کنید. نبودن در تب online به‌تنهایی یعنی فروشگاه آنلاین ندارد نیست.";
+      else if (!hits.length && website) reason = "بررسی دستی شد چون این لینک سایت است ولی در تب آنلاین فروشنده‌ای با همین آدرس پیدا نشد. برای مطمئن شدن، خود سایت را باز کنید، اینماد را نگاه کنید، و نام روی سایت را با نام فارسی و انگلیسی درخواست مقایسه کنید. نبودن در تب آنلاین به‌تنهایی یعنی فروشگاه آنلاین ندارد نیست.";
       else if (!hits.length) reason = "بررسی دستی شد چون این لینک شبکهٔ اجتماعی است ولی در تب social صفحه‌ای با همین لینک پیدا نشد. برای مطمئن شدن، لینک را باز کنید و نام صفحه را با نام فارسی و انگلیسی درخواست مقایسه کنید.";
       else reason = "بررسی دستی شد چون با این لینک " + hits.length + " فروشنده در تب " + tab + " پیدا شد و معلوم نیست کدام‌یک همین درخواست است. برای مطمئن شدن، همان ردیف‌ها را ببینید و فقط فروشنده‌ای را انتخاب کنید که نام فارسی و انگلیسی‌اش با این درخواست یکی است.";
       if (website) {
@@ -1162,7 +1199,7 @@
           fa: proposedFa,
           en: proposedEn,
           reason: "نام صاحب امتیاز و دستهٔ سایت جور است و فقط نام فارسی یا انگلیسی فرق دارد. اسم پیشنهادی همان نام نهایی شیت است.",
-          against: "تب online",
+          against: "تب آنلاین",
           fields
         };
       }
@@ -1173,7 +1210,7 @@
       return { status: statusOf("manual"), fa: shownFa, en: shownEn, reason: manualFromFields(blocks), against: "", fields };
     }
     let reason = website
-      ? "آماده فعال‌سازی است چون با تب online، اینماد یا دی‌نماد، و دستهٔ سایت جور شد."
+      ? "آماده فعال‌سازی است چون با تب آنلاین، اینماد یا دی‌نماد، و دستهٔ سایت جور شد."
       : "آماده فعال‌سازی است چون با تب social جور شد. لینک و کد ملی یکی است.";
     const phone = fields.filter((row) => row.key === "mobile")[0];
     if (nidOk && phone && phone.verdict === NO) reason += " " + phone.note;
@@ -1182,7 +1219,7 @@
       fa: tabFa || missingName,
       en: tabEn || missingName,
       reason,
-      against: website ? "تب online و اینماد" : "تب social",
+      against: website ? "تب آنلاین و اینماد" : "تب social",
       fields
     };
   }
@@ -1239,8 +1276,8 @@
     for (const item of items) {
       const result = effective(decisions && decisions[item.key], item);
       const sources = item.mode === "website"
-        ? "سایت، اینماد، تطبیق رکوردهای online با URL ستون O (اپراتور)"
-        : "تب social با site_link و Call Back (اپراتور)؛ سایت/اینماد/online خارج از محدوده";
+        ? "سایت، اینماد، تطبیق رکوردهای آنلاین با URL ستون O (اپراتور)"
+        : "تب social با site_link و Call Back (اپراتور)؛ سایت/اینماد/آنلاین خارج از محدوده";
       const base = {};
       for (const [key, value] of Object.entries(item.raw || {})) {
         if (!String(key).startsWith("__")) base[key] = value;
@@ -1446,11 +1483,13 @@
   let detailOpen = false;
   let page = 0;
   let filter = "all";
+  let reviewFilter = "active";
   let query = "";
   let modeFilter = "both";
   let decisions = {};
   let persistTimer = 0;
   let running = false;
+  let rowRechecking = false;
   let accessToken = "";
   let gvizSeq = 0;
 
@@ -1482,9 +1521,10 @@
     box.hidden = !text;
     box.textContent = text || "";
   }
-  function showToast(text) {
+  function showToast(text, success) {
     const box = document.getElementById("toast");
     box.hidden = false;
+    box.classList.toggle("toast-success", Boolean(success));
     box.textContent = text;
     clearTimeout(showToast._t);
     showToast._t = setTimeout(() => { box.hidden = true; }, 5000);
@@ -1514,8 +1554,10 @@
       status: STATUSES.includes(review.status) ? review.status : MANUAL,
       fa: review.status === RENAME ? (review.fa || "") : (review.fa || item.fa || ""),
       en: review.status === RENAME ? (review.en || "") : (review.en || item.en || ""),
-      ref: review.against || "",
-      reason: review.reason || "",
+      ref: "",
+      reason: "",
+      refEdited: false,
+      reasonEdited: false,
       touched: false
     };
   }
@@ -1534,6 +1576,8 @@
       en: enEmpty ? (raw.touched ? "" : (item.review && item.review.status === RENAME ? ((item.review && item.review.en) || "") : ((item.review && item.review.en) || item.en || ""))) : String(raw.en),
       ref: String(raw.ref || ""),
       reason: String(raw.reason || ""),
+      refEdited: !!raw.refEdited,
+      reasonEdited: !!raw.reasonEdited,
       touched: !!raw.touched
     };
   }
@@ -1560,10 +1604,9 @@
     if (!meta) return "در حال خواندن پنج تب گزارش. نوشتن فقط روی همان پنج تب است.";
     const c = tally();
     if (meta.fromReport) {
-      return "گزارش: آماده فعال‌سازی " + c.ready + " · نیاز به تغییر نام " + c.rename + " · بررسی دستی " + c.manual + ". سایت " + meta.websiteCount + " (آماده " + (meta.websiteReady || 0) + "، تغییر نام " + (meta.websiteRename || 0) + "، دستی " + (meta.websiteManual || 0) + ") · تطبیق کد ملی/موبایل/URL در online: " + (meta.websiteWithOnline || 0) + " · سوشال " + meta.socialModeCount + ".";
+      return "گزارش · " + items.length + " ردیف · در صف فعال: " + (items.length - c.reviewed) + " · بررسی‌شده: " + c.reviewed + "\nآمادهٔ فعال‌سازی: " + c.ready + "  ·  نیاز به تغییر نام: " + c.rename + "  ·  نیازمند بررسی دستی: " + c.manual + "\nسایت‌ها: " + meta.websiteCount + " (آماده " + (meta.websiteReady || 0) + "، تغییر نام " + (meta.websiteRename || 0) + "، دستی " + (meta.websiteManual || 0) + ")  ·  تطبیق در تب آنلاین: " + (meta.websiteWithOnline || 0) + "  ·  سوشال: " + meta.socialModeCount;
     }
-    const c2 = c;
-    return "خام " + meta.rawCount + " · صف " + meta.queueCount + " · سایت " + meta.websiteCount + " (تطبیق online " + meta.websiteWithOnline + ") · سوشال " + meta.socialModeCount + " (تطبیق " + meta.socialWithMatch + ") · نیاز به تغییر نام " + c2.rename;
+    return "خلاصهٔ گزارش · " + meta.rawCount + " ردیف ورودی، " + meta.queueCount + " ردیف در صف\nسایت‌ها: " + meta.websiteCount + " (تطبیق در تب آنلاین: " + meta.websiteWithOnline + ")  ·  سوشال: " + meta.socialModeCount + " (تطبیق: " + meta.socialWithMatch + ")  ·  نیاز به تغییر نام: " + c.rename;
   }
   function paintCards() {
     const dash = !meta;
@@ -1581,6 +1624,9 @@
       const status = (item.review && item.review.status) || MANUAL;
       if (modeFilter === "online" && item.mode !== "website") continue;
       if (modeFilter === "social" && item.mode !== "social") continue;
+      const isReviewed = Boolean(item.review && item.review.reviewed);
+      if (reviewFilter === "active" && isReviewed) continue;
+      if (reviewFilter === "reviewed" && !isReviewed) continue;
       if (filter === "ready" && status !== READY) continue;
       if (filter === "rename" && status !== RENAME) continue;
       if (filter === "manual" && status !== MANUAL) continue;
@@ -1615,7 +1661,12 @@
     const slice = vis.slice(page * PAGE, page * PAGE + PAGE);
     const nodes = [];
     if (!slice.length) {
-      nodes.push(el("tr", {}, [el("td", { colspan: "4" }, [items.length ? "ردیفی با این فیلتر نیست." : "هنوز نتیجه‌ای روی صفحه نیست."])]));
+      const emptyText = !items.length
+        ? "هنوز نتیجه‌ای روی صفحه نیست."
+        : reviewFilter === "active"
+          ? "صف بررسی فعال خالی است؛ از فیلتر «بررسی‌شده» برای دیدن ردیف‌های ثبت‌شده استفاده کنید."
+          : "ردیفی با این فیلتر نیست.";
+      nodes.push(el("tr", {}, [el("td", { colspan: "4" }, [emptyText])]));
     }
     for (const i of slice) {
       const item = items[i];
@@ -1765,17 +1816,33 @@
       for (const row of rows) wrap.append(verdictLine(row, review));
     }
     const section = el("section", { class: "review-section auto-review" }, [
-      el("h3", {}, ["۱. نتیجهٔ بررسی خودکار"]),
+      el("h3", {}, ["۱. خلاصهٔ بررسی خودکار"]),
       el("p", { class: "section-help" }, ["نتیجه و دلیل سامانه؛ برای دیدن ریزمعیارها بخش زیر را باز کنید."]),
       box
     ]);
     if (fieldRows.length) {
       section.append(el("details", { class: "review-evidence", "data-testid": "review-evidence" }, [
-        el("summary", {}, ["جزئیات بررسی خودکار (" + fieldRows.length + " معیار)"]),
+        el("summary", {}, ["جزئیات تطبیق معیارها (" + fieldRows.length + " مورد)"]),
         wrap
       ]));
     }
     return section;
+  }
+  function renderNewFlowDetails(item) {
+    const fields = Array.isArray(item.newFlowDetails) ? item.newFlowDetails : [];
+    if (!fields.length) return null;
+    const list = el("dl", { class: "source-fields" });
+    for (const field of fields) {
+      const label = String(field.label || "").trim() || ("ستون " + field.column);
+      list.append(el("div", { class: "pair" }, [
+        el("dt", {}, [label + " (" + field.column + ")"]),
+        el("dd", {}, [field.value])
+      ]));
+    }
+    return el("details", { class: "criteria-details", open: false, "data-testid": "new-flow-details" }, [
+      el("summary", {}, ["همهٔ اطلاعات New Flow (" + fields.length + " ستون دارای مقدار)"]),
+      list
+    ]);
   }
   function socialReady(review) {
     const against = String((review && review.against) || "");
@@ -1834,15 +1901,20 @@
     urlPair.querySelector("dd").setAttribute("data-testid", "url");
     grid.append(urlPair);
     nodes.push(grid);
+    const newFlowDetails = renderNewFlowDetails(item);
+    if (newFlowDetails) nodes.push(newFlowDetails);
     nodes.push(renderReview(item));
+    if (item.review && item.review.reviewed) {
+      nodes.push(el("p", { class: "reviewed-banner", role: "status" }, ["این ردیف بررسی و ثبت شده است؛ از فیلتر «بررسی‌شده» می‌توانی دوباره آن را باز کنی."]));
+    }
     nodes.push(el("p", { class: "mode" + (isWeb ? "" : " social"), "data-testid": "mode" }, [isWeb
-      ? "حالت ستون O: سایت. در محدوده: باز کردن سایت، بررسی اینماد و تطبیق URL یا دامنه با تب online."
+      ? "حالت ستون O: سایت. در محدوده: باز کردن سایت، بررسی اینماد و تطبیق URL یا دامنه با تب آنلاین."
       : "حالت ستون O: سوشال. فقط تطبیق site_link و Call Back در تب social بررسی می‌شود؛ سایت و اینماد خارج از محدوده است."
     ]));
     const actions = el("div", { class: "actions" });
     if (open) {
       actions.append(el("a", {
-        class: "primary", href: open, target: "_blank", rel: "noopener noreferrer", referrerpolicy: "no-referrer", "data-testid": "open-link"
+        class: "ghost", href: open, target: "_blank", rel: "noopener noreferrer", referrerpolicy: "no-referrer", "data-testid": "open-link"
       }, [isWeb ? "باز کردن سایت" : "باز کردن لینک"]));
     }
     let enamadMissing = false;
@@ -1860,21 +1932,14 @@
       }
     }
     actions.append(el("button", {
-      type: "button", class: "ghost",
-      onclick: () => {
-        delete decisions[item.key];
-        persistNow();
-        renderView();
-        paintCards();
-        paintTable();
-        setStatus(statusText());
-      }
-    }, ["پاک کردن این ردیف"]));
+      type: "button", class: "ghost", "data-testid": "recheck-row",
+      onclick: () => recheckCurrentRow()
+    }, ["بررسی دوبارهٔ این ردیف"]));
     nodes.push(actions);
     if (enamadMissing) {
       nodes.push(el("p", { class: "hint" }, ["این ردیف از گزارش قبلی است و لینک اختصاصی اینماد در آن ذخیره نشده؛ پس از اجرای دوبارهٔ بررسی سایت، اگر لینک پیدا شود دکمه فعال می‌شود."]));
     }
-    const criteria = el("details", { class: "criteria-details" });
+    const criteria = el("details", { class: "criteria-details", open: false });
     criteria.append(
       el("summary", {}, ["ارزیابی جداگانهٔ معیارها (اختیاری)"]),
       el("p", { class: "hint" }, ["این انتخاب‌ها فقط برای یادداشت شما در همین مرورگرند و نتیجهٔ خودکار یا شیت را تغییر نمی‌دهند."])
@@ -1942,15 +2007,14 @@
     decisionPanel.append(el("label", { class: "lbl" }, [
       "لینک یا ردیف مرجع تأییدشده (اختیاری)",
       el("input", {
-        type: "text", id: "ref", dir: "auto", value: d.ref, "data-testid": "ref",
-        placeholder: "فقط مرجعی را وارد کنید که خودتان تأیید کرده‌اید",
-        oninput: (event) => updateCurrent((next) => { next.ref = event.target.value; })
+        type: "text", id: "ref", dir: "auto", value: d.refEdited ? d.ref : "", "data-testid": "ref",
+        oninput: (event) => updateCurrent((next) => { next.ref = event.target.value; next.refEdited = true; })
       })
     ]));
     decisionPanel.append(el("p", { class: "hint" }, ["ذخیره، تصمیم و نام و دلیل همین فروشگاه را نگه می‌دارد و فقط همین ردیف را در پنج تب گزارش می‌نویسد."]));
     const reason = el("textarea", {
       id: "reason", "data-testid": "reason",
-      oninput: (event) => updateCurrent((next) => { next.reason = event.target.value; })
+      oninput: (event) => updateCurrent((next) => { next.reason = event.target.value; next.reasonEdited = true; })
     });
     decisionPanel.append(el("label", { class: "lbl" }, ["دلیل یا شواهد تصمیم", reason]));
     decisionPanel.append(el("button", {
@@ -1960,7 +2024,7 @@
     nodes.push(decisionPanel);
     detail.hidden = false;
     view.replaceChildren(...nodes);
-    reason.value = d.reason;
+    reason.value = d.reasonEdited ? d.reason : "";
     paintOutput();
     const visible = visibleIndices();
     const visiblePosition = visible.indexOf(idx);
@@ -2219,28 +2283,75 @@
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) throw new Error((data && data.error) || "ذخیره انجام نشد.");
-      decisions[item.key] = { checks: d.checks, status: status, fa: fa, en: en, ref: ref, reason: reason, touched: true };
+      decisions[item.key] = { checks: d.checks, status: status, fa: fa, en: en, ref: ref, reason: reason, reviewed: true, touched: true };
       persistNow();
       item.review = Object.assign({}, item.review, {
         status: status,
         fa: status === RENAME ? fa : (status === READY ? (item.review.activationFa || fa) : item.fa),
         en: status === RENAME ? en : (status === READY ? (item.review.activationEn || en) : item.en),
         reason: reason,
+        reviewed: true,
         against: ref || item.review.against,
         socialFa: item.review.socialFa,
         socialEn: item.review.socialEn,
         activationFa: item.review.activationFa,
         activationEn: item.review.activationEn
       });
+      const activeRows = visibleIndices();
+      if (!activeRows.includes(idx)) {
+        idx = activeRows[0] ?? -1;
+        detailOpen = false;
+        if (idx >= 0) sessionStorage.setItem(KEY_INDEX, items[idx].key);
+        else sessionStorage.removeItem(KEY_INDEX);
+      }
       paintCards();
       paintTable();
       renderView();
-      showToast("این فروشگاه ذخیره شد.");
+      paintPageMode();
+      showToast("تصمیم ثبت شد ✓ ردیف به فهرست «بررسی‌شده» منتقل شد. نتیجه: " + (data.status || status) + " · تب «" + (data.tab || "general") + "».", true);
     } catch (err) {
       showError(err && err.message ? err.message : "ذخیره انجام نشد.");
     } finally {
       const again = document.getElementById("save-store");
       if (again) again.disabled = false;
+    }
+  }
+  async function recheckCurrentRow() {
+    if (running || rowRechecking) return;
+    const item = items[idx];
+    if (!item) return;
+    rowRechecking = true;
+    const button = document.querySelector("[data-testid='recheck-row']");
+    const runButton = document.getElementById("run");
+    if (button) button.disabled = true;
+    if (runButton) runButton.disabled = true;
+    showError("");
+    setStatus("در حال بررسی دوبارهٔ همین ردیف " + item.contract + "…");
+    try {
+      const res = await fetch("/review/row", {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-instore-request": "1" },
+        body: JSON.stringify({ contract: item.contract })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) throw new Error((data && data.error) || "بررسی دوبارهٔ ردیف انجام نشد.");
+      const key = item.key;
+      delete decisions[key];
+      persistNow();
+      await loadReport();
+      const nextIndex = items.findIndex((next) => next.key === key || next.contract === item.contract);
+      if (nextIndex >= 0) select(nextIndex, true);
+      setStatus("بررسی ردیف کامل شد · نتیجه: " + data.status + ".");
+      showToast("بررسی دوباره کامل شد ✓ نتیجه: " + data.status, true);
+    } catch (err) {
+      showError(err && err.message ? err.message : "بررسی دوبارهٔ ردیف انجام نشد.");
+      if (meta) setStatus(statusText());
+    } finally {
+      rowRechecking = false;
+      const again = document.querySelector("[data-testid='recheck-row']");
+      if (again) again.disabled = false;
+      const runAgain = document.getElementById("run");
+      if (runAgain) runAgain.disabled = false;
     }
   }
   let reviewChecked = 0;
@@ -2255,6 +2366,10 @@
     const bar = document.getElementById("review-bar");
     const track = document.getElementById("review-track");
     if (!box || !rate || !left || !bar || !track) return;
+    if (stage === "complete") {
+      box.hidden = true;
+      return;
+    }
     box.hidden = false;
     const safeTotal = Math.max(0, total || 0);
     const safeChecked = Math.max(0, checked || 0);
@@ -2264,7 +2379,7 @@
     rate.textContent = safeChecked + " از " + safeTotal + " ردیف بررسی شده";
     left.textContent = stage === "writing"
       ? "در حال نوشتن نتایج · " + donePercent + "٪"
-      : (stage === "complete" ? "بررسی تمام شد · ۱۰۰٪" : donePercent + "٪ پیشرفت");
+      : donePercent + "٪ پیشرفت";
     bar.style.width = donePercent + "%";
     track.setAttribute("aria-valuenow", String(donePercent));
     track.setAttribute("aria-valuetext", donePercent + " درصد پیشرفت");
@@ -2273,7 +2388,7 @@
     reviewChecked = checked;
     paintReviewProgress(checked, total, stage, percent);
     if (stage === "writing") setStatus("بررسی سایت‌ها و شیت تمام شد؛ نتیجه‌ها در تب‌های گزارش نوشته می‌شود…");
-    else if (stage === "complete") setStatus("نوشتن نتیجه‌ها تمام شد؛ گزارش نهایی در حال بارگذاری است…");
+    else if (stage === "complete") setStatus("بررسی کامل شد؛ نتیجهٔ نهایی در حال بارگذاری است…");
   }
   async function readReviewProgress(res) {
     if (!res.ok) {
@@ -2359,9 +2474,11 @@
       if (!finished) throw new Error("بررسی هنوز تمام نشده است. نتیجه‌های ثبت‌شده حفظ شدند؛ دوباره دکمهٔ بررسی خودکار را بزنید تا ادامه پیدا کند.");
       await loadReport();
       recordLastReview();
+      const progress = document.getElementById("review-progress");
+      if (progress) progress.hidden = true;
       const summary = tally();
-      setStatus("بررسی خودکار تمام شد و نتیجه‌ها در شیت ثبت شد: آماده " + summary.ready + " · تغییر نام " + summary.rename + " · بررسی دستی " + summary.manual + ".");
-      showToast("بررسی تمام شد و گزارش در شیت ثبت شد.");
+      setStatus("بررسی کامل شد و نتیجه‌ها در شیت ثبت شد: آماده " + summary.ready + " · تغییر نام " + summary.rename + " · بررسی دستی " + summary.manual + ".");
+      showToast("بررسی کامل شد ✓ گزارش در شیت ثبت شد.", true);
     } catch (err) {
       showError(err && err.message ? err.message : "بررسی انجام نشد.");
       if (meta) setStatus(statusText());
@@ -2550,6 +2667,23 @@
     paintTable();
     paintPageMode();
   });
+  document.getElementById("review-filter").addEventListener("change", (event) => {
+    reviewFilter = event.target.value;
+    page = 0;
+    const visible = visibleIndices();
+    if (visible.length && !visible.includes(idx)) {
+      idx = visible[0];
+      sessionStorage.setItem(KEY_INDEX, items[idx].key);
+      renderView();
+    }
+    if (!visible.length) {
+      idx = -1;
+      detailOpen = false;
+      renderView();
+    }
+    paintTable();
+    paintPageMode();
+  });
   document.querySelectorAll(".chip").forEach((chip) => {
     chip.addEventListener("click", () => {
       filter = chip.getAttribute("data-filter") || "all";
@@ -2587,7 +2721,7 @@
     if (label === RENAME || label === "فعال\u200cسازی با اسم جدید") return RENAME;
     return MANUAL;
   }
-  function reportItem(row) {
+  function reportItem(row, newFlowDetails) {
     const url = cellAt(row, 3);
     const fa = cellAt(row, 10) || cellAt(row, 1);
     const en = cellAt(row, 11);
@@ -2625,18 +2759,19 @@
       en: en,
       brand: cellAt(row, 1),
       cat: cellAt(row, 2),
-      sub: cellAt(row, 41),
+      sub: cellAt(row, 42),
       url: url,
-      branch: cellAt(row, 42),
+      branch: cellAt(row, 43),
       owner_first: cellAt(row, 4),
       owner_last: "",
-      owner_id: cellAt(row, 43),
+      owner_id: cellAt(row, 44),
       owner_mobile: cellAt(row, 5),
       mode: mode,
+      newFlowDetails: Array.isArray(newFlowDetails) ? newFlowDetails : [],
       candidates: [],
         review: {
         status: status,
-        reviewed: Boolean(cellAt(row, 12).trim()),
+        reviewed: cellAt(row, 41).trim() === "بررسی‌شده",
         reason: cellAt(row, 8),
         fa: status === RENAME ? suggestedFa : (status === READY ? activationFa : fa),
         en: status === RENAME ? suggestedEn : (status === READY ? activationEn : en),
@@ -2652,7 +2787,7 @@
   }
   function applyReport(payload) {
     const rows = payload.rows || [];
-    items = rows.filter((row) => cellAt(row, 0)).map(reportItem);
+    items = rows.map((row, index) => ({ row, index })).filter((entry) => cellAt(entry.row, 0)).map((entry) => reportItem(entry.row, payload.newFlowDetails && payload.newFlowDetails[entry.index]));
     detailOpen = false;
     let websiteCount = 0;
     let socialCount = 0;
@@ -2674,7 +2809,8 @@
     };
     loadDecisions();
     let found = items.findIndex((item) => item.key === sessionStorage.getItem(KEY_INDEX));
-    idx = found >= 0 ? found : 0;
+    const visible = visibleIndices();
+    idx = found >= 0 && visible.includes(found) ? found : (visible[0] ?? -1);
     page = 0;
     showError("");
     paintCards();
