@@ -72,9 +72,9 @@
   }
   .card.ok { border-top-color: #b7e0c4; background: #e7f6ec; }
   .card.warn { border-top-color: #ead98a; background: #fff6d6; }
-  #card-box-rename { border-top-color: #e8c09a; background: #fff0e0; }
-  #chip-rename { background: #fff0e0; border-color: #f0d2b0; }
-  #chip-rename.on { background: #ffe4c7; border-color: #e8c09a; color: var(--ink); }
+  #card-box-rename { border-top-color: #a855f7; background: #f5edff; }
+  #chip-rename { background: #f5edff; border-color: #d8b4fe; color: #6b21a8; }
+  #chip-rename.on { background: #e9d5ff; border-color: #a855f7; color: #581c87; }
   .card .k { margin: 0; color: var(--muted); font-size: 12px; }
   .card .num {
     margin: 6px 0 0;
@@ -246,7 +246,7 @@
     font-size: 12px;
   }
   .tag.ok { background: #e7f6ec; color: var(--ink); }
-  .tag.rename { background: #fff0e0; color: var(--ink); }
+  .tag.rename { background: #f5edff; color: #6b21a8; }
   .tag.manual { background: #fff6d6; color: var(--ink); }
   .why-box { background: #f8fafc; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; margin: 0 0 10px; font-size: 13px; }
   .why-box p { margin: 0 0 6px; }
@@ -310,7 +310,7 @@
   .lbl { flex-direction: column; align-items: stretch; margin: 8px 0; }
   .pill { display: inline-block; border-radius: 999px; padding: 4px 10px; margin: 6px 0; background: #f3efe8; }
   .pill.ok { background: #e7f6ec; color: var(--ink); }
-  .pill.rename { background: #fff0e0; color: var(--ink); }
+  .pill.rename { background: #f5edff; color: #6b21a8; }
   .pill.manual { background: #fff6d6; color: var(--ink); }
   #blockers { margin: 4px 0 8px; padding-right: 1.2rem; }
   #blockers:empty { display: none; }
@@ -414,7 +414,7 @@
     <div class="filters">
       <button type="button" class="chip on" id="chip-all" data-filter="all">همه</button>
       <button type="button" class="chip" id="chip-ready" data-filter="ready">آماده فعال‌سازی</button>
-      <button type="button" class="chip" id="chip-rename" data-filter="rename">اسم جدید</button>
+      <button type="button" class="chip" id="chip-rename" data-filter="rename">نیاز به تغییر نام</button>
       <button type="button" class="chip" id="chip-manual" data-filter="manual">دستی</button>
       <input id="search" type="search" placeholder="جست‌وجو، شناسه یا اسم" autocomplete="off" data-testid="search">
       <label class="mode-filter" for="mode-filter">نوع فروشگاه
@@ -2398,7 +2398,7 @@
       { page: "نتیجه‌ها", sel: "#results-title", title: "نتیجه بررسی‌ها", body: "جدول پایین، نتیجهٔ هر درخواست را نشان می‌دهد." },
       { page: "نتیجه‌ها", sel: "#chip-all", title: "همه", body: "همهٔ ردیف‌ها را نشان می‌دهد." },
       { page: "نتیجه‌ها", sel: "#chip-ready", title: "اسم آنلاین", body: "فقط ردیف‌های آمادهٔ فعال‌سازی را نشان می‌دهد." },
-      { page: "نتیجه‌ها", sel: "#chip-rename", title: "اسم جدید", body: "فقط ردیف‌هایی را نشان می‌دهد که نامشان باید عوض شود." },
+      { page: "نتیجه‌ها", sel: "#chip-rename", title: "نیاز به تغییر نام", body: "فقط ردیف‌هایی را نشان می‌دهد که نامشان باید عوض شود." },
       { page: "نتیجه‌ها", sel: "#chip-manual", title: "دستی", body: "فقط ردیف‌هایی را نشان می‌دهد که باید دستی دیده شوند." },
       { page: "نتیجه‌ها", sel: "#search", title: "جست‌وجو", body: "شناسه یا اسم را بنویسید تا همان ردیف پیدا شود." },
       { page: "نتیجه‌ها", sel: "#mode-filter", title: "نوع فروشگاه", body: "نتایج را بر اساس سایت، سوشال یا هر دو فیلتر می‌کند." },
