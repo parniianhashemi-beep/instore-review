@@ -130,7 +130,16 @@
     to { background-position: 28px 0; }
   }
   .action-buttons { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .check { display: flex; align-items: center; gap: 6px; color: var(--ink); font-size: 12px; }
+  .check, .mode-filter { display: flex; align-items: center; gap: 6px; color: var(--ink); font-size: 12px; }
+  .mode-filter select {
+    min-height: 32px;
+    border: 1px solid #d5dbe6;
+    border-radius: 10px;
+    background: #fff;
+    padding: 5px 9px;
+    font: inherit;
+    direction: rtl;
+  }
   button.primary, a.ghost, button.ghost {
     display: inline-flex;
     align-items: center;
@@ -405,7 +414,13 @@
       <button type="button" class="chip" id="chip-rename" data-filter="rename">اسم جدید</button>
       <button type="button" class="chip" id="chip-manual" data-filter="manual">دستی</button>
       <input id="search" type="search" placeholder="جست‌وجو، شناسه یا اسم" autocomplete="off" data-testid="search">
-      <label class="check" id="web-only-label"><input type="checkbox" id="web-only" data-testid="web-only"> دسته‌بندی بر اساس فروشگاه آنلاین</label>
+      <label class="mode-filter" for="mode-filter">نوع فروشگاه
+        <select id="mode-filter" data-testid="mode-filter" aria-label="فیلتر بر اساس نوع فروشگاه">
+          <option value="all">هر دو: سایت و سوشال</option>
+          <option value="website">سایت / آنلاین</option>
+          <option value="social">سوشال</option>
+        </select>
+      </label>
     </div>
     <div id="rules" hidden>
       <p>اسم آنلاین = آماده فعال‌سازی، اسم جدید = نیاز به تغییر نام، دستی = نیازمند بررسی دستی. در شیت، پیشنهاد بررسی دستی «بررسی دستی» و پیشنهاد تغییر نام «فعال‌سازی با اسم جدید» نوشته می‌شود. تب تغییر نام انجام شد فقط سرستون ۱۴تایی نمونه را دارد.</p>
@@ -1354,7 +1369,7 @@
   let page = 0;
   let filter = "all";
   let query = "";
-  let webOnly = false;
+  let modeFilter = "all";
   let decisions = {};
   let persistTimer = 0;
   let running = false;
@@ -1494,7 +1509,7 @@
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
       const status = (item.review && item.review.status) || MANUAL;
-      if (webOnly && item.mode !== "website") continue;
+      if (modeFilter !== "all" && item.mode !== modeFilter) continue;
       if (filter === "ready" && status !== READY) continue;
       if (filter === "rename" && status !== RENAME) continue;
       if (filter === "manual" && status !== MANUAL) continue;
@@ -2332,7 +2347,7 @@
       { page: "نتیجه‌ها", sel: "#chip-rename", title: "اسم جدید", body: "فقط ردیف‌هایی را نشان می‌دهد که نامشان باید عوض شود." },
       { page: "نتیجه‌ها", sel: "#chip-manual", title: "دستی", body: "فقط ردیف‌هایی را نشان می‌دهد که باید دستی دیده شوند." },
       { page: "نتیجه‌ها", sel: "#search", title: "جست‌وجو", body: "شناسه یا اسم را بنویسید تا همان ردیف پیدا شود." },
-      { page: "نتیجه‌ها", sel: "#web-only-label", title: "فروشگاه آنلاین", body: "فقط درخواست‌هایی را نشان می‌دهد که لینکشان سایت است، نه شبکهٔ اجتماعی." },
+      { page: "نتیجه‌ها", sel: "#mode-filter", title: "نوع فروشگاه", body: "نتایج را بر اساس سایت، سوشال یا هر دو فیلتر می‌کند." },
       { page: "نتیجه‌ها", sel: "[data-testid='queue-table']", title: "جدول", body: "روی یک ردیف بزنید تا جزئیات همان درخواست پایین صفحه باز شود." },
       { page: "نتیجه‌ها", sel: "#pager", title: "صفحه‌ها", body: "اگر ردیف‌ها زیاد باشند، با این دکمه‌ها صفحهٔ بعدی و قبلی جدول را می‌بینید.", when: "pager" },
       { page: "یک درخواست", sel: "[data-testid='queue-table']", title: "صفحهٔ یک درخواست", body: "برای دیدن این صفحه، یک ردیف از جدول را انتخاب کنید. نام، لینک و دلیل همان درخواست پایین می‌آید.", when: "nodetail" },
@@ -2467,10 +2482,18 @@
   document.getElementById("next").addEventListener("click", () => step(1));
   document.getElementById("page-prev").addEventListener("click", () => { page -= 1; paintTable(); });
   document.getElementById("page-next").addEventListener("click", () => { page += 1; paintTable(); });
-  document.getElementById("web-only").addEventListener("change", (event) => {
-    webOnly = event.target.checked;
+  document.getElementById("mode-filter").addEventListener("change", (event) => {
+    modeFilter = event.target.value;
     page = 0;
-    paintTable();
+    const visible = visibleIndices();
+    const detail = document.getElementById("detail");
+    if (visible.length) {
+      if (!visible.includes(idx) || detail.hidden) select(visible.includes(idx) ? idx : visible[0]);
+      else paintTable();
+    } else {
+      paintTable();
+      detail.hidden = true;
+    }
   });
   document.querySelectorAll(".chip").forEach((chip) => {
     chip.addEventListener("click", () => {
