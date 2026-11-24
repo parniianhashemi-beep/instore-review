@@ -257,6 +257,9 @@
   .criteria-details { border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; margin: 12px 0; }
   .criteria-details summary { cursor: pointer; font-weight: 700; }
   .criteria-details[open] summary { margin-bottom: 8px; }
+  .review-evidence, .candidate-details { border-top: 1px solid var(--line); margin-top: 8px; padding-top: 8px; }
+  .review-evidence summary, .candidate-details summary { cursor: pointer; color: var(--blue); font-weight: 600; }
+  .review-evidence[open] summary, .candidate-details[open] summary { margin-bottom: 8px; }
   .decision-panel { border-color: #cbd8ec; background: #fbfcff; }
   .choice-mark { display: inline-grid; place-items: center; width: 1.1rem; height: 1.1rem; flex: none; font-size: 15px; font-weight: 800; line-height: 1; }
   .choice-mark.match { color: #16803a; }
@@ -1676,19 +1679,26 @@
     if (review.status === READY) {
       box.append(el("p", {}, ["اسم فروشگاه: " + (review.fa || "—") + " / " + (review.en || "—")]));
     }
+    const fieldRows = review.fields || [];
     const wrap = el("div", { class: "verdict-list", "data-testid": "field-notes" });
-    for (const verdict of ["جور است", "جور نیست", "نتوانستم بررسی کنم"]) {
-      const rows = (review.fields || []).filter((row) => row.verdict === verdict);
+    for (const verdict of ["جور است", "جور نیست", "نتوانستم بررسی کنم", "بررسی نمی‌شود"]) {
+      const rows = fieldRows.filter((row) => row.verdict === verdict);
       if (!rows.length) continue;
       wrap.append(el("h3", {}, [verdict]));
       for (const row of rows) wrap.append(verdictLine(row, review));
     }
-    return el("section", { class: "review-section auto-review" }, [
+    const section = el("section", { class: "review-section auto-review" }, [
       el("h3", {}, ["۱. نتیجهٔ بررسی خودکار"]),
-      el("p", { class: "section-help" }, ["این بخش گزارش سامانه است؛ تصمیم نهایی را در بخش جداگانهٔ پایین ثبت کنید."]),
-      box,
-      wrap
+      el("p", { class: "section-help" }, ["نتیجه و دلیل سامانه؛ برای دیدن ریزمعیارها بخش زیر را باز کنید."]),
+      box
     ]);
+    if (fieldRows.length) {
+      section.append(el("details", { class: "review-evidence", "data-testid": "review-evidence" }, [
+        el("summary", {}, ["جزئیات بررسی خودکار (" + fieldRows.length + " معیار)"]),
+        wrap
+      ]));
+    }
+    return section;
   }
   function socialReady(review) {
     const against = String((review && review.against) || "");
@@ -1736,7 +1746,7 @@
     const grid = el("div", { class: "meta" });
     for (const [label, value, ltr] of [
       ["کد قرارداد", item.contract, true],
-      ["برنچ", item.branch, false],
+      ["نام شعبه", item.branch, false],
       ["دسته", item.cat, false],
       ["زیردسته", item.sub, false],
       ["صاحب امتیاز", owner, false],
@@ -1787,14 +1797,17 @@
     if (enamadMissing) {
       nodes.push(el("p", { class: "hint" }, ["این ردیف از گزارش قبلی است و لینک اختصاصی اینماد در آن ذخیره نشده؛ پس از اجرای دوبارهٔ بررسی سایت، اگر لینک پیدا شود دکمه فعال می‌شود."]));
     }
-    nodes.push(el("h3", {}, ["نامزدهای کمکی"]));
-    nodes.push(el("p", { class: "hint" }, [isWeb
-      ? "تطبیق با URL نرمال‌شده یا دامنه در تب online. کد قرارداد معیار نیست. نامزد را خودتان مرجع می‌کنید."
-      : "تطبیق با site_link و Call Back در تب social. کد قرارداد معیار نیست. نامزد را خودتان مرجع می‌کنید."
-    ]));
+    const candidateDetails = el("details", { class: "candidate-details" });
     const candidates = item.candidates || [];
+    candidateDetails.append(
+      el("summary", {}, ["نامزدهای کمکی (" + candidates.length + ")"]),
+      el("p", { class: "hint" }, [isWeb
+        ? "تطبیق با URL نرمال‌شده یا دامنه در تب online. کد قرارداد معیار نیست. نامزد را خودتان مرجع می‌کنید."
+        : "تطبیق با site_link و Call Back در تب social. کد قرارداد معیار نیست. نامزد را خودتان مرجع می‌کنید."
+      ])
+    );
     if (!candidates.length) {
-      nodes.push(el("div", { class: "empty-cand", "data-testid": "candidates" }, [
+      candidateDetails.append(el("div", { class: "empty-cand", "data-testid": "candidates" }, [
         el("p", {}, [isWeb
           ? "نامزد online با این URL یا دامنه یافت نشد. نبودن در online رد آنلاین‌بودن نیست؛ سایت و اینماد را همچنان بررسی کنید."
           : "نامزد social با این URL یا یوزرنیم یافت نشد. نتیجه‌گیری منفی مجاز نیست؛ لینک را دستی بررسی کنید."])
@@ -1822,9 +1835,10 @@
         );
         cards.append(card);
       });
-      nodes.push(cards);
-      nodes.push(el("p", { class: "hint" }, ["دیدن نامزد تصمیم را عوض نمی‌کند. مرجع دقیق فقط با دکمهٔ بالا یا نوشتن خودتان پر می‌شود."]));
+      candidateDetails.append(cards);
+      candidateDetails.append(el("p", { class: "hint" }, ["دیدن نامزد تصمیم را عوض نمی‌کند. مرجع دقیق فقط با دکمهٔ بالا یا نوشتن خودتان پر می‌شود."]));
     }
+    nodes.push(candidateDetails);
     const criteria = el("details", { class: "criteria-details" });
     criteria.append(
       el("summary", {}, ["ارزیابی جداگانهٔ معیارها (اختیاری)"]),
@@ -2565,12 +2579,12 @@
       en: en,
       brand: cellAt(row, 1),
       cat: cellAt(row, 2),
-      sub: "",
+      sub: cellAt(row, 35),
       url: url,
-      branch: "",
+      branch: cellAt(row, 36),
       owner_first: cellAt(row, 4),
       owner_last: "",
-      owner_id: "",
+      owner_id: cellAt(row, 37),
       owner_mobile: cellAt(row, 5),
       mode: mode,
       candidates: [],
