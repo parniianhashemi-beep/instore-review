@@ -46,7 +46,8 @@
   #google-signin { min-height: 42px; }
   #auth-message { color: var(--pink-ink); min-height: 1.5em; }
   header { background: #fff; border-top: 4px solid var(--blue); border-bottom: 1px solid var(--line); }
-  .head-inner, .wrap { width: min(1180px, calc(100% - 28px)); margin: 0 auto; }
+  .head-inner { width: calc(100% - 28px); margin: 0 auto; }
+  .wrap { width: min(1180px, calc(100% - 28px)); margin: 0 auto; }
   .head-inner {
     display: flex;
     justify-content: space-between;
@@ -54,8 +55,8 @@
     gap: 12px;
     padding: 8px 0;
   }
-  .brand-lockup { display: flex; align-items: center; gap: 18px; min-width: 0; }
-  .brand-logo-frame { width: 132px; height: 84px; flex: none; background: #fff; }
+  .brand-lockup { display: flex; align-items: center; min-width: 0; }
+  .brand-logo-frame { width: 112px; height: 72px; flex: none; background: #fff; }
   .brand-logo { display: block; width: 100%; height: 100%; object-fit: contain; object-position: center; }
   .brand-title { min-width: 0; }
   .brand-title h1 { color: #123b67; }
@@ -380,11 +381,13 @@
     .source-fields { grid-template-columns: 1fr; }
   }
   @media (max-width: 640px) {
-    .cards, .action, .head-inner { display: block; }
-    .brand-lockup { justify-content: space-between; gap: 12px; }
-    .brand-logo-frame { width: 96px; height: 62px; }
+    .cards, .action { display: block; }
+    .head-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "title logo" "actions actions"; align-items: center; gap: 8px 12px; }
+    .brand-title { grid-area: title; }
+    .brand-logo-frame { grid-area: logo; width: 88px; height: 56px; }
     .brand-title h1 { font-size: 1rem; }
-    .head-actions, .action-buttons { margin-top: 10px; }
+    .head-actions { grid-area: actions; margin-top: 4px; }
+    .action-buttons { margin-top: 10px; }
     .field { flex-wrap: wrap; }
   }
 </style>
@@ -400,15 +403,13 @@
 </section>
 <header>
   <div class="head-inner">
-    <div class="brand-lockup">
-      <div class="brand-title"><h1>بررسی فعال‌سازی حضوری</h1></div>
-      <div class="brand-logo-frame"><img class="brand-logo" src="/snapp-pay-logo-header.png" alt="لوگوی اسنپ‌پی"></div>
-    </div>
+    <div class="brand-title"><h1>بررسی فعال‌سازی حضوری</h1></div>
     <div class="head-actions">
       <button type="button" class="ghost" id="help-toggle">راهنما</button>
       <a class="ghost" id="open-sheet" href="https://docs.google.com/spreadsheets/d/1YF81MqW8l3GKwwQCj74c8HfaBDEaN6hpOgGXgmtqA6I/edit" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">باز کردن شیت گزارش</a>
       <button type="button" class="ghost" id="logout" hidden>خروج</button>
     </div>
+    <div class="brand-logo-frame"><img class="brand-logo" src="/snapp-pay-logo-header.png" alt="لوگوی اسنپ‌پی"></div>
   </div>
 </header>
 <div class="wrap">
