@@ -1666,7 +1666,7 @@
       const emptyText = !items.length
         ? "هنوز نتیجه‌ای روی صفحه نیست."
         : reviewFilter === "active"
-          ? "صف بررسی فعال خالی است؛ از فیلتر «بررسی‌شده» برای دیدن ردیف‌های ثبت‌شده استفاده کنید."
+          ? "صف بررسی فعال خالی است؛ برای دیدن ردیف‌هایی که ستون P در New Flow آن‌ها Lived است، فیلتر «بررسی‌شده» را انتخاب کنید."
           : "ردیفی با این فیلتر نیست.";
       nodes.push(el("tr", {}, [el("td", { colspan: "4" }, [emptyText])]));
     }
@@ -1907,7 +1907,7 @@
     if (newFlowDetails) nodes.push(newFlowDetails);
     nodes.push(renderReview(item));
     if (item.review && item.review.reviewed) {
-      nodes.push(el("p", { class: "reviewed-banner", role: "status" }, ["این ردیف بررسی و ثبت شده است؛ از فیلتر «بررسی‌شده» می‌توانی دوباره آن را باز کنی."]));
+      nodes.push(el("p", { class: "reviewed-banner", role: "status" }, ["این ردیف در تب New Flow، ستون P برابر Lived است و در فیلتر «بررسی‌شده» نمایش داده می‌شود."]));
     }
     nodes.push(el("p", { class: "mode" + (isWeb ? "" : " social"), "data-testid": "mode" }, [isWeb
       ? "حالت ستون O: سایت. در محدوده: باز کردن سایت، بررسی اینماد و تطبیق URL یا دامنه با تب آنلاین."
@@ -2285,14 +2285,15 @@
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) throw new Error((data && data.error) || "ذخیره انجام نشد.");
-      decisions[item.key] = { checks: d.checks, status: status, fa: fa, en: en, ref: ref, reason: reason, reviewed: true, touched: true };
+      const isReviewed = isLivedInNewFlow(item.newFlowDetails);
+      decisions[item.key] = { checks: d.checks, status: status, fa: fa, en: en, ref: ref, reason: reason, reviewed: isReviewed, touched: true };
       persistNow();
       item.review = Object.assign({}, item.review, {
         status: status,
         fa: status === RENAME ? fa : (status === READY ? (item.review.activationFa || fa) : item.fa),
         en: status === RENAME ? en : (status === READY ? (item.review.activationEn || en) : item.en),
         reason: reason,
-        reviewed: true,
+        reviewed: isReviewed,
         against: ref || item.review.against,
         socialFa: item.review.socialFa,
         socialEn: item.review.socialEn,
@@ -2310,7 +2311,10 @@
       paintTable();
       renderView();
       paintPageMode();
-      showToast("تصمیم ثبت شد ✓ ردیف به فهرست «بررسی‌شده» منتقل شد. نتیجه: " + (data.status || status) + " · تب «" + (data.tab || "general") + "».", true);
+      const reviewedMessage = isReviewed
+        ? "این ردیف به‌دلیل Lived بودن ستون P در فیلتر «بررسی‌شده» است."
+        : "فیلتر «بررسی‌شده» فقط ردیف‌هایی را نشان می‌دهد که ستون P آن‌ها Lived است.";
+      showToast("تصمیم ثبت شد ✓ نتیجه: " + (data.status || status) + " · تب «" + (data.tab || "general") + "». " + reviewedMessage, true);
     } catch (err) {
       showError(err && err.message ? err.message : "ذخیره انجام نشد.");
     } finally {
@@ -2723,6 +2727,11 @@
     if (label === RENAME || label === "فعال\u200cسازی با اسم جدید") return RENAME;
     return MANUAL;
   }
+  function isLivedInNewFlow(details) {
+    if (!Array.isArray(details)) return false;
+    const sourceStep = details.find((field) => String(field && field.column || "").toUpperCase() === "P");
+    return String(sourceStep && sourceStep.value || "").trim().toLowerCase() === "lived";
+  }
   function reportItem(row, newFlowDetails) {
     const url = cellAt(row, 3);
     const fa = cellAt(row, 10) || cellAt(row, 1);
@@ -2733,6 +2742,7 @@
     const suggestedEn = cellAt(row, 38);
     const activationFa = cellAt(row, 39);
     const activationEn = cellAt(row, 40);
+    const isReviewed = isLivedInNewFlow(newFlowDetails);
     const pairs = [
       [15, 16, "لینک"],
       [17, 18, "کد ملی"],
@@ -2773,7 +2783,7 @@
       candidates: [],
         review: {
         status: status,
-        reviewed: cellAt(row, 41).trim() === "بررسی‌شده",
+        reviewed: isReviewed,
         reason: cellAt(row, 8),
         fa: status === RENAME ? suggestedFa : (status === READY ? activationFa : fa),
         en: status === RENAME ? suggestedEn : (status === READY ? activationEn : en),
