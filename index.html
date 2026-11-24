@@ -257,9 +257,9 @@
   .criteria-details { border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; margin: 12px 0; }
   .criteria-details summary { cursor: pointer; font-weight: 700; }
   .criteria-details[open] summary { margin-bottom: 8px; }
-  .review-evidence, .candidate-details { border-top: 1px solid var(--line); margin-top: 8px; padding-top: 8px; }
-  .review-evidence summary, .candidate-details summary { cursor: pointer; color: var(--blue); font-weight: 600; }
-  .review-evidence[open] summary, .candidate-details[open] summary { margin-bottom: 8px; }
+  .review-evidence { border-top: 1px solid var(--line); margin-top: 8px; padding-top: 8px; }
+  .review-evidence summary { cursor: pointer; color: var(--blue); font-weight: 600; }
+  .review-evidence[open] summary { margin-bottom: 8px; }
   .decision-panel { border-color: #cbd8ec; background: #fbfcff; }
   .choice-mark { display: inline-grid; place-items: center; width: 1.1rem; height: 1.1rem; flex: none; font-size: 15px; font-weight: 800; line-height: 1; }
   .choice-mark.match { color: #16803a; }
@@ -406,7 +406,7 @@
     </div>
   </div>
   <p id="error" class="banner" data-testid="error" hidden></p>
-  <section class="panel">
+  <section class="panel" id="results-panel">
     <div class="results-head">
       <h2 id="results-title">نتیجه بررسی‌ها</h2>
       <button type="button" class="ghost" id="help-inline">راهنمای تصمیم</button>
@@ -419,23 +419,25 @@
       <input id="search" type="search" placeholder="جست‌وجو، شناسه یا اسم" autocomplete="off" data-testid="search">
       <label class="mode-filter" for="mode-filter">نوع فروشگاه
         <select id="mode-filter" data-testid="mode-filter" aria-label="فیلتر بر اساس نوع فروشگاه">
-          <option value="all">هر دو: سایت و سوشال</option>
-          <option value="website">سایت / آنلاین</option>
-          <option value="social">سوشال</option>
+          <option value="online">online</option>
+          <option value="social">social</option>
+          <option value="both" selected>both</option>
         </select>
       </label>
     </div>
     <div id="rules" hidden>
-      <p>اسم آنلاین = آماده فعال‌سازی، اسم جدید = نیاز به تغییر نام، دستی = نیازمند بررسی دستی. در شیت، پیشنهاد بررسی دستی «بررسی دستی» و پیشنهاد تغییر نام «فعال‌سازی با اسم جدید» نوشته می‌شود. تب تغییر نام انجام شد فقط سرستون ۱۴تایی نمونه را دارد.</p>
+      <p>آنلاین و سوشال جداگانه بررسی می‌شوند. در سوشال موبایل بررسی نمی‌شود؛ لینک یا کد ملی نامنطبق، یا نام کاملاً متفاوت به تغییر نام می‌رود. اختلاف جزئی نام یکسان حساب می‌شود و شباهت مبهم بررسی دستی می‌خواهد. در آنلاین، نبودن URL در تب online به‌تنهایی مانع نیست؛ نام مالک، محصولات، شهر و گواهی بررسی می‌شوند. هر مورد ناخوانا در دلیل ردیف با عبارت «بررسی نشد» ثبت می‌شود.</p>
+      <p>آنلاین: اختلاف قطعی نام صاحب امتیاز، نام فروشگاه یا گروه کالایی → تغییر نام؛ شهرِ تنها مورد نامنطبق، سایت/گواهی ناخوانا، تطبیق مبهم یا شباهت مشکوک محصولات → بررسی دستی. پوشاک زنانه در برابر مردانه تطبیق قطعی نیست.</p>
       <ul>
-        <li>سرستون هر تب خروجی همان نمونه است: شناسه درخواست، برند، دسته، سایت، نام متقاضی، موبایل، وضعیت NBO، پیشنهاد سامانه، دلیل پیشنهاد، تصمیم نهایی، اسم فارسی قابل فعال‌سازی، اسم انگلیسی قابل فعال‌سازی، وضعیت بررسی، انجام تغییر نام.</li>
+        <li>نام اصلی جدا می‌ماند. نام پیشنهادی تغییر نام از زیر‌دسته و نام فروشگاه حضوری ساخته می‌شود؛ ستون‌های قرمز J و M در New Flow تکراری‌اند و پیشنهاد جایگزین می‌گیرند.</li>
+        <li>نام قابل فعال‌سازی در ستون‌های جداست: در سوشال از ردیف social، در آنلاین از ردیف online؛ اگر آنلاین پیدا نشود همان عبارت «در تب online یافت نشد» نوشته می‌شود.</li>
         <li>برنامه فروشگاه را فعال نمی‌کند و نام را خودش عوض نمی‌کند.</li>
         <li>صف: ستون N دقیقاً ONLINE SITE EXISTS - DUPLICATE NAME KEPT و ستون‌های P و Z خالی.</li>
         <li>وصل شدن به online و social فقط با URL ستون O است، نه با کد قرارداد.</li>
-        <li>سایت، از جمله دامنهٔ .app و .in: باز کردن سایت، اینماد، و نامزدهای online.</li>
+        <li>سایت، از جمله دامنهٔ .app و .in: باز کردن سایت، بررسی اینماد و تطبیق با تب online.</li>
         <li>بقیه (اینستاگرام، تلگرام، بله، لینک خالی پلتفرم و مانند آن): فقط تب social.</li>
         <li>نبودن در online رد آنلاین‌بودن نیست و نتیجه‌گیری منفی مجاز نیست.</li>
-        <li>آماده فعال‌سازی فقط وقتی ثبت می‌شود که همهٔ موردها جور باشد، هیچ موردی بررسی‌نشده نماند، و مرجع دقیق پر باشد.</li>
+        <li>آماده فعال‌سازی فقط وقتی ثبت می‌شود که معیارهای لازم جور باشند؛ اختلاف شهر به‌تنهایی و موارد مبهم به بررسی دستی می‌روند.</li>
         <li>دکمهٔ آبی هر پنج تب خروجی را سلول‌به‌سلول پاک می‌کند و از اول می‌نویسد. چیزی به ته جدول اضافه نمی‌شود. New Flow و online و social، و تب‌های گزارش، لیست بررسی حضوری، صفحات بررسی و راهنما پاک نمی‌شوند.</li>
       </ul>
     </div>
@@ -458,10 +460,11 @@
       <button type="button" class="ghost" id="page-next">صفحهٔ بعدی</button>
     </div>
   </section>
-  <section id="detail" hidden>
+  <section class="panel" id="detail" hidden>
     <div class="row-nav">
       <h2>بررسی این ردیف</h2>
       <div class="row-nav-buttons">
+        <button type="button" class="ghost" id="back-to-results">بازگشت به نتایج</button>
         <button type="button" class="ghost" id="prev">ردیف قبلی</button>
         <button type="button" class="ghost" id="next">ردیف بعدی</button>
         <span id="pos"></span>
@@ -996,8 +999,53 @@
   function compareBrand(left, right, missingNote) {
     if (!String(right || "").trim()) return [UNK, missingNote];
     if (!String(left || "").trim()) return [UNK, "نام درخواست خالی است."];
-    if (foldName(left) === foldName(right)) return [OK, "نام یکی است."];
-    return [NO, "نام درخواست «" + left + "» و نام تب «" + right + "» یکی نیست."];
+    const relation = brandRelation(left, right);
+    if (relation === "same") return [OK, "نام با وجود واژهٔ توضیحی یا اختلاف جزئی یکسان حساب شد."];
+    if (relation === "different") return [NO, "نام درخواست «" + left + "» و نام مرجع «" + right + "» کاملاً متفاوت است."];
+    return [UNK, "نام درخواست و نام مرجع تا حدی شبیه‌اند؛ تطبیق قطعی نام بررسی نشد."];
+  }
+  const BRAND_NOISE = new Set(["فروشگاه", "بوتیک", "آنلاین", "پوشاک", "لباس", "زنانه", "مردانه", "بچگانه", "store", "shop", "online", "fashion", "clothing", "apparel", "women", "woman", "men", "mens", "womens", "kids"]);
+  function brandTokens(value) {
+    const all = foldName(value).replace(/[^\p{L}\p{N}]+/gu, " ").trim().split(/\s+/).filter(Boolean);
+    const core = all.filter((part) => !BRAND_NOISE.has(part));
+    return core.length ? core : all;
+  }
+  function brandTokenNear(left, right) {
+    if (left === right) return true;
+    if (Math.min(left.length, right.length) < 4 || Math.abs(left.length - right.length) > 1) return false;
+    let i = 0, j = 0, edits = 0;
+    while (i < left.length && j < right.length) {
+      if (left[i] === right[j]) { i++; j++; continue; }
+      if (++edits > 1) return false;
+      if (left.length > right.length) i++;
+      else if (right.length > left.length) j++;
+      else { i++; j++; }
+    }
+    return edits + ((i < left.length || j < right.length) ? 1 : 0) <= 1;
+  }
+  function brandRelation(left, right) {
+    if (!String(left || "").trim() || !String(right || "").trim()) return "unknown";
+    const a = brandTokens(left), b = brandTokens(right);
+    const allA = foldName(left).replace(/[^\p{L}\p{N}]+/gu, " ").trim().split(/\s+/).filter(Boolean);
+    const allB = foldName(right).replace(/[^\p{L}\p{N}]+/gu, " ").trim().split(/\s+/).filter(Boolean);
+    const coreA = allA.filter((part) => !BRAND_NOISE.has(part));
+    const coreB = allB.filter((part) => !BRAND_NOISE.has(part));
+    const hasAny = (parts, values) => parts.some((part) => values.includes(part));
+    const womenA = hasAny(allA, ["زنانه", "دخترانه", "women", "woman", "female"]);
+    const menA = hasAny(allA, ["مردانه", "پسرانه", "mens", "men", "male"]);
+    const kidsA = hasAny(allA, ["بچگانه", "کودک", "نوزاد", "kids", "children", "baby"]);
+    const womenB = hasAny(allB, ["زنانه", "دخترانه", "women", "woman", "female"]);
+    const menB = hasAny(allB, ["مردانه", "پسرانه", "mens", "men", "male"]);
+    const kidsB = hasAny(allB, ["بچگانه", "کودک", "نوزاد", "kids", "children", "baby"]);
+    const opposingGender = ((womenA && menB) || (menA && womenB) || (kidsA && (womenB || menB)) || (kidsB && (womenA || menA)));
+    if (opposingGender && !coreA.some((part) => coreB.includes(part))) return "close";
+    if (a.join(" ") === b.join(" ") || a.every((part) => b.includes(part)) || b.every((part) => a.includes(part))) return "same";
+    if (a.every((part) => b.some((other) => brandTokenNear(part, other))) && b.every((part) => a.some((other) => brandTokenNear(part, other))) || (a.length === 1 && b.length === 1 && brandTokenNear(a[0], b[0]))) return "same";
+    if (a.some((part) => b.some((other) => brandTokenNear(part, other)))) return "close";
+    const rawA = allA;
+    const rawB = allB;
+    if (rawA.some((part) => rawB.includes(part))) return "close";
+    return "different";
   }
   function websiteOnlyFields() {
     const unread = "خوانده نشد، پس جور بودن ساخته نشد.";
@@ -1031,7 +1079,11 @@
     const website = item.mode === "website";
     const tab = website ? "online" : "social";
     const hits = item.candidates || [];
-    const hit = hits.length === 1 ? hits[0] : null;
+    let hit = hits.length === 1 ? hits[0] : null;
+    if (!hit && !website && hits.length > 1) {
+      const idHits = hits.filter((candidate) => compareId(item.owner_id, candidate.national_id)[0] === OK);
+      if (idHits.length === 1) hit = idHits[0];
+    }
     const missingName = website ? "از تب آنلاین اسم پیدا نشد" : "از تب سوشال اسم پیدا نشد";
     const tabFa = hit ? String(hit.fa || "").trim() : "";
     const tabEn = hit ? String(hit.en || "").trim() : "";
@@ -1039,7 +1091,7 @@
     const nidOk = idPair[0] === OK;
     let mobilePair = hit ? compareMobile(item.owner_mobile, hit.mobile, nidOk) : [UNK, "فروشندهٔ مشخصی پیدا نشد و موبایل مقایسه نشد."];
     let linkPair;
-    if (hit) linkPair = [OK, "همین لینک در تب " + tab + " پیدا شد."];
+    if (hit) linkPair = [OK, hits.length > 1 ? "چند ردیف با لینک پیدا شد و کد ملی فقط با همین یک ردیف جور است." : "همین لینک در تب " + tab + " پیدا شد."];
     else if (hits.length > 1) linkPair = [UNK, "با این لینک " + hits.length + " فروشنده در تب " + tab + " پیدا شد."];
     else linkPair = [NO, "این لینک در تب " + tab + " پیدا نشد."];
     const faPair = hit ? compareBrand(item.fa, tabFa, missingName) : [UNK, "فروشندهٔ مشخصی پیدا نشد و نام فارسی مقایسه نشد."];
@@ -1047,9 +1099,11 @@
     const fields = [
       oneField("link", "لینک", linkPair[0], linkPair[1]),
       oneField("national_id", "کد ملی", idPair[0], idPair[1]),
-      oneField("mobile", "موبایل", mobilePair[0], mobilePair[1]),
+      ...(website ? [oneField("mobile", "موبایل", mobilePair[0], mobilePair[1])] : []),
       oneField("fa", "نام فارسی فروشگاه", faPair[0], faPair[1]),
-      oneField("en", "نام انگلیسی فروشگاه", enPair[0], enPair[1])
+      website
+        ? oneField("en", "نام انگلیسی فروشگاه", enPair[0], enPair[1])
+        : oneField("en", "نام انگلیسی فروشگاه", SKIP, "نام انگلیسی در وضعیت سوشال معیار تصمیم نیست؛ نام فارسی بررسی می‌شود.")
     ].concat(website ? websiteOnlyFields() : skipWebsiteFields().map((row, i) => {
       const labels = ["نام صاحب امتیاز", "نام خانوادگی صاحب امتیاز", "گواهی", "دسته", "زیردسته"];
       row.name = labels[i];
@@ -1058,7 +1112,7 @@
     const shownFa = hit ? (tabFa || missingName) : (item.fa || "");
     const shownEn = hit ? (tabEn || missingName) : (item.en || "");
     const statusOf = (code) => code === "ready" ? STATUSES[0] : (code === "rename" ? STATUSES[1] : STATUSES[2]);
-    if (hits.length !== 1) {
+    if (!hit) {
       const url = String(item.url || "").trim();
       const bare = !website && url && !instagramUsername(url) && !socialPathUser(url) && (hostIsSocial(urlHost(url)) || SOCIAL_HOSTS.some((domain) => url.toLowerCase().includes(domain)));
       let reason;
@@ -1071,7 +1125,30 @@
         const extra = fields.filter((row) => ["certificate", "category", "subcategory", "owner_first", "owner_last"].includes(row.key));
         reason += " " + manualFromFields(extra);
       }
+      if (!website) {
+        const socialReason = hits.length
+          ? "تغییر نام پیشنهاد شد چون لینک به " + hits.length + " ردیف در تب social رسید و یک ردیف یکتا مشخص نشد. " + linkPair[1]
+          : "تغییر نام پیشنهاد شد چون " + linkPair[1] + " لینک سوشال را بررسی کنید و پیشنهاد نام را در همین ردیف ثبت کنید.";
+        return { status: statusOf("rename"), fa: "", en: "", reason: socialReason, against: "تب social", fields };
+      }
       return { status: statusOf("manual"), fa: shownFa, en: shownEn, reason, against: "", fields };
+    }
+    if (!website) {
+      const socialNameRelation = tabFa && item.fa ? brandRelation(item.fa, tabFa) : "unknown";
+      if (idPair[0] === NO) {
+        return { status: statusOf("rename"), fa: "", en: "", reason: "تغییر نام پیشنهاد شد چون کد ملی درخواست و ردیف تب social جور نیست: " + idPair[1], against: "تب social", fields };
+      }
+      if (idPair[0] !== OK) {
+        return { status: statusOf("manual"), fa: item.fa || "", en: item.en || "", reason: "کد ملی در تب social خوانده نشد؛ تطبیق کد ملی بررسی نشد. " + idPair[1], against: "تب social", fields };
+      }
+      if (socialNameRelation === "different") {
+        return { status: statusOf("rename"), fa: item.final_fa || (String(item.sub || "").trim() + " " + String(item.fa || "").trim()).trim(), en: item.final_en || "", reason: "تغییر نام پیشنهاد شد چون نام فارسی فروشگاه با تب social کاملاً متفاوت است. " + faPair[1], against: "تب social", fields };
+      }
+      if (socialNameRelation !== "same") {
+        return { status: statusOf("manual"), fa: item.fa || "", en: item.en || "", reason: "بررسی دستی لازم است؛ نام فارسی فقط تا حدی شبیه است یا خوانده نشد، بنابراین تطبیق نام بررسی نشد. " + faPair[1], against: "تب social", fields };
+      }
+      let socialReason = "آماده فعال‌سازی است چون لینک یکتا، کد ملی و نام فارسی با تب social جور هستند.";
+      return { status: statusOf("ready"), fa: tabFa || item.fa, en: tabEn || item.en, reason: socialReason, against: "تب social", fields };
     }
     const other = fields.filter((row) => row.key !== "fa" && row.key !== "en" && blocksStatus(row, nidOk));
     const nameNo = fields.filter((row) => (row.key === "fa" || row.key === "en") && row.verdict === NO);
@@ -1091,14 +1168,9 @@
       }
     }
     let blocks = other.concat(nameUnk);
-    if (!website || other.length || nameUnk.length) blocks = blocks.concat(nameNo);
-    if (!website) blocks = other.concat(nameUnk, nameNo);
+    if (other.length || nameUnk.length) blocks = blocks.concat(nameNo);
     if (blocks.length) {
-      let reason;
-      if (!website && nameNo.length && !other.length && !nameUnk.length) {
-        reason = "بررسی دستی شد چون نام فارسی یا انگلیسی با تب social یکی نیست. برای سوشال فقط لینک، کد ملی و موبایل بررسی می‌شود و نام صاحب و محصولات دیده نمی‌شود، پس فقط به‌خاطر تفاوت نام همان فروشگاه حساب نمی‌شود و در نیاز به تغییر نام نمی‌رود. " + manualFromFields(nameNo);
-      } else reason = manualFromFields(blocks);
-      return { status: statusOf("manual"), fa: shownFa, en: shownEn, reason, against: "", fields };
+      return { status: statusOf("manual"), fa: shownFa, en: shownEn, reason: manualFromFields(blocks), against: "", fields };
     }
     let reason = website
       ? "آماده فعال‌سازی است چون با تب online، اینماد یا دی‌نماد، و دستهٔ سایت جور شد."
@@ -1167,7 +1239,7 @@
     for (const item of items) {
       const result = effective(decisions && decisions[item.key], item);
       const sources = item.mode === "website"
-        ? "سایت، اینماد، نامزدهای online با URL ستون O (اپراتور)"
+        ? "سایت، اینماد، تطبیق رکوردهای online با URL ستون O (اپراتور)"
         : "تب social با site_link و Call Back (اپراتور)؛ سایت/اینماد/online خارج از محدوده";
       const base = {};
       for (const [key, value] of Object.entries(item.raw || {})) {
@@ -1189,8 +1261,10 @@
         "پیشنهاد برنامه": result.status,
         "دلیل پیشنهاد": result.reason,
         "تصمیم نهایی": result.status,
-        "نام فارسی": result.fa,
-        "نام انگلیسی": result.en,
+        "نام فارسی اصلی": item.fa || "",
+        "نام انگلیسی اصلی": item.en || "",
+        "پیشنهاد نام فارسی": result.status === rename ? result.fa : "",
+        "پیشنهاد نام انگلیسی": result.status === rename ? result.en : "",
         "وضعیت بررسی": result.unknown.length ? "ناقص" : "انجام شد",
         "وضعیت انجام تغییر نام": "انجام نشده",
         "منابع بررسی‌شده": sources,
@@ -1369,10 +1443,11 @@
   let items = [];
   let meta = null;
   let idx = 0;
+  let detailOpen = false;
   let page = 0;
   let filter = "all";
   let query = "";
-  let modeFilter = "all";
+  let modeFilter = "both";
   let decisions = {};
   let persistTimer = 0;
   let running = false;
@@ -1437,8 +1512,8 @@
     return {
       checks,
       status: STATUSES.includes(review.status) ? review.status : MANUAL,
-      fa: review.fa || item.fa || "",
-      en: review.en || item.en || "",
+      fa: review.status === RENAME ? (review.fa || "") : (review.fa || item.fa || ""),
+      en: review.status === RENAME ? (review.en || "") : (review.en || item.en || ""),
       ref: review.against || "",
       reason: review.reason || "",
       touched: false
@@ -1446,7 +1521,7 @@
   }
   function sanitize(raw, item) {
     const checks = {};
-    for (const field of FIELDS) {
+    for (const field of FIELDS.filter((field) => isWeb || field !== "موبایل")) {
       const value = raw.checks && raw.checks[field];
       checks[field] = MATCH.includes(value) ? value : UNK;
     }
@@ -1455,8 +1530,8 @@
     return {
       checks,
       status: STATUSES.includes(raw.status) ? raw.status : MANUAL,
-      fa: faEmpty ? (raw.touched ? "" : (item.fa || "")) : String(raw.fa),
-      en: enEmpty ? (raw.touched ? "" : (item.en || "")) : String(raw.en),
+      fa: faEmpty ? (raw.touched ? "" : (item.review && item.review.status === RENAME ? ((item.review && item.review.fa) || "") : ((item.review && item.review.fa) || item.fa || ""))) : String(raw.fa),
+      en: enEmpty ? (raw.touched ? "" : (item.review && item.review.status === RENAME ? ((item.review && item.review.en) || "") : ((item.review && item.review.en) || item.en || ""))) : String(raw.en),
       ref: String(raw.ref || ""),
       reason: String(raw.reason || ""),
       touched: !!raw.touched
@@ -1465,14 +1540,6 @@
   function decisionOf(item) {
     const saved = decisions[item.key];
     return saved ? sanitize(saved, item) : blankDecision(item);
-  }
-  function candidateRef(c) {
-    const link = c.site_link || c.call_back || "";
-    const name = [c.fa, c.en].filter(Boolean).join(" / ");
-    const bits = [c.source === "online" ? "online" : "social", name, link];
-    if (c.national_id) bits.push("کدملی " + (Logic.padNationalId(c.national_id) || c.national_id));
-    if (c.mobile) bits.push("موبایل " + c.mobile);
-    return bits.filter(Boolean).join(" | ");
   }
   function haystack(item) {
     const parts = [item.contract, item.fa, item.en, item.url, item.branch, item.cat, item.sub, item.owner_first, item.owner_last];
@@ -1496,7 +1563,7 @@
       return "گزارش: آماده فعال‌سازی " + c.ready + " · نیاز به تغییر نام " + c.rename + " · بررسی دستی " + c.manual + ". سایت " + meta.websiteCount + " (آماده " + (meta.websiteReady || 0) + "، تغییر نام " + (meta.websiteRename || 0) + "، دستی " + (meta.websiteManual || 0) + ") · تطبیق کد ملی/موبایل/URL در online: " + (meta.websiteWithOnline || 0) + " · سوشال " + meta.socialModeCount + ".";
     }
     const c2 = c;
-    return "خام " + meta.rawCount + " · صف " + meta.queueCount + " · سایت " + meta.websiteCount + " (نامزد online " + meta.websiteWithOnline + ") · سوشال " + meta.socialModeCount + " (نامزد " + meta.socialWithMatch + ") · نیاز به تغییر نام " + c2.rename;
+    return "خام " + meta.rawCount + " · صف " + meta.queueCount + " · سایت " + meta.websiteCount + " (تطبیق online " + meta.websiteWithOnline + ") · سوشال " + meta.socialModeCount + " (تطبیق " + meta.socialWithMatch + ") · نیاز به تغییر نام " + c2.rename;
   }
   function paintCards() {
     const dash = !meta;
@@ -1512,7 +1579,8 @@
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
       const status = (item.review && item.review.status) || MANUAL;
-      if (modeFilter !== "all" && item.mode !== modeFilter) continue;
+      if (modeFilter === "online" && item.mode !== "website") continue;
+      if (modeFilter === "social" && item.mode !== "social") continue;
       if (filter === "ready" && status !== READY) continue;
       if (filter === "rename" && status !== RENAME) continue;
       if (filter === "manual" && status !== MANUAL) continue;
@@ -1615,11 +1683,6 @@
     list.replaceChildren(...eff.blockers.map((text) => el("li", {}, [text])));
     const reason = document.getElementById("reason");
     if (reason) reason.classList.toggle("need", eff.status === MANUAL && !String(d.reason || "").trim());
-    const ref = String(d.ref || "").trim();
-    document.querySelectorAll("[data-cand]").forEach((card, i) => {
-      const c = items[idx].candidates[i];
-      card.classList.toggle("picked", !!c && !!ref && candidateRef(c) === ref);
-    });
   }
   function updateCurrent(mutator) {
     const item = items[idx];
@@ -1643,14 +1706,28 @@
     persist();
     paintOutput();
   }
-  function select(i) {
+  function paintPageMode() {
+    const results = document.getElementById("results-panel");
+    const detail = document.getElementById("detail");
+    const hasItem = Boolean(items.length && items[idx]);
+    results.hidden = detailOpen && hasItem;
+    detail.hidden = !detailOpen || !hasItem;
+  }
+  function select(i, openDetail = true) {
     if (i < 0 || i >= items.length) return;
     idx = i;
+    detailOpen = Boolean(openDetail);
     sessionStorage.setItem(KEY_INDEX, items[i].key);
     renderView();
     paintTable();
-    const detail = document.getElementById("detail");
-    if (detail && !detail.hidden) detail.scrollIntoView({ block: "nearest" });
+    paintPageMode();
+    if (detailOpen) window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  function closeDetail() {
+    detailOpen = false;
+    paintPageMode();
+    paintTable();
+    document.getElementById("results-panel").scrollIntoView({ block: "start", behavior: "smooth" });
   }
   function step(delta) {
     const vis = visibleIndices();
@@ -1673,11 +1750,11 @@
     ]);
     if (review.against) box.append(el("p", {}, ["مرجع تطبیق: " + review.against]));
     if (review.status === RENAME) {
-      box.append(el("p", {}, ["اسم فارسی پیشنهادی: " + (review.fa || "—")]));
-      box.append(el("p", { class: "ltr" }, [review.en || "—"]));
+      box.append(el("p", {}, ["پیشنهاد نام فارسی: " + (review.fa || "—")]));
+      box.append(el("p", {}, ["پیشنهاد نام انگلیسی: ", el("span", { class: "ltr" }, [review.en || "—"])]));
     }
     if (review.status === READY) {
-      box.append(el("p", {}, ["اسم فروشگاه: " + (review.fa || "—") + " / " + (review.en || "—")]));
+      box.append(el("p", {}, ["اسم قابل فعال‌سازی: " + (review.fa || "—") + " / " + (review.en || "—")]));
     }
     const fieldRows = review.fields || [];
     const wrap = el("div", { class: "verdict-list", "data-testid": "field-notes" });
@@ -1759,8 +1836,8 @@
     nodes.push(grid);
     nodes.push(renderReview(item));
     nodes.push(el("p", { class: "mode" + (isWeb ? "" : " social"), "data-testid": "mode" }, [isWeb
-      ? "حالت ستون O: سایت. در محدوده: باز کردن سایت، بررسی اینماد، و نامزدهای تب online با همین URL یا دامنه."
-      : "حالت ستون O: سوشال. فقط نامزدهای تب social (site_link و Call Back). سایت، اینماد و online خارج از محدوده است."
+      ? "حالت ستون O: سایت. در محدوده: باز کردن سایت، بررسی اینماد و تطبیق URL یا دامنه با تب online."
+      : "حالت ستون O: سوشال. فقط تطبیق site_link و Call Back در تب social بررسی می‌شود؛ سایت و اینماد خارج از محدوده است."
     ]));
     const actions = el("div", { class: "actions" });
     if (open) {
@@ -1797,48 +1874,6 @@
     if (enamadMissing) {
       nodes.push(el("p", { class: "hint" }, ["این ردیف از گزارش قبلی است و لینک اختصاصی اینماد در آن ذخیره نشده؛ پس از اجرای دوبارهٔ بررسی سایت، اگر لینک پیدا شود دکمه فعال می‌شود."]));
     }
-    const candidateDetails = el("details", { class: "candidate-details" });
-    const candidates = item.candidates || [];
-    candidateDetails.append(
-      el("summary", {}, ["نامزدهای کمکی (" + candidates.length + ")"]),
-      el("p", { class: "hint" }, [isWeb
-        ? "تطبیق با URL نرمال‌شده یا دامنه در تب online. کد قرارداد معیار نیست. نامزد را خودتان مرجع می‌کنید."
-        : "تطبیق با site_link و Call Back در تب social. کد قرارداد معیار نیست. نامزد را خودتان مرجع می‌کنید."
-      ])
-    );
-    if (!candidates.length) {
-      candidateDetails.append(el("div", { class: "empty-cand", "data-testid": "candidates" }, [
-        el("p", {}, [isWeb
-          ? "نامزد online با این URL یا دامنه یافت نشد. نبودن در online رد آنلاین‌بودن نیست؛ سایت و اینماد را همچنان بررسی کنید."
-          : "نامزد social با این URL یا یوزرنیم یافت نشد. نتیجه‌گیری منفی مجاز نیست؛ لینک را دستی بررسی کنید."])
-      ]));
-    } else {
-      const cards = el("div", { class: "cand-grid", "data-testid": "candidates" });
-      candidates.forEach((c, i) => {
-        const ref = candidateRef(c);
-        const card = el("div", { class: "cand" + (d.ref.trim() && d.ref.trim() === ref ? " picked" : ""), "data-cand": String(i) });
-        card.append(
-          el("p", {}, [el("span", { class: "badge" }, [c.source === "online" ? "online" : "social"]), " ", c.fa || "—", " / ", c.en || "—"]),
-          el("p", {}, ["site_link: ", linkOrText(c.site_link)])
-        );
-        if (c.source === "social") card.append(el("p", {}, ["Call Back: ", linkOrText(c.call_back)]));
-        card.append(
-          el("p", {}, ["کد ملی ", el("span", { class: "ltr" }, [Logic.padNationalId(c.national_id) || "—"]), " · موبایل ", el("span", { class: "ltr" }, [c.mobile || "—"])]),
-          el("button", {
-            type: "button", class: "ghost", "data-testid": i === 0 ? "use-candidate" : null,
-            onclick: () => {
-              const input = document.getElementById("ref");
-              if (input) input.value = ref;
-              updateCurrent((next) => { next.ref = ref; });
-            }
-          }, ["ثبت به‌عنوان مرجع دقیق"])
-        );
-        cards.append(card);
-      });
-      candidateDetails.append(cards);
-      candidateDetails.append(el("p", { class: "hint" }, ["دیدن نامزد تصمیم را عوض نمی‌کند. مرجع دقیق فقط با دکمهٔ بالا یا نوشتن خودتان پر می‌شود."]));
-    }
-    nodes.push(candidateDetails);
     const criteria = el("details", { class: "criteria-details" });
     criteria.append(
       el("summary", {}, ["ارزیابی جداگانهٔ معیارها (اختیاری)"]),
@@ -1886,6 +1921,7 @@
         status
       ]));
     });
+    if (!isWeb) radios.append(el("p", { class: "hint" }, ["سوشال: موبایل بررسی نمی‌شود. لینک یا کد ملی نامنطبق و نام کاملاً متفاوت → تغییر نام؛ اختلاف جزئی نام پذیرفته می‌شود، شباهت مبهم → بررسی دستی؛ لینک، کد ملی و نام فارسی منطبق → آماده فعال‌سازی."]));
     decisionPanel.append(radios);
     decisionPanel.append(el("div", { id: "output-status", "data-testid": "output-status", class: "pill" }, ["…"]));
     decisionPanel.append(el("ul", { id: "blockers", "data-testid": "blockers" }));
@@ -1926,13 +1962,16 @@
     view.replaceChildren(...nodes);
     reason.value = d.reason;
     paintOutput();
+    const visible = visibleIndices();
+    const visiblePosition = visible.indexOf(idx);
     const pos = document.getElementById("pos");
-    if (pos) pos.textContent = "ردیف " + (idx + 1) + " از " + items.length + " · " + item.contract;
+    if (pos) pos.textContent = "ردیف " + (visiblePosition >= 0 ? visiblePosition + 1 : idx + 1) + " از " + (visiblePosition >= 0 ? visible.length : items.length) + " · " + item.contract;
     paintRowNav();
   }
   function applyState(state) {
     meta = state.meta;
     items = state.items || [];
+    detailOpen = false;
     loadDecisions();
     let found = items.findIndex((item) => item.key === sessionStorage.getItem(KEY_INDEX));
     if (found < 0) {
@@ -1946,6 +1985,7 @@
     paintChips();
     paintTable();
     renderView();
+    paintPageMode();
     setStatus(statusText());
   }
   function quoteSheet(name) {
@@ -2175,22 +2215,22 @@
       const res = await fetch("/save", {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-instore-request": "1" },
-        body: JSON.stringify({ contract: item.contract, status: status, fa: fa, en: en, reason: reason, ref: ref })
+        body: JSON.stringify({ contract: item.contract, status: status, fa: fa, en: en, activationFa: item.review.activationFa || "", activationEn: item.review.activationEn || "", originalFa: item.fa, originalEn: item.en, reason: reason, ref: ref })
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) throw new Error((data && data.error) || "ذخیره انجام نشد.");
       decisions[item.key] = { checks: d.checks, status: status, fa: fa, en: en, ref: ref, reason: reason, touched: true };
       persistNow();
-      item.fa = fa || item.fa;
-      item.en = en || item.en;
       item.review = Object.assign({}, item.review, {
         status: status,
-        fa: fa,
-        en: en,
+        fa: status === RENAME ? fa : (status === READY ? (item.review.activationFa || fa) : item.fa),
+        en: status === RENAME ? en : (status === READY ? (item.review.activationEn || en) : item.en),
         reason: reason,
         against: ref || item.review.against,
         socialFa: item.review.socialFa,
-        socialEn: item.review.socialEn
+        socialEn: item.review.socialEn,
+        activationFa: item.review.activationFa,
+        activationEn: item.review.activationEn
       });
       paintCards();
       paintTable();
@@ -2362,9 +2402,9 @@
       { page: "نتیجه‌ها", sel: "#chip-manual", title: "دستی", body: "فقط ردیف‌هایی را نشان می‌دهد که باید دستی دیده شوند." },
       { page: "نتیجه‌ها", sel: "#search", title: "جست‌وجو", body: "شناسه یا اسم را بنویسید تا همان ردیف پیدا شود." },
       { page: "نتیجه‌ها", sel: "#mode-filter", title: "نوع فروشگاه", body: "نتایج را بر اساس سایت، سوشال یا هر دو فیلتر می‌کند." },
-      { page: "نتیجه‌ها", sel: "[data-testid='queue-table']", title: "جدول", body: "روی یک ردیف بزنید تا جزئیات همان درخواست پایین صفحه باز شود." },
+      { page: "نتیجه‌ها", sel: "[data-testid='queue-table']", title: "جدول", body: "روی یک ردیف بزنید تا جزئیات همان درخواست در صفحهٔ جدا باز شود." },
       { page: "نتیجه‌ها", sel: "#pager", title: "صفحه‌ها", body: "اگر ردیف‌ها زیاد باشند، با این دکمه‌ها صفحهٔ بعدی و قبلی جدول را می‌بینید.", when: "pager" },
-      { page: "یک درخواست", sel: "[data-testid='queue-table']", title: "صفحهٔ یک درخواست", body: "برای دیدن این صفحه، یک ردیف از جدول را انتخاب کنید. نام، لینک و دلیل همان درخواست پایین می‌آید.", when: "nodetail" },
+      { page: "یک درخواست", sel: "#back-to-results", title: "بازگشت به نتایج", body: "با این دکمه از بررسی ردیف به جدول نتایج برمی‌گردید.", when: "detail" },
       { page: "یک درخواست", sel: "#prev", title: "ردیف قبلی", body: "درخواست قبلی را در همین صفحه باز می‌کند.", when: "detail" },
       { page: "یک درخواست", sel: "#next", title: "ردیف بعدی", body: "درخواست بعدی را در همین صفحه باز می‌کند.", when: "detail" },
       { page: "یک درخواست", sel: "#view", title: "جزئیات درخواست", body: "نام، لینک و دلیل همین درخواست اینجاست.", when: "detail" },
@@ -2494,20 +2534,21 @@
   document.getElementById("help-inline").addEventListener("click", toggleHelp);
   document.getElementById("prev").addEventListener("click", () => step(-1));
   document.getElementById("next").addEventListener("click", () => step(1));
+  document.getElementById("back-to-results").addEventListener("click", closeDetail);
   document.getElementById("page-prev").addEventListener("click", () => { page -= 1; paintTable(); });
   document.getElementById("page-next").addEventListener("click", () => { page += 1; paintTable(); });
   document.getElementById("mode-filter").addEventListener("change", (event) => {
     modeFilter = event.target.value;
     page = 0;
     const visible = visibleIndices();
-    const detail = document.getElementById("detail");
-    if (visible.length) {
-      if (!visible.includes(idx) || detail.hidden) select(visible.includes(idx) ? idx : visible[0]);
-      else paintTable();
-    } else {
-      paintTable();
-      detail.hidden = true;
+    if (visible.length && !visible.includes(idx)) {
+      idx = visible[0];
+      sessionStorage.setItem(KEY_INDEX, items[idx].key);
+      renderView();
     }
+    if (!visible.length) detailOpen = false;
+    paintTable();
+    paintPageMode();
   });
   document.querySelectorAll(".chip").forEach((chip) => {
     chip.addEventListener("click", () => {
@@ -2543,14 +2584,19 @@
   }
   function reportStatus(label) {
     if (label === READY) return READY;
-    if (label === "فعال\u200cسازی با اسم جدید") return RENAME;
+    if (label === RENAME || label === "فعال\u200cسازی با اسم جدید") return RENAME;
     return MANUAL;
   }
   function reportItem(row) {
     const url = cellAt(row, 3);
     const fa = cellAt(row, 10) || cellAt(row, 1);
     const en = cellAt(row, 11);
+    const mode = Logic.classifyUrl(url);
     const status = reportStatus(cellAt(row, 7));
+    const suggestedFa = cellAt(row, 37);
+    const suggestedEn = cellAt(row, 38);
+    const activationFa = cellAt(row, 39);
+    const activationEn = cellAt(row, 40);
     const pairs = [
       [15, 16, "لینک"],
       [17, 18, "کد ملی"],
@@ -2561,7 +2607,8 @@
       [27, 28, "نام خانوادگی صاحب امتیاز"],
       [29, 30, "گواهی"],
       [31, 32, "دسته"],
-      [33, 34, "زیردسته"]
+      [33, 34, "زیردسته"],
+      [35, 36, "شهر شعبه"]
     ];
     const fields = [];
     for (const pair of pairs) {
@@ -2571,7 +2618,6 @@
     }
     const certificateField = fields.find((field) => field.name === "گواهی");
     const enamadUrl = certificateField ? Logic.safeEnamadUrl(certificateField.note) : "";
-    const mode = Logic.classifyUrl(url);
     return {
       key: cellAt(row, 0) || url,
       contract: cellAt(row, 0),
@@ -2579,12 +2625,12 @@
       en: en,
       brand: cellAt(row, 1),
       cat: cellAt(row, 2),
-      sub: cellAt(row, 35),
+      sub: cellAt(row, 41),
       url: url,
-      branch: cellAt(row, 36),
+      branch: cellAt(row, 42),
       owner_first: cellAt(row, 4),
       owner_last: "",
-      owner_id: cellAt(row, 37),
+      owner_id: cellAt(row, 43),
       owner_mobile: cellAt(row, 5),
       mode: mode,
       candidates: [],
@@ -2592,10 +2638,12 @@
         status: status,
         reviewed: Boolean(cellAt(row, 12).trim()),
         reason: cellAt(row, 8),
-        fa: fa,
-        en: en,
-        socialFa: fa,
-        socialEn: en,
+        fa: status === RENAME ? suggestedFa : (status === READY ? activationFa : fa),
+        en: status === RENAME ? suggestedEn : (status === READY ? activationEn : en),
+        socialFa: activationFa,
+        socialEn: activationEn,
+        activationFa: activationFa,
+        activationEn: activationEn,
         against: cellAt(row, 14),
         enamadUrl: enamadUrl,
         fields: fields
@@ -2605,6 +2653,7 @@
   function applyReport(payload) {
     const rows = payload.rows || [];
     items = rows.filter((row) => cellAt(row, 0)).map(reportItem);
+    detailOpen = false;
     let websiteCount = 0;
     let socialCount = 0;
     for (const item of items) {
@@ -2632,6 +2681,7 @@
     paintChips();
     paintTable();
     renderView();
+    paintPageMode();
     setStatus(statusText());
   }
   async function loadReport() {
