@@ -8,20 +8,28 @@
 <style>
   :root {
     --ink: #1c2430;
-    --muted: #667085;
-    --page: #f5f9ff;
+    --muted: #4a5f78;
+    --page: #f7faff;
     --card: #fff;
-    --line: #e4ebf3;
+    --line: #cbdced;
     --blue: #008cf5;
-    --blue-dark: #006fcb;
-    --blue-soft: #eaf5ff;
-    --green: #1f9d55;
+    --blue-dark: #006bc2;
+    --blue-soft: #e7f3ff;
+    --navy: #103b70;
+    --green: #126b38;
+    --green-bg: #128047;
+    --green-soft: #dff3e6;
+    --rename-bg: #0874cf;
+    --rename-soft: #dceeff;
+    --manual-bg: #ffd13f;
+    --manual-ink: #382900;
+    --manual-soft: #fff0bd;
     --orange: #e07a2f;
     --pink: #fde8ec;
     --pink-ink: #9d2340;
-    --ok-bg: #e7f6ec;
+    --ok-bg: #e2f4e8;
     --no-bg: #fdecef;
-    --unk-bg: #fff4e2;
+    --unk-bg: #fff0c2;
     --unk: #8a4e0b;
   }
   * { box-sizing: border-box; }
@@ -59,7 +67,7 @@
   .brand-logo-frame { width: 112px; height: 72px; flex: none; background: #fff; }
   .brand-logo { display: block; width: 100%; height: 100%; object-fit: contain; object-position: center; }
   .brand-title { min-width: 0; }
-  .brand-title h1 { color: #123b67; }
+  .brand-title h1 { color: var(--navy); }
   h1 { margin: 0; font-size: 1.15rem; font-weight: 700; }
   .sub { margin: 4px 0 0; color: var(--muted); max-width: 46rem; font-size: 0.86rem; }
   .head-tools { display: flex; align-items: center; gap: 16px; direction: ltr; }
@@ -74,23 +82,30 @@
   .card {
     background: var(--card);
     border: 1px solid var(--line);
-    border-top: 3px solid #d5dbe6;
-    border-radius: 12px;
-    padding: 8px 10px 8px;
-    min-height: 64px;
-    box-shadow: 0 2px 8px rgba(23, 43, 77, 0.035);
+    border-top: 4px solid #0b76c9;
+    border-radius: 14px;
+    padding: 10px 12px 11px;
+    min-height: 72px;
+    box-shadow: 0 5px 14px rgba(15, 59, 112, 0.10);
   }
-  .card.ok { border-top-color: #b7e0c4; background: #e7f6ec; }
-  .card.warn { border-top-color: #ead98a; background: #fff6d6; }
-  #card-box-rename { border-top-color: #a855f7; background: #f5edff; }
-  .card .k { margin: 0; color: var(--muted); font-size: 12px; }
+  #card-box-all, #card-box-reviewed, #card-box-rename, .card.ok {
+    color: #fff;
+    border-color: transparent;
+  }
+  #card-box-all { border-top-color: #55b7ff; background: #0875cf; }
+  #card-box-reviewed { border-top-color: #829bff; background: #263f9e; }
+  .card.ok { border-top-color: #65d28e; background: #117746; }
+  .card.warn { border-top-color: #d39a00; background: #ffd13f; color: #382900; }
+  #card-box-rename { border-top-color: #69bdff; background: #005eae; }
+  .card .k { margin: 0; color: inherit; opacity: .92; font-size: 12px; font-weight: 700; }
   .card .num {
     margin: 6px 0 0;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     line-height: 1;
   }
+  .card .num { color: inherit; }
   .action {
     display: flex;
     justify-content: space-between;
@@ -109,9 +124,9 @@
     line-height: 1.8;
     white-space: pre-line;
     background: #fff;
-    border: 1px solid #d6e8fa;
-    border-radius: 11px;
-    box-shadow: 0 2px 10px rgba(0, 95, 180, 0.04);
+    border: 1px solid #c8def3;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0, 95, 180, 0.06);
   }
   .reviewed-banner { margin: 8px 0; padding: 9px 12px; color: #07599b; background: var(--blue-soft); border: 1px solid #b7dcfb; border-radius: 10px; }
   .last-update { margin: 6px 0 0; color: var(--muted); font-size: 12px; }
@@ -155,7 +170,7 @@
   .check, .mode-filter { display: flex; align-items: center; gap: 6px; color: var(--ink); font-size: 12px; }
   .mode-filter select {
     min-height: 32px;
-    border: 1px solid #d5dbe6;
+    border: 1px solid #cad8e8;
     border-radius: 10px;
     background: #fff;
     padding: 5px 9px;
@@ -170,7 +185,7 @@
     padding: 6px 12px;
     border-radius: 8px;
     text-decoration: none;
-    border: 1px solid #d5dbe6;
+    border: 1px solid #cad8e8;
     background: #fff;
     color: var(--ink);
     font-size: 13px;
@@ -188,8 +203,16 @@
   button.primary:hover { background: var(--blue-dark); }
   #run { background: var(--blue); border-color: var(--blue); color: #fff; }
   #run:hover { background: var(--blue-dark); }
-  #save-store { background: var(--blue-soft); border-color: #b7dcfb; color: #07599b; }
-  #save-store:hover { background: #d9edff; }
+  #save-store { background: var(--blue); border-color: var(--blue); color: #fff; box-shadow: 0 3px 9px rgba(0, 112, 201, .2); }
+  #save-store:hover { background: var(--blue-dark); }
+  .detail-actions {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 12px 2px 2px;
+    margin-top: 8px;
+    border-top: 1px solid var(--line);
+  }
   button:disabled { opacity: 0.55; cursor: default; }
   .banner {
     background: var(--pink);
@@ -201,10 +224,10 @@
   }
   .panel {
     background: #fff;
-    border: 1px solid #d9e8f8;
-    border-radius: 14px;
-    padding: 12px;
-    box-shadow: 0 5px 20px rgba(0, 95, 180, 0.045);
+    border: 1px solid #cbdced;
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 8px 24px rgba(16, 59, 112, 0.08);
   }
   .results-head, .filters, .row-nav, .pager {
     display: flex;
@@ -216,7 +239,7 @@
   .results-head h2, .row-nav h2 { margin: 0; font-size: 14px; }
   .filters { margin: 8px 0; justify-content: flex-start; }
   .chip {
-    border: 1px solid #d5dbe6;
+    border: 1px solid #c5d5e7;
     background: #fff;
     border-radius: 999px;
     padding: 3px 10px;
@@ -254,13 +277,14 @@
   th {
     position: sticky;
     top: 0;
-    background: #f8fafc;
-    color: var(--muted);
+    background: #e9f3ff;
+    color: #164b7f;
     font-weight: 650;
     font-size: 12px;
   }
   tbody tr { cursor: pointer; }
   tbody tr.sel { background: #eef5ff; }
+  tbody tr:hover { background: #f2f8ff; }
   .muted { color: var(--muted); font-size: 12px; }
   .ltr { direction: ltr; unicode-bidi: isolate; text-align: left; }
   .tag {
@@ -270,12 +294,13 @@
     background: #f3efe8;
     font-size: 12px;
   }
-  .tag.ok { background: #e7f6ec; color: var(--ink); }
-  .tag.rename { background: #f5edff; color: #6b21a8; }
-  .tag.manual { background: #fff6d6; color: var(--ink); }
+  .tag.ok { background: var(--green-bg); border: 1px solid #0d6c36; color: #fff; font-weight: 700; }
+  .tag.rename { background: var(--rename-bg); border: 1px solid #075ba8; color: #fff; font-weight: 700; }
+  .tag.manual { background: var(--manual-bg); border: 1px solid #d39a00; color: var(--manual-ink); font-weight: 700; }
+  .tag.reviewed { background: #e3f1ff; border: 1px solid #0874cf; color: #07599b; font-weight: 700; }
   .why-box { background: #f8fafc; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; margin: 0 0 10px; font-size: 13px; }
   .why-box p { margin: 0 0 6px; }
-  .review-section { border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin: 12px 0; background: #fff; }
+  .review-section { border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin: 14px 0; background: #fff; box-shadow: 0 3px 10px rgba(16, 59, 112, 0.045); }
   .review-section > h3:first-child { margin-top: 0; }
   .review-section .section-help { margin: 0 0 10px; color: var(--muted); font-size: 13px; }
   .auto-review { background: #f8fafc; }
@@ -285,7 +310,7 @@
   .review-evidence { border-top: 1px solid var(--line); margin-top: 8px; padding-top: 8px; }
   .review-evidence summary { cursor: pointer; color: var(--blue); font-weight: 600; }
   .review-evidence[open] summary { margin-bottom: 8px; }
-  .decision-panel { border-color: #cbd8ec; background: #fbfcff; }
+  .decision-panel { border-color: #9bc8f0; background: #f4f9ff; }
   .choice-mark { display: inline-grid; place-items: center; width: 1.1rem; height: 1.1rem; flex: none; font-size: 15px; font-weight: 800; line-height: 1; }
   .choice-mark.match { color: #16803a; }
   .choice-mark.mismatch { color: #c62828; }
@@ -337,9 +362,9 @@
   .decisions label, .lbl { display: flex; gap: 8px; align-items: center; }
   .lbl { flex-direction: column; align-items: stretch; margin: 8px 0; }
   .pill { display: inline-block; border-radius: 999px; padding: 4px 10px; margin: 6px 0; background: #f3efe8; }
-  .pill.ok { background: #e7f6ec; color: var(--ink); }
-  .pill.rename { background: #f5edff; color: #6b21a8; }
-  .pill.manual { background: #fff6d6; color: var(--ink); }
+  .pill.ok { background: var(--green-bg); color: #fff; font-weight: 700; }
+  .pill.rename { background: var(--rename-bg); color: #fff; font-weight: 700; }
+  .pill.manual { background: var(--manual-bg); color: var(--manual-ink); font-weight: 700; }
   #toast.toast-success { background: #176b35; border: 1px solid #0f5a2b; }
   #blockers { margin: 4px 0 8px; padding-right: 1.2rem; }
   #blockers:empty { display: none; }
@@ -482,7 +507,8 @@
         <li>بقیه (اینستاگرام، تلگرام، بله، لینک خالی پلتفرم و مانند آن): فقط تب social.</li>
         <li>نبودن در تب آنلاین رد آنلاین‌بودن نیست و نتیجه‌گیری منفی مجاز نیست.</li>
         <li>آماده فعال‌سازی فقط وقتی ثبت می‌شود که معیارهای لازم جور باشند؛ اختلاف شهر به‌تنهایی و موارد مبهم به بررسی دستی می‌روند.</li>
-        <li>دکمهٔ آبی هر پنج تب خروجی را سلول‌به‌سلول پاک می‌کند و از اول می‌نویسد. چیزی به ته جدول اضافه نمی‌شود. New Flow، آنلاین و سوشال، و تب‌های گزارش، لیست بررسی حضوری، صفحات بررسی و راهنما پاک نمی‌شوند.</li>
+        <li>کارت و فیلتر «بررسی‌شده» از ردیف‌های New Flow با مقدار دقیق ستون N و هر مقدار غیرخالی در P ساخته می‌شود. سابقهٔ تصمیم آن‌ها فقط در اپ می‌ماند و ردیفشان در پنج تب خروجی گزارش نمی‌ماند.</li>
+        <li>هر بار بررسی خودکار را اجرا کنید، اطلاعات پنج تب خروجی پاک و از نو نوشته می‌شود. چیزی به ته جدول اضافه نمی‌شود. تب‌های منبع New Flow، online و social هیچ تغییری نمی‌کنند.</li>
       </ul>
     </div>
     <div class="table-wrap">
@@ -508,13 +534,16 @@
     <div class="row-nav">
       <h2>بررسی این ردیف</h2>
       <div class="row-nav-buttons">
-        <button type="button" class="ghost" id="back-to-results">بازگشت به نتایج</button>
         <button type="button" class="ghost" id="prev">ردیف قبلی</button>
         <button type="button" class="ghost" id="next">ردیف بعدی</button>
         <span id="pos"></span>
       </div>
     </div>
     <article id="view" data-testid="detail"></article>
+    <div class="detail-actions">
+      <button type="button" class="primary" id="save-store" data-testid="save-store">ذخیره تغییرات</button>
+      <button type="button" class="ghost" id="back-to-results">بازگشت</button>
+    </div>
   </section>
 </div>
 <div id="toast" role="status" aria-live="polite" hidden></div>
@@ -941,9 +970,6 @@
     const social = soHeaders.length ? rowsAsDicts(soHeaders, soBody) : [];
     if (!online.length) throw new Error("تب آنلاین خالی است یا خوانده نشد.");
     if (!social.length) throw new Error("social خالی است یا خوانده نشد.");
-    if (!queue.length) {
-      throw new Error("هیچ ردیفی پس از فیلتر New Flow باقی نماند (خام=" + rows.length + "، نگاشت=" + mode + "). شرط: ستون N دقیقاً «" + FILTER_N + "» و ستون‌های P و Z خالی.");
-    }
     const onlineCols = helperCols(online, false);
     const socialCols = helperCols(social, true);
     const onlineIndex = buildOnlineIndex(online, onlineCols);
@@ -1494,6 +1520,8 @@
   let query = "";
   let modeFilter = "both";
   let decisions = {};
+  let drafts = Object.create(null);
+  let detailDraftKeys = new Set();
   let persistTimer = 0;
   let running = false;
   let rowRechecking = false;
@@ -1589,7 +1617,7 @@
     };
   }
   function decisionOf(item) {
-    const saved = decisions[item.key];
+    const saved = drafts[item.key] || decisions[item.key];
     return saved ? sanitize(saved, item) : blankDecision(item);
   }
   function haystack(item) {
@@ -1599,19 +1627,22 @@
   function tally() {
     const out = { raw: meta ? meta.rawCount : 0, reviewed: 0, ready: 0, rename: 0, manual: 0 };
     for (const item of items) {
-      const status = (item.review && item.review.status) || MANUAL;
+      const hasHistory = Boolean(decisions[item.key] && decisions[item.key].touched);
+      const status = item.review && item.review.reviewed && !hasHistory ? "" : ((item.review && item.review.status) || MANUAL);
       if (item.review && item.review.reviewed) out.reviewed++;
+      if (!status) continue;
       if (status === READY) out.ready++;
       else if (status === RENAME) out.rename++;
       else out.manual++;
     }
+    if (meta && Number.isFinite(Number(meta.reviewedCount))) out.reviewed = Number(meta.reviewedCount);
     return out;
   }
   function statusText() {
     if (!meta) return "در حال خواندن پنج تب گزارش. نوشتن فقط روی همان پنج تب است.";
     const c = tally();
     if (meta.fromReport) {
-      return "گزارش · " + items.length + " ردیف · در صف فعال: " + (items.length - c.reviewed) + " · بررسی‌شده: " + c.reviewed + "\nآمادهٔ فعال‌سازی: " + c.ready + "  ·  نیاز به تغییر نام: " + c.rename + "  ·  نیازمند بررسی دستی: " + c.manual + "\nسایت‌ها: " + meta.websiteCount + " (آماده " + (meta.websiteReady || 0) + "، تغییر نام " + (meta.websiteRename || 0) + "، دستی " + (meta.websiteManual || 0) + ")  ·  تطبیق در تب آنلاین: " + (meta.websiteWithOnline || 0) + "  ·  سوشال: " + meta.socialModeCount;
+      return "گزارش · " + items.length + " ردیف · در صف فعال: " + Math.max(0, items.length - c.reviewed) + " · بررسی‌شده: " + c.reviewed + "\nآمادهٔ فعال‌سازی: " + c.ready + "  ·  نیاز به تغییر نام: " + c.rename + "  ·  نیازمند بررسی دستی: " + c.manual + "\nسایت‌ها: " + meta.websiteCount + " (آماده " + (meta.websiteReady || 0) + "، تغییر نام " + (meta.websiteRename || 0) + "، دستی " + (meta.websiteManual || 0) + ")  ·  تطبیق در تب آنلاین: " + (meta.websiteWithOnline || 0) + "  ·  سوشال: " + meta.socialModeCount;
     }
     return "خلاصهٔ گزارش · " + meta.rawCount + " ردیف ورودی، " + meta.queueCount + " ردیف در صف\nسایت‌ها: " + meta.websiteCount + " (تطبیق در تب آنلاین: " + meta.websiteWithOnline + ")  ·  سوشال: " + meta.socialModeCount + " (تطبیق: " + meta.socialWithMatch + ")  ·  نیاز به تغییر نام: " + c.rename;
   }
@@ -1628,7 +1659,8 @@
     const out = [];
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
-      const status = (item.review && item.review.status) || MANUAL;
+      const hasHistory = Boolean(decisions[item.key] && decisions[item.key].touched);
+      const status = item.review && item.review.reviewed && !hasHistory ? "" : ((item.review && item.review.status) || MANUAL);
       if (modeFilter === "online" && item.mode !== "website") continue;
       if (modeFilter === "social" && item.mode !== "social") continue;
       const isReviewed = Boolean(item.review && item.review.reviewed);
@@ -1671,18 +1703,20 @@
       const emptyText = !items.length
         ? "هنوز نتیجه‌ای روی صفحه نیست."
         : reviewFilter === "active"
-          ? "صف بررسی فعال خالی است؛ برای دیدن ردیف‌هایی که ستون P در New Flow آن‌ها Lived است، فیلتر «بررسی‌شده» را انتخاب کنید."
+          ? "صف بررسی فعال خالی است؛ برای دیدن ردیف‌هایی که ستون N آن‌ها با شرط صف منطبق و ستون P غیرخالی است، فیلتر «بررسی‌شده» را انتخاب کنید."
           : "ردیفی با این فیلتر نیست.";
       nodes.push(el("tr", {}, [el("td", { colspan: "4" }, [emptyText])]));
     }
     for (const i of slice) {
       const item = items[i];
       const review = item.review || { status: MANUAL };
+      const hasHistory = Boolean(decisions[item.key] && decisions[item.key].touched);
+      const badgeText = review.reviewed && !hasHistory ? "بررسی‌شده" : (review.status || MANUAL);
       const tr = el("tr", { class: i === idx ? "sel" : "" }, [
         el("td", {}, [item.fa || "—"]),
         el("td", { class: "ltr" }, [item.en || "—"]),
         el("td", { class: "ltr" }, [item.contract || "—"]),
-        el("td", {}, [el("span", { class: "tag " + tagClass(review.status) }, [review.status])])
+        el("td", {}, [el("span", { class: "tag " + (badgeText === "بررسی‌شده" ? "reviewed" : tagClass(review.status)) }, [badgeText])])
       ]);
       tr.tabIndex = 0;
       tr.addEventListener("click", () => select(i));
@@ -1748,8 +1782,8 @@
     const next = JSON.parse(JSON.stringify(decisionOf(item)));
     next.touched = true;
     mutator(next);
-    decisions[item.key] = next;
-    persist();
+    drafts[item.key] = next;
+    detailDraftKeys.add(item.key);
     paintOutput();
     paintCards();
     paintTable();
@@ -1760,8 +1794,8 @@
     if (!item) return;
     const next = JSON.parse(JSON.stringify(decisionOf(item)));
     next.checks[field] = value;
-    decisions[item.key] = next;
-    persist();
+    drafts[item.key] = next;
+    detailDraftKeys.add(item.key);
     paintOutput();
   }
   function paintPageMode() {
@@ -1773,6 +1807,7 @@
   }
   function select(i, openDetail = true) {
     if (i < 0 || i >= items.length) return;
+    if (openDetail && !detailOpen) detailDraftKeys = new Set();
     idx = i;
     detailOpen = Boolean(openDetail);
     sessionStorage.setItem(KEY_INDEX, items[i].key);
@@ -1782,6 +1817,8 @@
     if (detailOpen) window.scrollTo({ top: 0, behavior: "smooth" });
   }
   function closeDetail() {
+    for (const key of detailDraftKeys) delete drafts[key];
+    detailDraftKeys.clear();
     detailOpen = false;
     paintPageMode();
     paintTable();
@@ -1802,9 +1839,11 @@
   }
   function renderReview(item) {
     const review = item.review || { status: MANUAL, reason: "", fields: [], fa: "", en: "", against: "" };
+    const hasLocalHistory = Boolean(decisions[item.key] && decisions[item.key].touched);
+    const shownStatus = review.reviewed && !hasLocalHistory ? "بررسی‌شده" : (review.status || MANUAL);
     const box = el("div", { class: "why-box", "data-testid": "review-reason" }, [
-      el("p", {}, [el("span", { class: "tag " + tagClass(review.status) }, [review.status || MANUAL])]),
-      el("p", {}, [review.reason || "—"])
+      el("p", {}, [el("span", { class: "tag " + (shownStatus === "بررسی‌شده" ? "reviewed" : tagClass(review.status)) }, [shownStatus])]),
+      el("p", {}, [review.reason || (shownStatus === "بررسی‌شده" ? "تصمیم قبلی در این مرورگر ذخیره نشده است." : "—")])
     ]);
     if (review.against) box.append(el("p", {}, ["مرجع تطبیق: " + review.against]));
     if (review.status === RENAME) {
@@ -1912,7 +1951,7 @@
     if (newFlowDetails) nodes.push(newFlowDetails);
     nodes.push(renderReview(item));
     if (item.review && item.review.reviewed) {
-      nodes.push(el("p", { class: "reviewed-banner", role: "status" }, ["این ردیف در تب New Flow، ستون P برابر Lived است و در فیلتر «بررسی‌شده» نمایش داده می‌شود."]));
+      nodes.push(el("p", { class: "reviewed-banner", role: "status" }, ["ستون N این ردیف در New Flow با شرط صف برابر است و ستون P خالی نیست؛ سابقهٔ آن فقط در اپ نگه‌داری می‌شود."]));
     }
     nodes.push(el("p", { class: "mode" + (isWeb ? "" : " social"), "data-testid": "mode" }, [isWeb
       ? "حالت ستون O: سایت. در محدوده: باز کردن سایت، بررسی اینماد و تطبیق URL یا دامنه با تب آنلاین."
@@ -1938,10 +1977,12 @@
         enamadMissing = true;
       }
     }
-    actions.append(el("button", {
-      type: "button", class: "ghost", "data-testid": "recheck-row",
-      onclick: () => recheckCurrentRow()
-    }, ["بررسی دوبارهٔ این ردیف"]));
+    if (!(item.review && item.review.reviewed)) {
+      actions.append(el("button", {
+        type: "button", class: "ghost", "data-testid": "recheck-row",
+        onclick: () => recheckCurrentRow()
+      }, ["بررسی دوبارهٔ این ردیف"]));
+    }
     nodes.push(actions);
     if (enamadMissing) {
       nodes.push(el("p", { class: "hint" }, ["این ردیف از گزارش قبلی است و لینک اختصاصی اینماد در آن ذخیره نشده؛ پس از اجرای دوبارهٔ بررسی سایت، اگر لینک پیدا شود دکمه فعال می‌شود."]));
@@ -2018,16 +2059,12 @@
         oninput: (event) => updateCurrent((next) => { next.ref = event.target.value; next.refEdited = true; })
       })
     ]));
-    decisionPanel.append(el("p", { class: "hint" }, ["ذخیره، تصمیم و نام و دلیل همین فروشگاه را نگه می‌دارد و فقط همین ردیف را در پنج تب گزارش می‌نویسد."]));
+    decisionPanel.append(el("p", { class: "hint" }, ["ردیف‌های در حال بررسی در تب‌های گزارش ثبت می‌شوند؛ سابقهٔ ردیف‌های بررسی‌شده فقط در اپ می‌ماند."]));
     const reason = el("textarea", {
       id: "reason", "data-testid": "reason",
       oninput: (event) => updateCurrent((next) => { next.reason = event.target.value; next.reasonEdited = true; })
     });
     decisionPanel.append(el("label", { class: "lbl" }, ["دلیل یا شواهد تصمیم", reason]));
-    decisionPanel.append(el("button", {
-      type: "button", class: "primary", id: "save-store", "data-testid": "save-store",
-      onclick: () => saveStore()
-    }, ["ذخیرهٔ تصمیم"]));
     nodes.push(decisionPanel);
     detail.hidden = false;
     view.replaceChildren(...nodes);
@@ -2286,12 +2323,15 @@
       const res = await fetch("/save", {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-instore-request": "1" },
-        body: JSON.stringify({ contract: item.contract, status: status, fa: fa, en: en, activationFa: item.review.activationFa || "", activationEn: item.review.activationEn || "", originalFa: item.fa, originalEn: item.en, reason: reason, ref: ref })
+        body: JSON.stringify({ contract: item.contract, status: status, reviewed: isReviewedInNewFlow(item.newFlowDetails), fa: fa, en: en, activationFa: item.review.activationFa || "", activationEn: item.review.activationEn || "", originalFa: item.fa, originalEn: item.en, reason: reason, ref: ref })
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) throw new Error((data && data.error) || "ذخیره انجام نشد.");
-      const isReviewed = isLivedInNewFlow(item.newFlowDetails);
+      const isReviewed = isReviewedInNewFlow(item.newFlowDetails);
       decisions[item.key] = { checks: d.checks, status: status, fa: fa, en: en, ref: ref, reason: reason, reviewed: isReviewed, touched: true };
+      for (const key of detailDraftKeys) delete drafts[key];
+      detailDraftKeys.clear();
+      drafts = Object.create(null);
       persistNow();
       item.review = Object.assign({}, item.review, {
         status: status,
@@ -2305,21 +2345,14 @@
         activationFa: item.review.activationFa,
         activationEn: item.review.activationEn
       });
-      const activeRows = visibleIndices();
-      if (!activeRows.includes(idx)) {
-        idx = activeRows[0] ?? -1;
-        detailOpen = false;
-        if (idx >= 0) sessionStorage.setItem(KEY_INDEX, items[idx].key);
-        else sessionStorage.removeItem(KEY_INDEX);
-      }
+      detailOpen = false;
       paintCards();
       paintTable();
       renderView();
       paintPageMode();
-      const reviewedMessage = isReviewed
-        ? "این ردیف به‌دلیل Lived بودن ستون P در فیلتر «بررسی‌شده» است."
-        : "فیلتر «بررسی‌شده» فقط ردیف‌هایی را نشان می‌دهد که ستون P آن‌ها Lived است.";
-      showToast("تصمیم ثبت شد ✓ نتیجه: " + (data.status || status) + " · تب «" + (data.tab || "general") + "». " + reviewedMessage, true);
+      document.getElementById("results-panel").scrollIntoView({ block: "start", behavior: "smooth" });
+      const savedWhere = isReviewed ? "سابقه فقط در اپ ذخیره شد" : "در تب «" + (data.tab || "general") + "» ثبت شد";
+      showToast("تغییرات ثبت شد ✓ نتیجه: " + (data.status || status) + " · " + savedWhere, true);
     } catch (err) {
       showError(err && err.message ? err.message : "ذخیره انجام نشد.");
     } finally {
@@ -2442,7 +2475,7 @@
       showError("");
       if (preview) {
         setStatus("در حال خواندن پنج تب گزارش…");
-        await loadReport();
+        await loadReport({ pruneReviewed: false });
         showToast("پنج تب گزارش روی صفحه است. چیزی نوشته نشد.");
         return;
       }
@@ -2514,13 +2547,13 @@
     const steps = [
       { page: "خانه", sel: "h1", title: "این صفحه", body: "اینجا درخواست‌های فعال‌سازی فروشگاه حضوری را می‌بینید. شمارنده‌ها بالا هستند و دکمهٔ آبی نتیجه را در شیت می‌نویسد." },
       { page: "خانه", sel: "#card-box-all", title: "همه درخواست‌ها", body: "تعداد همهٔ درخواست‌هایی که از شیت خوانده شده است." },
-      { page: "خانه", sel: "#card-box-reviewed", title: "بررسی‌شده تا الان", body: "تعداد ردیف‌هایی که نتیجهٔ بررسی در شیت برایشان ثبت شده است." },
+      { page: "خانه", sel: "#card-box-reviewed", title: "بررسی‌شده تا الان", body: "تعداد ردیف‌های New Flow با شرط ستون N و مقدار غیرخالی در P؛ سابقهٔ تصمیمشان فقط در اپ نگه‌داری می‌شود." },
       { page: "خانه", sel: "#card-box-ready", title: "آماده فعال‌سازی", body: "درخواست‌هایی که نامشان با یک فروشنده در شیت یکی است." },
       { page: "خانه", sel: "#card-box-rename", title: "نیاز به تغییر نام", body: "درخواست‌هایی که بررسی برایشان نام تازه پیشنهاد کرده است." },
       { page: "خانه", sel: "#card-box-manual", title: "نیازمند بررسی دستی", body: "درخواست‌هایی که یک فروشندهٔ مشخص برایشان پیدا نشده است." },
       { page: "خانه", sel: "#status-line", title: "وضعیت", body: "این خط می‌گوید برنامه الان چه کار می‌کند." },
       { page: "خانه", sel: "#preview-label", title: "پیش‌نمایش", body: "اگر این را روشن کنید، دکمهٔ آبی فقط نتیجه را نشان می‌دهد و شیت را عوض نمی‌کند." },
-      { page: "خانه", sel: "#run", title: "دکمهٔ آبی", body: "یک بار بزنید. پنج تب خروجی کامل پاک می‌شود و نتیجهٔ تازه از اول نوشته می‌شود. چیزی به ته جدول اضافه نمی‌شود و تب‌های منبع دست نمی‌خورند." },
+      { page: "خانه", sel: "#run", title: "دکمهٔ آبی", body: "یک بار بزنید. داده‌های هر پنج تب خروجی کامل پاک و نتیجهٔ فعال تازه نوشته می‌شود. ردیف‌های بررسی‌شده فقط در اپ می‌مانند؛ تب‌های New Flow، online و social تغییر نمی‌کنند." },
       { page: "خانه", sel: "#open-sheet", title: "شیت گزارش", body: "شیت گزارش را در صفحهٔ تازه باز می‌کند." },
       { page: "خانه", sel: "#help-toggle", title: "راهنما", body: "هر وقت خواستید این راهنما را از اول ببینید، همین دکمه را بزنید." },
       { page: "نتیجه‌ها", sel: "#results-title", title: "نتیجه بررسی‌ها", body: "جدول پایین، نتیجهٔ هر درخواست را نشان می‌دهد." },
@@ -2532,7 +2565,7 @@
       { page: "نتیجه‌ها", sel: "#mode-filter", title: "نوع فروشگاه", body: "نتایج را بر اساس سایت، سوشال یا هر دو فیلتر می‌کند." },
       { page: "نتیجه‌ها", sel: "[data-testid='queue-table']", title: "جدول", body: "روی یک ردیف بزنید تا جزئیات همان درخواست در صفحهٔ جدا باز شود." },
       { page: "نتیجه‌ها", sel: "#pager", title: "صفحه‌ها", body: "اگر ردیف‌ها زیاد باشند، با این دکمه‌ها صفحهٔ بعدی و قبلی جدول را می‌بینید.", when: "pager" },
-      { page: "یک درخواست", sel: "#back-to-results", title: "بازگشت به نتایج", body: "با این دکمه از بررسی ردیف به جدول نتایج برمی‌گردید.", when: "detail" },
+      { page: "یک درخواست", sel: "#back-to-results", title: "بازگشت", body: "تغییرات ذخیره‌نشده دور ریخته می‌شوند و به جدول نتایج برمی‌گردید.", when: "detail" },
       { page: "یک درخواست", sel: "#prev", title: "ردیف قبلی", body: "درخواست قبلی را در همین صفحه باز می‌کند.", when: "detail" },
       { page: "یک درخواست", sel: "#next", title: "ردیف بعدی", body: "درخواست بعدی را در همین صفحه باز می‌کند.", when: "detail" },
       { page: "یک درخواست", sel: "#view", title: "جزئیات درخواست", body: "نام، لینک و دلیل همین درخواست اینجاست.", when: "detail" },
@@ -2663,6 +2696,7 @@
   document.getElementById("prev").addEventListener("click", () => step(-1));
   document.getElementById("next").addEventListener("click", () => step(1));
   document.getElementById("back-to-results").addEventListener("click", closeDetail);
+  document.getElementById("save-store").addEventListener("click", saveStore);
   document.getElementById("page-prev").addEventListener("click", () => { page -= 1; paintTable(); });
   document.getElementById("page-next").addEventListener("click", () => { page += 1; paintTable(); });
   document.getElementById("mode-filter").addEventListener("change", (event) => {
@@ -2732,10 +2766,11 @@
     if (label === RENAME || label === "فعال\u200cسازی با اسم جدید") return RENAME;
     return MANUAL;
   }
-  function isLivedInNewFlow(details) {
+  function isReviewedInNewFlow(details) {
     if (!Array.isArray(details)) return false;
-    const sourceStep = details.find((field) => String(field && field.column || "").toUpperCase() === "P");
-    return String(sourceStep && sourceStep.value || "").trim().toLowerCase() === "lived";
+    const filterN = details.find((field) => String(field && field.column || "").toUpperCase() === "N");
+    const filterP = details.find((field) => String(field && field.column || "").toUpperCase() === "P");
+    return String(filterN && filterN.value || "").trim() === Logic.FILTER_N && String(filterP && filterP.value || "").trim() !== "";
   }
   function reportItem(row, newFlowDetails) {
     const url = cellAt(row, 3);
@@ -2747,7 +2782,7 @@
     const suggestedEn = cellAt(row, 38);
     const activationFa = cellAt(row, 39);
     const activationEn = cellAt(row, 40);
-    const isReviewed = isLivedInNewFlow(newFlowDetails);
+    const isReviewed = isReviewedInNewFlow(newFlowDetails);
     const pairs = [
       [15, 16, "لینک"],
       [17, 18, "کد ملی"],
@@ -2822,9 +2857,22 @@
       websiteReady: payload.websiteReady || 0,
       websiteRename: payload.websiteRename || 0,
       websiteManual: payload.websiteManual || 0,
-      socialWithMatch: payload.ready || 0
+      socialWithMatch: payload.ready || 0,
+      reviewedCount: Number(payload.reviewedCount || 0)
     };
     loadDecisions();
+    for (const item of items) {
+      const saved = decisions[item.key];
+      if (!saved || !saved.touched) continue;
+      const decision = sanitize(saved, item);
+      item.review = Object.assign({}, item.review, {
+        status: decision.status,
+        fa: decision.fa,
+        en: decision.en,
+        reason: decision.reason,
+        against: decision.ref || item.review.against,
+      });
+    }
     let found = items.findIndex((item) => item.key === sessionStorage.getItem(KEY_INDEX));
     const visible = visibleIndices();
     idx = found >= 0 && visible.includes(found) ? found : (visible[0] ?? -1);
@@ -2837,8 +2885,9 @@
     paintPageMode();
     setStatus(statusText());
   }
-  async function loadReport() {
-    const res = await fetch("/report", { cache: "no-store", headers: { "x-instore-request": "1" } });
+  async function loadReport(options = {}) {
+    const prune = options.pruneReviewed === false ? "" : "?prune=1";
+    const res = await fetch("/report" + prune, { cache: "no-store", headers: { "x-instore-request": "1" } });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || !data.ok || !data.rows) throw new Error((data && data.error) || "پنج تب گزارش خوانده نشد.");
     applyReport(data);

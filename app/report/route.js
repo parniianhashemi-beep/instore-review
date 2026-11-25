@@ -9,7 +9,8 @@ export async function GET(request) {
   const identity = await reviewer(request)
   if (identity instanceof Response) return identity
   try {
-    return Response.json(await reportView(), { headers: PRIVATE })
+    const pruneReviewed = new URL(request.url).searchParams.get("prune") === "1"
+    return Response.json(await reportView({ pruneReviewed }), { headers: PRIVATE })
   } catch (error) {
     return Response.json(
       { ok: false, error: error.message || "خواندن گزارش انجام نشد." },
