@@ -17,13 +17,15 @@
     --blue-soft: #e7f3ff;
     --navy: #103b70;
     --green: #126b38;
-    --green-bg: #128047;
-    --green-soft: #dff3e6;
-    --rename-bg: #0874cf;
-    --rename-soft: #dceeff;
-    --manual-bg: #ffd13f;
-    --manual-ink: #382900;
-    --manual-soft: #fff0bd;
+    --green-bg: #edf6ef;
+    --green-line: #cfe4d4;
+    --green-ink: #365c40;
+    --rename-bg: #fbf1ed;
+    --rename-line: #ecd7cd;
+    --rename-ink: #805541;
+    --manual-bg: #f8f5e9;
+    --manual-line: #e9e1c7;
+    --manual-ink: #74683d;
     --orange: #e07a2f;
     --pink: #fde8ec;
     --pink-ink: #9d2340;
@@ -82,21 +84,17 @@
   .card {
     background: var(--card);
     border: 1px solid var(--line);
-    border-top: 4px solid #0b76c9;
+    border-top: 3px solid #d5e4f0;
     border-radius: 14px;
     padding: 10px 12px 11px;
     min-height: 72px;
-    box-shadow: 0 5px 14px rgba(15, 59, 112, 0.10);
+    box-shadow: 0 2px 8px rgba(15, 59, 112, 0.035);
   }
-  #card-box-all, #card-box-reviewed, #card-box-rename, .card.ok {
-    color: #fff;
-    border-color: transparent;
-  }
-  #card-box-all { border-top-color: #55b7ff; background: #0875cf; }
-  #card-box-reviewed { border-top-color: #829bff; background: #263f9e; }
-  .card.ok { border-top-color: #65d28e; background: #117746; }
-  .card.warn { border-top-color: #d39a00; background: #ffd13f; color: #382900; }
-  #card-box-rename { border-top-color: #69bdff; background: #005eae; }
+  #card-box-all { color: #496277; border-top-color: #c7dceb; background: #f3f8fc; }
+  #card-box-reviewed { color: #645d76; border-top-color: #d7cde6; background: #f7f4fa; }
+  #card-box-ready { color: #46634c; border-top-color: #c9dfce; background: #f3f8f3; }
+  #card-box-rename { color: #795c4f; border-top-color: #e7d2c7; background: #fbf5f1; }
+  #card-box-manual { color: #726743; border-top-color: #e5ddbF; background: #faf8f0; }
   .card .k { margin: 0; color: inherit; opacity: .92; font-size: 12px; font-weight: 700; }
   .card .num {
     margin: 6px 0 0;
@@ -294,10 +292,10 @@
     background: #f3efe8;
     font-size: 12px;
   }
-  .tag.ok { background: var(--green-bg); border: 1px solid #0d6c36; color: #fff; font-weight: 700; }
-  .tag.rename { background: var(--rename-bg); border: 1px solid #075ba8; color: #fff; font-weight: 700; }
-  .tag.manual { background: var(--manual-bg); border: 1px solid #d39a00; color: var(--manual-ink); font-weight: 700; }
-  .tag.reviewed { background: #e3f1ff; border: 1px solid #0874cf; color: #07599b; font-weight: 700; }
+  .tag.ok { background: var(--green-bg); border: 1px solid var(--green-line); color: var(--green-ink); font-weight: 650; }
+  .tag.rename { background: var(--rename-bg); border: 1px solid var(--rename-line); color: var(--rename-ink); font-weight: 650; }
+  .tag.manual { background: var(--manual-bg); border: 1px solid var(--manual-line); color: var(--manual-ink); font-weight: 650; }
+  .tag.reviewed { background: #f0f4f7; border: 1px solid #d9e2e9; color: #566a7b; font-weight: 650; }
   .why-box { background: #f8fafc; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; margin: 0 0 10px; font-size: 13px; }
   .why-box p { margin: 0 0 6px; }
   .review-section { border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin: 14px 0; background: #fff; box-shadow: 0 3px 10px rgba(16, 59, 112, 0.045); }
@@ -362,9 +360,9 @@
   .decisions label, .lbl { display: flex; gap: 8px; align-items: center; }
   .lbl { flex-direction: column; align-items: stretch; margin: 8px 0; }
   .pill { display: inline-block; border-radius: 999px; padding: 4px 10px; margin: 6px 0; background: #f3efe8; }
-  .pill.ok { background: var(--green-bg); color: #fff; font-weight: 700; }
-  .pill.rename { background: var(--rename-bg); color: #fff; font-weight: 700; }
-  .pill.manual { background: var(--manual-bg); color: var(--manual-ink); font-weight: 700; }
+  .pill.ok { background: var(--green-bg); color: var(--green-ink); border: 1px solid var(--green-line); font-weight: 650; }
+  .pill.rename { background: var(--rename-bg); color: var(--rename-ink); border: 1px solid var(--rename-line); font-weight: 650; }
+  .pill.manual { background: var(--manual-bg); color: var(--manual-ink); border: 1px solid var(--manual-line); font-weight: 650; }
   #toast.toast-success { background: #176b35; border: 1px solid #0f5a2b; }
   #blockers { margin: 4px 0 8px; padding-right: 1.2rem; }
   #blockers:empty { display: none; }
@@ -501,13 +499,13 @@
         <li>نام اصلی جدا می‌ماند. نام پیشنهادی تغییر نام از زیر‌دسته و نام فروشگاه حضوری ساخته می‌شود؛ ستون‌های قرمز J و M در New Flow تکراری‌اند و پیشنهاد جایگزین می‌گیرند.</li>
         <li>نام قابل فعال‌سازی در ستون‌های جداست: در سوشال از ردیف سوشال، در آنلاین از ردیف آنلاین؛ اگر آنلاین پیدا نشود همان عبارت «در تب آنلاین یافت نشد» نوشته می‌شود.</li>
         <li>برنامه فروشگاه را فعال نمی‌کند و نام را خودش عوض نمی‌کند.</li>
-        <li>صف: ستون N دقیقاً ONLINE SITE EXISTS - DUPLICATE NAME KEPT و ستون‌های P و Z خالی.</li>
+        <li>صف: ستون N دقیقاً ONLINE SITE EXISTS - DUPLICATE NAME KEPT باشد و ستون P خالی و ستون Z غیر از Completed باشد.</li>
         <li>وصل شدن به تب‌های آنلاین و سوشال فقط با URL ستون O است، نه با کد قرارداد.</li>
         <li>سایت، از جمله دامنهٔ .app و .in: باز کردن سایت، بررسی اینماد و تطبیق با تب آنلاین.</li>
         <li>بقیه (اینستاگرام، تلگرام، بله، لینک خالی پلتفرم و مانند آن): فقط تب social.</li>
         <li>نبودن در تب آنلاین رد آنلاین‌بودن نیست و نتیجه‌گیری منفی مجاز نیست.</li>
         <li>آماده فعال‌سازی فقط وقتی ثبت می‌شود که معیارهای لازم جور باشند؛ اختلاف شهر به‌تنهایی و موارد مبهم به بررسی دستی می‌روند.</li>
-        <li>کارت و فیلتر «بررسی‌شده» از ردیف‌های New Flow با مقدار دقیق ستون N و هر مقدار غیرخالی در P ساخته می‌شود. سابقهٔ تصمیم آن‌ها فقط در اپ می‌ماند و ردیفشان در پنج تب خروجی گزارش نمی‌ماند.</li>
+        <li>کارت و فیلتر «بررسی‌شده» از ردیف‌های New Flow با مقدار دقیق ستون N و یکی از این شرط‌ها ساخته می‌شود: ستون P غیرخالی باشد یا ستون Z برابر Completed باشد. سابقهٔ تصمیم آن‌ها فقط در اپ می‌ماند و ردیفشان در پنج تب خروجی گزارش نمی‌ماند.</li>
         <li>هر بار بررسی خودکار را اجرا کنید، اطلاعات پنج تب خروجی پاک و از نو نوشته می‌شود. چیزی به ته جدول اضافه نمی‌شود. تب‌های منبع New Flow، online و social هیچ تغییری نمی‌کنند.</li>
       </ul>
     </div>
@@ -949,7 +947,9 @@
       const nVal = cell(row, mapping.filter_n, headers).trim();
       const pVal = cell(row, mapping.filter_p, headers);
       const zVal = cell(row, mapping.filter_z, headers);
-      if (nVal === FILTER_N && !String(pVal || "").trim() && !String(zVal || "").trim()) {
+      if (nVal === FILTER_N &&
+          !String(pVal || "").trim() &&
+          String(zVal || "").trim().toLowerCase() !== "completed") {
         row.__contract = cell(row, mapping.contract, headers).trim();
         row.__fa = cell(row, mapping.fa, headers).trim();
         row.__en = cell(row, mapping.en, headers).trim();
@@ -1703,7 +1703,7 @@
       const emptyText = !items.length
         ? "هنوز نتیجه‌ای روی صفحه نیست."
         : reviewFilter === "active"
-          ? "صف بررسی فعال خالی است؛ برای دیدن ردیف‌هایی که ستون N آن‌ها با شرط صف منطبق و ستون P غیرخالی است، فیلتر «بررسی‌شده» را انتخاب کنید."
+          ? "صف بررسی فعال خالی است؛ برای دیدن ردیف‌هایی که ستون N آن‌ها با شرط صف منطبق و ستون P غیرخالی یا ستون Z برابر Completed است، فیلتر «بررسی‌شده» را انتخاب کنید."
           : "ردیفی با این فیلتر نیست.";
       nodes.push(el("tr", {}, [el("td", { colspan: "4" }, [emptyText])]));
     }
@@ -1951,7 +1951,7 @@
     if (newFlowDetails) nodes.push(newFlowDetails);
     nodes.push(renderReview(item));
     if (item.review && item.review.reviewed) {
-      nodes.push(el("p", { class: "reviewed-banner", role: "status" }, ["ستون N این ردیف در New Flow با شرط صف برابر است و ستون P خالی نیست؛ سابقهٔ آن فقط در اپ نگه‌داری می‌شود."]));
+      nodes.push(el("p", { class: "reviewed-banner", role: "status" }, ["ستون N این ردیف با شرط صف برابر است و ستون P مقدار دارد یا ستون Z برابر Completed است؛ سابقهٔ آن فقط در اپ نگه‌داری می‌شود."]));
     }
     nodes.push(el("p", { class: "mode" + (isWeb ? "" : " social"), "data-testid": "mode" }, [isWeb
       ? "حالت ستون O: سایت. در محدوده: باز کردن سایت، بررسی اینماد و تطبیق URL یا دامنه با تب آنلاین."
@@ -2547,7 +2547,7 @@
     const steps = [
       { page: "خانه", sel: "h1", title: "این صفحه", body: "اینجا درخواست‌های فعال‌سازی فروشگاه حضوری را می‌بینید. شمارنده‌ها بالا هستند و دکمهٔ آبی نتیجه را در شیت می‌نویسد." },
       { page: "خانه", sel: "#card-box-all", title: "همه درخواست‌ها", body: "تعداد همهٔ درخواست‌هایی که از شیت خوانده شده است." },
-      { page: "خانه", sel: "#card-box-reviewed", title: "بررسی‌شده تا الان", body: "تعداد ردیف‌های New Flow با شرط ستون N و مقدار غیرخالی در P؛ سابقهٔ تصمیمشان فقط در اپ نگه‌داری می‌شود." },
+      { page: "خانه", sel: "#card-box-reviewed", title: "بررسی‌شده تا الان", body: "ردیف‌های New Flow با شرط دقیق ستون N و ستون P غیرخالی یا ستون Z برابر Completed؛ سابقهٔ تصمیمشان فقط در اپ نگه‌داری می‌شود." },
       { page: "خانه", sel: "#card-box-ready", title: "آماده فعال‌سازی", body: "درخواست‌هایی که نامشان با یک فروشنده در شیت یکی است." },
       { page: "خانه", sel: "#card-box-rename", title: "نیاز به تغییر نام", body: "درخواست‌هایی که بررسی برایشان نام تازه پیشنهاد کرده است." },
       { page: "خانه", sel: "#card-box-manual", title: "نیازمند بررسی دستی", body: "درخواست‌هایی که یک فروشندهٔ مشخص برایشان پیدا نشده است." },
@@ -2770,7 +2770,10 @@
     if (!Array.isArray(details)) return false;
     const filterN = details.find((field) => String(field && field.column || "").toUpperCase() === "N");
     const filterP = details.find((field) => String(field && field.column || "").toUpperCase() === "P");
-    return String(filterN && filterN.value || "").trim() === Logic.FILTER_N && String(filterP && filterP.value || "").trim() !== "";
+    const filterZ = details.find((field) => String(field && field.column || "").toUpperCase() === "Z");
+    return String(filterN && filterN.value || "").trim() === Logic.FILTER_N &&
+      (String(filterP && filterP.value || "").trim() !== "" ||
+       String(filterZ && filterZ.value || "").trim().toLowerCase() === "completed");
   }
   function reportItem(row, newFlowDetails) {
     const url = cellAt(row, 3);
