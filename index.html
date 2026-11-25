@@ -2026,7 +2026,26 @@
           type: "radio", name: "status", value: status, checked: d.status === status,
           "data-testid": n === 0 ? "status-ready" : (n === 1 ? "status-rename" : "status-manual"),
           onchange: () => {
-            updateCurrent((next) => { next.status = status; });
+            let proposedFa = "";
+            let proposedEn = "";
+            updateCurrent((next) => {
+              next.status = status;
+              if (status === RENAME) {
+                if ((!next.fa || next.fa === item.fa) && item.suggestionFa) next.fa = item.suggestionFa;
+                if ((!next.en || next.en === item.en) && item.suggestionEn) next.en = item.suggestionEn;
+              }
+              proposedFa = next.fa;
+              proposedEn = next.en;
+            });
+            if (status === RENAME) {
+              const faInput = document.getElementById("fa-proposed");
+              const enInput = document.getElementById("en-proposed");
+              if (faInput) faInput.value = proposedFa;
+              if (enInput) enInput.value = proposedEn;
+              if ((!item.suggestionFa || !item.suggestionEn) && (!proposedFa || proposedFa === item.fa || !proposedEn || proposedEn === item.en)) {
+                showToast("برای این ردیف پیشنهاد مطمئن نام پیدا نشد؛ نام را دستی وارد کنید یا بررسی دستی را انتخاب کنید.", false);
+              }
+            }
             const box = document.getElementById("rename-box");
             if (box) box.hidden = status !== RENAME;
           }
@@ -2328,15 +2347,17 @@
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.ok) throw new Error((data && data.error) || "ذخیره انجام نشد.");
       const isReviewed = isReviewedInNewFlow(item.newFlowDetails);
-      decisions[item.key] = { checks: d.checks, status: status, fa: fa, en: en, ref: ref, reason: reason, reviewed: isReviewed, touched: true };
+      const savedFa = data.fa || fa;
+      const savedEn = data.en || en;
+      decisions[item.key] = { checks: d.checks, status: status, fa: savedFa, en: savedEn, ref: ref, reason: reason, reviewed: isReviewed, touched: true };
       for (const key of detailDraftKeys) delete drafts[key];
       detailDraftKeys.clear();
       drafts = Object.create(null);
       persistNow();
       item.review = Object.assign({}, item.review, {
         status: status,
-        fa: status === RENAME ? fa : (status === READY ? (item.review.activationFa || fa) : item.fa),
-        en: status === RENAME ? en : (status === READY ? (item.review.activationEn || en) : item.en),
+        fa: status === RENAME ? savedFa : (status === READY ? (item.review.activationFa || fa) : item.fa),
+        en: status === RENAME ? savedEn : (status === READY ? (item.review.activationEn || en) : item.en),
         reason: reason,
         reviewed: isReviewed,
         against: ref || item.review.against,
@@ -2822,6 +2843,8 @@
       owner_id: cellAt(row, 44),
       owner_mobile: cellAt(row, 5),
       mode: mode,
+      suggestionFa: suggestedFa,
+      suggestionEn: suggestedEn,
       newFlowDetails: Array.isArray(newFlowDetails) ? newFlowDetails : [],
       candidates: [],
         review: {
